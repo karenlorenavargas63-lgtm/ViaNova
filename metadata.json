@@ -1,0 +1,6 @@
+{
+  "name": "VIANOVA - Movilidad Inteligente",
+  "description": "Plataforma integral de movilidad urbana inteligente, planificación de rutas seguras, alertas viales en tiempo real y educación vial.",
+  "requestFramePermissions": ["geolocation"],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
