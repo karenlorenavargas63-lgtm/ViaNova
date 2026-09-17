@@ -59,6 +59,24 @@ export default function App() {
     setCurrentTab('inicio');
   };
 
+  const handleDeleteAccount = () => {
+    try {
+      const active = localStorage.getItem('vianova_active_user');
+      if (active) {
+        const activeObj = JSON.parse(active);
+        const stored = JSON.parse(localStorage.getItem('vianova_registered_users') || '[]');
+        const filtered = stored.filter((u: any) => u.email?.toLowerCase() !== activeObj.email?.toLowerCase());
+        localStorage.setItem('vianova_registered_users', JSON.stringify(filtered));
+      }
+      localStorage.removeItem('vianova_active_user');
+    } catch (err) {
+      console.error('Error eliminando cuenta', err);
+    }
+    setUser(mockUserProfile);
+    setIsAuthenticated(false);
+    setCurrentTab('inicio');
+  };
+
   const handleUpdateUser = (updated: UserProfile) => {
     setUser(updated);
     try {
@@ -92,6 +110,7 @@ export default function App() {
         onOpenAuthModal={() => setIsAuthModalOpen(true)}
         onLogout={handleLogout}
         onUpdateUser={handleUpdateUser}
+        onDeleteAccount={handleDeleteAccount}
       />
 
       {/* Primary Dynamic Main Content View */}
@@ -129,6 +148,7 @@ export default function App() {
             user={user}
             onUpdateUser={handleUpdateUser}
             onLogout={handleLogout}
+            onDeleteAccount={handleDeleteAccount}
             setCurrentTab={setCurrentTab}
           />
         )}

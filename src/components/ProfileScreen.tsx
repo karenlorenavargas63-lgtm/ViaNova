@@ -30,6 +30,7 @@ interface ProfileScreenProps {
   user: UserProfile;
   onUpdateUser: (updated: UserProfile) => void;
   onLogout?: () => void;
+  onDeleteAccount?: () => void;
   setCurrentTab?: (tab: NavigationTab) => void;
 }
 
@@ -37,10 +38,12 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
   user, 
   onUpdateUser, 
   onLogout, 
+  onDeleteAccount,
   setCurrentTab 
 }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [selectedBadge, setSelectedBadge] = useState<any | null>(null);
 
   // File picker references for computer file explorer
@@ -218,6 +221,18 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
     }
   };
 
+  const handleConfirmDeleteAccount = () => {
+    setIsDeleteModalOpen(false);
+    if (onDeleteAccount) {
+      onDeleteAccount();
+    } else if (onLogout) {
+      onLogout();
+    }
+    if (setCurrentTab) {
+      setCurrentTab('inicio');
+    }
+  };
+
   // Avatar presets
   const avatarPresets = [
     defaultAvatarImg,
@@ -387,10 +402,20 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
                 id="btn-profile-card-logout"
                 type="button"
                 onClick={() => setIsLogoutModalOpen(true)}
-                className="w-full py-3 px-4 rounded-xl border border-rose-200/90 bg-rose-50/60 hover:bg-rose-100/80 hover:border-rose-300 text-rose-700 font-semibold text-sm transition-all duration-200 shadow-2xs flex items-center justify-center gap-2 cursor-pointer"
+                className="w-full py-3 px-4 rounded-xl border border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-700 font-semibold text-sm transition-all duration-200 shadow-2xs flex items-center justify-center gap-2 cursor-pointer"
               >
-                <LogOut className="w-4 h-4 text-rose-600" />
+                <LogOut className="w-4 h-4 text-slate-500" />
                 <span>Cerrar sesión</span>
+              </button>
+
+              <button
+                id="btn-profile-card-delete"
+                type="button"
+                onClick={() => setIsDeleteModalOpen(true)}
+                className="w-full py-2.5 px-4 rounded-xl border border-rose-200 bg-rose-50/60 hover:bg-rose-100/80 text-rose-600 font-semibold text-xs transition-all duration-200 flex items-center justify-center gap-2 cursor-pointer"
+              >
+                <Trash2 className="w-3.5 h-3.5 text-rose-500" />
+                <span>Eliminar cuenta</span>
               </button>
             </div>
           </div>
@@ -809,9 +834,54 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
               <button
                 type="button"
                 onClick={handleConfirmLogout}
-                className="flex-1 py-2.5 rounded-xl bg-rose-600 hover:bg-rose-700 text-white text-xs font-semibold shadow-sm"
+                className="flex-1 py-2.5 rounded-xl bg-[#0057d9] hover:bg-[#0047b3] text-white text-xs font-semibold shadow-sm"
               >
                 Cerrar Sesión
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal: Confirmación Eliminar Cuenta */}
+      {isDeleteModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in">
+          <div className="relative w-full max-w-md rounded-3xl bg-white border border-slate-200 p-6 sm:p-7 shadow-2xl text-center space-y-4">
+            <div className="w-14 h-14 mx-auto rounded-2xl bg-rose-50 flex items-center justify-center text-rose-600">
+              <Trash2 className="w-7 h-7" />
+            </div>
+            <div>
+              <h4 className="text-lg font-bold text-[#0a193b]">¿Eliminar cuenta definitivamente?</h4>
+              <p className="text-xs text-slate-600 mt-2 leading-relaxed">
+                Esta acción es irreversible y eliminará todos tus datos registrados, progreso de rutas, educación y certificaciones viales.
+              </p>
+            </div>
+            <div className="p-3 rounded-2xl bg-rose-50 border border-rose-100 text-left text-xs text-rose-800 space-y-1">
+              <p className="font-bold flex items-center gap-1.5">
+                <Trash2 className="w-3.5 h-3.5 text-rose-600 shrink-0" />
+                Se borrarán los siguientes datos:
+              </p>
+              <ul className="list-disc pl-5 text-[11px] text-rose-700/90 space-y-0.5">
+                <li>Perfil y credenciales asociadas a {user.email || 'tu cuenta'}</li>
+                <li>Progreso vial y certificaciones acumuladas</li>
+                <li>Insignias y preferencias de movilidad</li>
+              </ul>
+            </div>
+            <div className="flex items-center gap-3 pt-2">
+              <button
+                type="button"
+                onClick={() => setIsDeleteModalOpen(false)}
+                className="flex-1 py-2.5 rounded-xl border border-slate-200 text-slate-600 hover:bg-slate-50 text-xs font-semibold"
+              >
+                Cancelar
+              </button>
+              <button
+                type="button"
+                onClick={handleConfirmDeleteAccount}
+                className="flex-1 py-2.5 rounded-xl bg-rose-600 hover:bg-rose-700 text-white text-xs font-semibold shadow-sm inline-flex items-center justify-center gap-1.5"
+              >
+                <Trash2 className="w-4 h-4" />
+                Sí, Eliminar Cuenta
               </button>
             </div>
           </div>

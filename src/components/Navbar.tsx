@@ -6,19 +6,10 @@ import {
   Menu,
   X,
   ChevronDown,
-  MapPin,
-  Calendar,
-  Bike,
-  ShieldCheck,
-  Award,
-  Leaf,
-  Route,
-  BookOpen,
   Edit3,
   LogOut,
-  Mail,
-  UserCheck,
-  ExternalLink
+  Trash2,
+  AlertTriangle
 } from 'lucide-react';
 import { Logo } from './Logo';
 import { UserProfileDropdown } from './UserProfileDropdown';
@@ -31,6 +22,7 @@ interface NavbarProps {
   onOpenAuthModal: () => void;
   onLogout: () => void;
   onUpdateUser?: (updated: UserProfile) => void;
+  onDeleteAccount?: () => void;
 }
 
 export const Navbar: React.FC<NavbarProps> = ({
@@ -41,9 +33,11 @@ export const Navbar: React.FC<NavbarProps> = ({
   onOpenAuthModal,
   onLogout,
   onUpdateUser,
+  onDeleteAccount,
 }) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = React.useState(false);
   const [isMobileProfileExpanded, setIsMobileProfileExpanded] = useState(false);
+  const [isMobileDeleteConfirmOpen, setIsMobileDeleteConfirmOpen] = useState(false);
 
   const navItems: { id: NavigationTab; label: string }[] = [
     { id: 'inicio', label: 'Inicio' },
@@ -99,6 +93,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                 user={user}
                 onUpdateUser={onUpdateUser}
                 onLogout={onLogout}
+                onDeleteAccount={onDeleteAccount}
                 setCurrentTab={setCurrentTab}
                 currentTab={currentTab}
               />
@@ -153,8 +148,8 @@ export const Navbar: React.FC<NavbarProps> = ({
 
           <div className="pt-3 border-t border-slate-100">
             {isAuthenticated && user ? (
-              <div className="space-y-3">
-                {/* Mobile Button containing User Name: clicking expands all info */}
+              <div className="space-y-2">
+                {/* Mobile Button containing User Name */}
                 <button
                   type="button"
                   onClick={() => setIsMobileProfileExpanded(!isMobileProfileExpanded)}
@@ -179,102 +174,83 @@ export const Navbar: React.FC<NavbarProps> = ({
                   </div>
                   <div className="flex items-center gap-1.5 shrink-0">
                     <span className="text-[11px] font-semibold text-blue-700">
-                      {isMobileProfileExpanded ? 'Ocultar' : 'Ver datos'}
+                      {isMobileProfileExpanded ? 'Ocultar' : 'Opciones'}
                     </span>
                     <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${isMobileProfileExpanded ? 'rotate-180' : ''}`} />
                   </div>
                 </button>
 
-                {/* Mobile Expanded Information */}
+                {/* Mobile Expanded 4 Options */}
                 {isMobileProfileExpanded && (
-                  <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200/80 space-y-4 animate-fade-in text-xs text-slate-700">
-                    {/* Identity Details */}
-                    <div className="space-y-2 bg-white p-3 rounded-xl border border-slate-100">
-                      <div className="flex items-center gap-2 text-slate-600 truncate">
-                        <Mail className="w-3.5 h-3.5 text-slate-400 shrink-0" />
-                        <span className="truncate">{user.email || 'No registrado'}</span>
+                  <div className="p-2 rounded-2xl bg-slate-50 border border-slate-200/80 space-y-1 animate-fade-in text-xs">
+                    {/* 1. Ver la cuenta */}
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setCurrentTab('perfil');
+                        setIsMobileMenuOpen(false);
+                      }}
+                      className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl bg-white hover:bg-slate-100 text-slate-800 font-bold transition-colors"
+                    >
+                      <div className="w-7 h-7 rounded-lg bg-blue-50 text-[#0057d9] flex items-center justify-center shrink-0">
+                        <UserIcon className="w-4 h-4" />
                       </div>
-                      <div className="flex items-center gap-2 text-slate-600">
-                        <MapPin className="w-3.5 h-3.5 text-slate-400 shrink-0" />
-                        <span className="truncate">{user.city || 'No especificada'}</span>
+                      <div className="text-left min-w-0 flex-1">
+                        <p className="text-xs font-bold text-slate-800 leading-tight">Ver la cuenta</p>
+                        <p className="text-[10px] text-slate-500 font-normal">Detalles, estadísticas e insignias</p>
                       </div>
-                      <div className="flex items-center gap-2 text-slate-600">
-                        <Calendar className="w-3.5 h-3.5 text-slate-400 shrink-0" />
-                        <span>Miembro desde {user.memberSince || 'Septiembre 2026'}</span>
-                      </div>
-                      <div className="flex items-center gap-2 text-[#0057d9] font-bold">
-                        <Bike className="w-3.5 h-3.5 shrink-0" />
-                        <span>{(user.kmTraveled ?? 0).toLocaleString()} km recorridos</span>
-                      </div>
-                    </div>
+                    </button>
 
-                    {/* Metrics */}
-                    <div className="space-y-2 bg-white p-3 rounded-xl border border-slate-100">
-                      <div className="flex items-center justify-between font-bold text-slate-800">
-                        <span>Avance y Seguridad</span>
-                        <span className="text-blue-600 bg-blue-50 px-2 py-0.5 rounded-full text-[10px]">
-                          Score: {user.safetyScore ?? 0}%
-                        </span>
+                    {/* 2. Editar perfil */}
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setCurrentTab('perfil');
+                        setIsMobileMenuOpen(false);
+                      }}
+                      className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl bg-white hover:bg-slate-100 text-slate-800 font-bold transition-colors"
+                    >
+                      <div className="w-7 h-7 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0">
+                        <Edit3 className="w-4 h-4" />
                       </div>
-                      <div className="flex items-center justify-between text-slate-600 text-[11px]">
-                        <span>Rutas completadas:</span>
-                        <strong className="text-slate-900">{user.monthlyStats?.routesCompleted ?? 0} / {user.monthlyStats?.totalRoutesGoal ?? 20}</strong>
+                      <div className="text-left min-w-0 flex-1">
+                        <p className="text-xs font-bold text-slate-800 leading-tight">Editar perfil</p>
+                        <p className="text-[10px] text-slate-500 font-normal">Modificar nombre, rol, ciudad y foto</p>
                       </div>
-                      <div className="flex items-center justify-between text-slate-600 text-[11px]">
-                        <span>Módulos de educación:</span>
-                        <strong className="text-slate-900">{user.monthlyStats?.educationalModules ?? 0} / {user.monthlyStats?.totalModulesGoal ?? 10}</strong>
-                      </div>
-                      <div className="flex items-center justify-between text-slate-600 text-[11px]">
-                        <span>CO₂ Ahorrado:</span>
-                        <strong className="text-emerald-700">{user.monthlyStats?.co2SavedKg ?? 0} kg</strong>
-                      </div>
-                    </div>
+                    </button>
 
-                    {/* Badges */}
-                    <div className="bg-white p-3 rounded-xl border border-slate-100">
-                      <p className="font-bold text-slate-800 mb-1.5 flex items-center gap-1.5">
-                        <Award className="w-3.5 h-3.5 text-amber-500" />
-                        Insignias ({user.badges?.length || 0})
-                      </p>
-                      {(!user.badges || user.badges.length === 0) ? (
-                        <p className="text-[11px] text-slate-400">Sin insignias aún. Completa trayectos para ganarlas.</p>
-                      ) : (
-                        <div className="flex flex-wrap gap-1">
-                          {user.badges.map(b => (
-                            <span key={b.id} className="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-blue-50 text-blue-700 font-bold text-[10px]">
-                              <ShieldCheck className="w-3 h-3" /> {b.name}
-                            </span>
-                          ))}
-                        </div>
-                      )}
-                    </div>
+                    {/* 3. Cerrar sesión */}
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setIsMobileMenuOpen(false);
+                        onLogout();
+                      }}
+                      className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl bg-white hover:bg-slate-100 text-slate-800 font-bold transition-colors"
+                    >
+                      <div className="w-7 h-7 rounded-lg bg-slate-100 text-slate-600 flex items-center justify-center shrink-0">
+                        <LogOut className="w-4 h-4" />
+                      </div>
+                      <div className="text-left min-w-0 flex-1">
+                        <p className="text-xs font-bold text-slate-800 leading-tight">Cerrar sesión</p>
+                        <p className="text-[10px] text-slate-500 font-normal">Finalizar sesión en este dispositivo</p>
+                      </div>
+                    </button>
 
-                    {/* Mobile Actions */}
-                    <div className="flex flex-col gap-2 pt-1">
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setCurrentTab('perfil');
-                          setIsMobileMenuOpen(false);
-                        }}
-                        className="w-full py-2.5 px-3 rounded-xl bg-blue-50 text-blue-700 font-bold text-xs flex items-center justify-center gap-1.5"
-                      >
-                        <ExternalLink className="w-3.5 h-3.5" />
-                        <span>Ver Pantalla Completa de Perfil</span>
-                      </button>
-
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setIsMobileMenuOpen(false);
-                          onLogout();
-                        }}
-                        className="w-full py-2.5 px-3 rounded-xl text-rose-600 bg-rose-50 font-bold text-xs flex items-center justify-center gap-1.5"
-                      >
-                        <LogOut className="w-3.5 h-3.5" />
-                        <span>Cerrar Sesión</span>
-                      </button>
-                    </div>
+                    {/* 4. Eliminar cuenta */}
+                    <button
+                      type="button"
+                      onClick={() => setIsMobileDeleteConfirmOpen(true)}
+                      className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl bg-rose-50/60 hover:bg-rose-100/70 text-rose-700 font-bold transition-colors"
+                    >
+                      <div className="w-7 h-7 rounded-lg bg-rose-100 text-rose-600 flex items-center justify-center shrink-0">
+                        <Trash2 className="w-4 h-4" />
+                      </div>
+                      <div className="text-left min-w-0 flex-1">
+                        <p className="text-xs font-bold text-rose-600 leading-tight">Eliminar cuenta</p>
+                        <p className="text-[10px] text-rose-500/80 font-normal">Borrar datos de usuario e historial</p>
+                      </div>
+                    </button>
                   </div>
                 )}
               </div>
@@ -289,6 +265,48 @@ export const Navbar: React.FC<NavbarProps> = ({
                 Iniciar Sesión
               </button>
             )}
+          </div>
+        </div>
+      )}
+
+      {/* Modal: Confirmación Eliminar Cuenta (Mobile) */}
+      {isMobileDeleteConfirmOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-fade-in">
+          <div className="relative w-full max-w-sm rounded-3xl bg-white border border-slate-200 p-6 shadow-2xl text-center space-y-4">
+            <div className="w-12 h-12 mx-auto rounded-2xl bg-rose-50 flex items-center justify-center text-rose-600">
+              <AlertTriangle className="w-6 h-6" />
+            </div>
+            <div>
+              <h4 className="text-base font-bold text-[#0a193b]">¿Eliminar cuenta definitivamente?</h4>
+              <p className="text-xs text-slate-600 mt-1 leading-relaxed">
+                Esta acción eliminará de forma irreversible tu cuenta de usuario, rutas e insignias en VIANOVA.
+              </p>
+            </div>
+            <div className="flex items-center gap-3 pt-2">
+              <button
+                type="button"
+                onClick={() => setIsMobileDeleteConfirmOpen(false)}
+                className="flex-1 py-2.5 rounded-xl border border-slate-200 text-slate-600 hover:bg-slate-50 text-xs font-bold"
+              >
+                Cancelar
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setIsMobileDeleteConfirmOpen(false);
+                  setIsMobileMenuOpen(false);
+                  if (onDeleteAccount) {
+                    onDeleteAccount();
+                  } else {
+                    onLogout();
+                  }
+                }}
+                className="flex-1 py-2.5 rounded-xl bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold shadow-sm inline-flex items-center justify-center gap-1.5"
+              >
+                <Trash2 className="w-4 h-4" />
+                Eliminar Cuenta
+              </button>
+            </div>
           </div>
         </div>
       )}

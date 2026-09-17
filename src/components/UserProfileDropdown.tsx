@@ -13,18 +13,21 @@ import {
   BookOpen,
   Edit3,
   LogOut,
+  Trash2,
   Camera,
   X,
   Check,
-  ExternalLink,
-  Mail,
-  UserCheck
+  AlertTriangle,
+  Upload,
+  UserCheck,
+  ArrowRight
 } from 'lucide-react';
 
 interface UserProfileDropdownProps {
   user: UserProfile;
   onUpdateUser?: (updated: UserProfile) => void;
   onLogout: () => void;
+  onDeleteAccount?: () => void;
   setCurrentTab: (tab: NavigationTab) => void;
   currentTab: NavigationTab;
 }
@@ -33,42 +36,45 @@ export const UserProfileDropdown: React.FC<UserProfileDropdownProps> = ({
   user,
   onUpdateUser,
   onLogout,
+  onDeleteAccount,
   setCurrentTab,
   currentTab
 }) => {
   const [isOpen, setIsOpen] = useState(false);
-  const [isEditing, setIsEditing] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [isAccountModalOpen, setIsAccountModalOpen] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
+
   const dropdownRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // Form states for inline editing
+  // Form states for editing
   const [editName, setEditName] = useState(user.name);
   const [editRole, setEditRole] = useState(user.role);
   const [editCity, setEditCity] = useState(user.city || '');
   const [editAvatar, setEditAvatar] = useState(user.avatar || '');
   const [isUploadingPhoto, setIsUploadingPhoto] = useState(false);
 
-  // Sync edit form when user changes or modal opens
+  // Sync edit form with user data
   useEffect(() => {
     setEditName(user.name);
     setEditRole(user.role);
     setEditCity(user.city || '');
     setEditAvatar(user.avatar || '');
-  }, [user, isEditing]);
+  }, [user, isEditModalOpen]);
 
-  // Close on outside click
+  // Close dropdown on outside click
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
         setIsOpen(false);
-        setIsEditing(false);
       }
     };
 
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === 'Escape') {
         setIsOpen(false);
-        setIsEditing(false);
       }
     };
 
@@ -84,8 +90,7 @@ export const UserProfileDropdown: React.FC<UserProfileDropdownProps> = ({
   }, [isOpen]);
 
   const toggleDropdown = () => {
-    setIsOpen(!isOpen);
-    setIsEditing(false);
+    setIsOpen(prev => !prev);
   };
 
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -127,12 +132,6 @@ export const UserProfileDropdown: React.FC<UserProfileDropdownProps> = ({
           ctx.drawImage(img, 0, 0, width, height);
           const compressed = canvas.toDataURL('image/jpeg', 0.85);
           setEditAvatar(compressed);
-          if (onUpdateUser) {
-            onUpdateUser({
-              ...user,
-              avatar: compressed
-            });
-          }
         }
         setIsUploadingPhoto(false);
       };
@@ -154,14 +153,23 @@ export const UserProfileDropdown: React.FC<UserProfileDropdownProps> = ({
     };
 
     onUpdateUser(updatedUser);
-    setIsEditing(false);
+    setIsEditModalOpen(false);
+  };
+
+  const handleConfirmDelete = () => {
+    setIsDeleteModalOpen(false);
+    if (onDeleteAccount) {
+      onDeleteAccount();
+    } else {
+      onLogout();
+    }
   };
 
   const displayName = user.name?.trim() ? user.name : 'Usuario VIANOVA';
   const shortName = displayName.split(' ')[0];
   const userRole = user.role || 'Ciudadano';
+  const userEmail = user.email || 'No especificado';
   const userCity = user.city?.trim() ? user.city : 'No especificada';
-  const userEmail = user.email || 'No registrado';
   const memberSince = user.memberSince || 'Septiembre 2026';
   const kmTraveled = user.kmTraveled ?? 0;
   const safetyScore = user.safetyScore ?? 0;
@@ -173,12 +181,9 @@ export const UserProfileDropdown: React.FC<UserProfileDropdownProps> = ({
   const co2Saved = user.monthlyStats?.co2SavedKg ?? 0;
   const cyclingKm = user.monthlyStats?.cyclingKm ?? 0;
 
-  const routesPercent = routesGoal > 0 ? Math.min(100, Math.round((routesCompleted / routesGoal) * 100)) : 0;
-  const modulesPercent = modulesGoal > 0 ? Math.min(100, Math.round((modulesCompleted / modulesGoal) * 100)) : 0;
-
   return (
     <div className="relative inline-block text-left" ref={dropdownRef}>
-      {/* Hidden file input for uploading profile picture */}
+      {/* Hidden file input */}
       <input
         type="file"
         ref={fileInputRef}
@@ -187,7 +192,7 @@ export const UserProfileDropdown: React.FC<UserProfileDropdownProps> = ({
         className="hidden"
       />
 
-      {/* Main Button with User Name & Avatar */}
+      {/* Button containing user name: clicking it displays the dropdown options */}
       <button
         id="nav-profile-btn"
         type="button"
@@ -221,283 +226,322 @@ export const UserProfileDropdown: React.FC<UserProfileDropdownProps> = ({
         />
       </button>
 
-      {/* Unfolded Dropdown with All User Information */}
+      {/* Dropdown Menu with Requested User Options: Ver la cuenta, Editar perfil, Cerrar sesión, Eliminar cuenta */}
       {isOpen && (
         <div
-          id="user-profile-dropdown-panel"
-          className="absolute right-0 mt-2.5 w-[340px] sm:w-[390px] max-h-[85vh] overflow-y-auto bg-white rounded-3xl shadow-2xl border border-slate-200/90 z-50 animate-fade-in p-5 text-slate-800 focus:outline-none divide-y divide-slate-100"
-          style={{
-            scrollbarWidth: 'thin',
-            scrollbarColor: '#cbd5e1 transparent'
-          }}
+          id="user-profile-dropdown-menu"
+          className="absolute right-0 mt-2.5 w-72 sm:w-80 bg-white rounded-2xl shadow-2xl border border-slate-200/90 z-50 animate-fade-in overflow-hidden py-1 divide-y divide-slate-100"
         >
-          {/* Section 1: Header / Profile identity */}
-          <div className="pb-4">
-            <div className="flex items-start justify-between gap-3 mb-3">
-              <div className="flex items-center gap-3.5">
-                <div className="relative group">
-                  {user.avatar ? (
-                    <img
-                      src={user.avatar}
-                      alt={displayName}
-                      className="w-14 h-14 rounded-2xl object-cover border-2 border-white shadow-md"
-                    />
-                  ) : (
-                    <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-[#0057d9] to-[#0a193b] text-white flex items-center justify-center text-xl font-black shadow-md">
-                      {displayName.charAt(0).toUpperCase()}
-                    </div>
-                  )}
-                  <button
-                    type="button"
-                    onClick={() => fileInputRef.current?.click()}
-                    title="Cambiar foto de perfil"
-                    className="absolute -bottom-1 -right-1 p-1 rounded-full bg-blue-600 hover:bg-blue-700 text-white shadow-xs transition-colors"
-                  >
-                    <Camera className="w-3 h-3" />
-                  </button>
+          {/* Header preview of the user */}
+          <div className="px-4 py-3 bg-slate-50/70">
+            <div className="flex items-center gap-3">
+              {user.avatar ? (
+                <img
+                  src={user.avatar}
+                  alt={displayName}
+                  className="w-10 h-10 rounded-full object-cover border border-white shadow-sm shrink-0"
+                />
+              ) : (
+                <div className="w-10 h-10 rounded-full bg-[#0057d9] text-white flex items-center justify-center text-sm font-black shadow-sm shrink-0">
+                  {displayName.charAt(0).toUpperCase()}
                 </div>
+              )}
+              <div className="min-w-0 flex-1">
+                <p className="text-xs font-black text-[#0a193b] truncate leading-tight">
+                  {displayName}
+                </p>
+                <p className="text-[11px] text-slate-500 truncate mt-0.5">
+                  {userEmail}
+                </p>
+                <span className="inline-block mt-1 px-2 py-0.5 rounded-full bg-blue-50 text-[#0057d9] text-[10px] font-bold border border-blue-100 truncate">
+                  {userRole}
+                </span>
+              </div>
+            </div>
+          </div>
 
-                <div className="min-w-0">
-                  <h4 className="text-base font-extrabold text-[#0a193b] leading-tight truncate">
-                    {displayName}
-                  </h4>
-                  <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 mt-1 rounded-full bg-blue-50 text-[#0057d9] text-[11px] font-bold border border-blue-100">
-                    <UserCheck className="w-3 h-3" />
-                    <span>{userRole}</span>
-                  </div>
+          {/* Action List of the 4 requested options */}
+          <div className="p-1.5 space-y-0.5">
+            {/* 1. Ver la cuenta */}
+            <button
+              id="dropdown-opt-view-account"
+              type="button"
+              onClick={() => {
+                setIsOpen(false);
+                setCurrentTab('perfil');
+              }}
+              className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-left hover:bg-slate-100 transition-colors group"
+            >
+              <div className="w-8 h-8 rounded-lg bg-blue-50 text-[#0057d9] flex items-center justify-center shrink-0 group-hover:bg-[#0057d9] group-hover:text-white transition-colors">
+                <UserIcon className="w-4 h-4" />
+              </div>
+              <div className="min-w-0 flex-1">
+                <p className="text-xs font-bold text-slate-800 leading-tight">Ver la cuenta</p>
+                <p className="text-[10px] text-slate-500 leading-tight">Detalles del perfil, progreso y estadísticas</p>
+              </div>
+              <ArrowRight className="w-3.5 h-3.5 text-slate-400 group-hover:text-[#0057d9] group-hover:translate-x-0.5 transition-all" />
+            </button>
+
+            {/* 2. Editar perfil */}
+            <button
+              id="dropdown-opt-edit-profile"
+              type="button"
+              onClick={() => {
+                setIsOpen(false);
+                setIsEditModalOpen(true);
+              }}
+              className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-left hover:bg-slate-100 transition-colors group"
+            >
+              <div className="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0 group-hover:bg-emerald-600 group-hover:text-white transition-colors">
+                <Edit3 className="w-4 h-4" />
+              </div>
+              <div className="min-w-0 flex-1">
+                <p className="text-xs font-bold text-slate-800 leading-tight">Editar perfil</p>
+                <p className="text-[10px] text-slate-500 leading-tight">Modificar nombre, rol, ciudad y foto</p>
+              </div>
+              <ArrowRight className="w-3.5 h-3.5 text-slate-400 group-hover:text-emerald-600 group-hover:translate-x-0.5 transition-all" />
+            </button>
+
+            {/* 3. Cerrar sesión */}
+            <button
+              id="dropdown-opt-logout"
+              type="button"
+              onClick={() => {
+                setIsOpen(false);
+                setIsLogoutModalOpen(true);
+              }}
+              className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-left hover:bg-slate-100 transition-colors group"
+            >
+              <div className="w-8 h-8 rounded-lg bg-slate-100 text-slate-600 flex items-center justify-center shrink-0 group-hover:bg-slate-700 group-hover:text-white transition-colors">
+                <LogOut className="w-4 h-4" />
+              </div>
+              <div className="min-w-0 flex-1">
+                <p className="text-xs font-bold text-slate-800 leading-tight">Cerrar sesión</p>
+                <p className="text-[10px] text-slate-500 leading-tight">Finalizar tu sesión en este dispositivo</p>
+              </div>
+              <ArrowRight className="w-3.5 h-3.5 text-slate-400 group-hover:text-slate-700 group-hover:translate-x-0.5 transition-all" />
+            </button>
+
+            {/* 4. Eliminar cuenta */}
+            <button
+              id="dropdown-opt-delete-account"
+              type="button"
+              onClick={() => {
+                setIsOpen(false);
+                setIsDeleteModalOpen(true);
+              }}
+              className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-left hover:bg-rose-50 transition-colors group"
+            >
+              <div className="w-8 h-8 rounded-lg bg-rose-50 text-rose-600 flex items-center justify-center shrink-0 group-hover:bg-rose-600 group-hover:text-white transition-colors">
+                <Trash2 className="w-4 h-4" />
+              </div>
+              <div className="min-w-0 flex-1">
+                <p className="text-xs font-bold text-rose-600 leading-tight">Eliminar cuenta</p>
+                <p className="text-[10px] text-rose-500/80 leading-tight">Borrar datos de usuario y progreso vial</p>
+              </div>
+              <ArrowRight className="w-3.5 h-3.5 text-rose-300 group-hover:text-rose-600 group-hover:translate-x-0.5 transition-all" />
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Modal: Editar Perfil */}
+      {isEditModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-fade-in">
+          <div className="relative w-full max-w-md rounded-3xl bg-white border border-slate-200 p-6 sm:p-7 shadow-2xl">
+            <div className="flex items-center justify-between pb-4 border-b border-slate-100">
+              <div className="flex items-center gap-2.5">
+                <div className="w-9 h-9 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center">
+                  <Edit3 className="w-5 h-5" />
+                </div>
+                <div>
+                  <h3 className="text-base font-bold text-[#0a193b]">Editar Perfil</h3>
+                  <p className="text-xs text-slate-500">Actualiza tus datos personales en VIANOVA</p>
                 </div>
               </div>
-
               <button
                 type="button"
-                onClick={() => setIsOpen(false)}
-                className="p-1 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-colors"
-                aria-label="Cerrar"
+                onClick={() => setIsEditModalOpen(false)}
+                className="p-1.5 rounded-xl text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-colors"
               >
-                <X className="w-4 h-4" />
+                <X className="w-5 h-5" />
               </button>
             </div>
 
-            {/* Email, City, Member Since, Km */}
-            <div className="mt-3.5 space-y-2 text-xs text-slate-600 bg-slate-50/70 p-3 rounded-2xl border border-slate-100">
-              <div className="flex items-center gap-2.5 truncate">
-                <Mail className="w-3.5 h-3.5 text-slate-400 shrink-0" />
-                <span className="truncate">{userEmail}</span>
-              </div>
-              <div className="flex items-center gap-2.5">
-                <MapPin className="w-3.5 h-3.5 text-slate-400 shrink-0" />
-                <span className="truncate font-medium">{userCity}</span>
-              </div>
-              <div className="flex items-center gap-2.5">
-                <Calendar className="w-3.5 h-3.5 text-slate-400 shrink-0" />
-                <span>Miembro desde {memberSince}</span>
-              </div>
-              <div className="flex items-center gap-2.5 text-[#0057d9] font-bold">
-                <Bike className="w-3.5 h-3.5 shrink-0" />
-                <span>{kmTraveled.toLocaleString()} km recorridos</span>
-              </div>
-            </div>
-          </div>
-
-          {/* Section 2: Progress & Statistics (0 for new user) */}
-          <div className="py-4 space-y-3">
-            <div className="flex items-center justify-between">
-              <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">
-                Avance Vial y Métricas
-              </span>
-              <span className="text-[11px] font-bold text-blue-600 bg-blue-50 px-2 py-0.5 rounded-full border border-blue-100">
-                Seguridad: {safetyScore}%
-              </span>
-            </div>
-
-            {/* Rutas Completadas */}
-            <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-100/80">
-              <div className="flex items-center justify-between text-xs mb-1.5">
-                <div className="flex items-center gap-1.5 text-slate-700 font-semibold">
-                  <Route className="w-3.5 h-3.5 text-[#0057d9]" />
-                  <span>Rutas completadas</span>
+            <form onSubmit={handleSaveProfile} className="mt-5 space-y-4">
+              {/* Photo preview and upload */}
+              <div className="flex items-center gap-4 p-3 rounded-2xl bg-slate-50 border border-slate-100">
+                <div className="relative shrink-0">
+                  {editAvatar ? (
+                    <img
+                      src={editAvatar}
+                      alt={editName}
+                      className="w-14 h-14 rounded-2xl object-cover border-2 border-white shadow-sm"
+                    />
+                  ) : (
+                    <div className="w-14 h-14 rounded-2xl bg-[#0057d9] text-white flex items-center justify-center text-lg font-black shadow-sm">
+                      {editName ? editName.charAt(0).toUpperCase() : 'U'}
+                    </div>
+                  )}
+                  {isUploadingPhoto && (
+                    <div className="absolute inset-0 bg-black/40 rounded-2xl flex items-center justify-center text-white text-[10px]">
+                      ...
+                    </div>
+                  )}
                 </div>
-                <span className="text-slate-500 font-medium">
-                  <strong className="text-slate-900">{routesCompleted}</strong> / {routesGoal}
-                </span>
-              </div>
-              <div className="w-full h-1.5 bg-slate-200 rounded-full overflow-hidden">
-                <div
-                  className="h-full bg-[#0057d9] rounded-full transition-all duration-300"
-                  style={{ width: `${routesPercent}%` }}
-                ></div>
-              </div>
-            </div>
-
-            {/* Módulos Educativos */}
-            <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-100/80">
-              <div className="flex items-center justify-between text-xs mb-1.5">
-                <div className="flex items-center gap-1.5 text-slate-700 font-semibold">
-                  <BookOpen className="w-3.5 h-3.5 text-emerald-600" />
-                  <span>Módulos de educación</span>
-                </div>
-                <span className="text-slate-500 font-medium">
-                  <strong className="text-slate-900">{modulesCompleted}</strong> / {modulesGoal}
-                </span>
-              </div>
-              <div className="w-full h-1.5 bg-slate-200 rounded-full overflow-hidden">
-                <div
-                  className="h-full bg-emerald-500 rounded-full transition-all duration-300"
-                  style={{ width: `${modulesPercent}%` }}
-                ></div>
-              </div>
-            </div>
-
-            {/* Quick counters grid */}
-            <div className="grid grid-cols-2 gap-2 text-center pt-1">
-              <div className="p-2 rounded-xl bg-emerald-50/60 border border-emerald-100 text-xs">
-                <p className="text-[10px] text-emerald-700 font-medium flex items-center justify-center gap-1">
-                  <Leaf className="w-3 h-3" /> CO₂ ahorrado
-                </p>
-                <p className="text-sm font-extrabold text-emerald-800 mt-0.5">{co2Saved} kg</p>
-              </div>
-              <div className="p-2 rounded-xl bg-blue-50/60 border border-blue-100 text-xs">
-                <p className="text-[10px] text-blue-700 font-medium flex items-center justify-center gap-1">
-                  <Bike className="w-3 h-3" /> En bicicleta
-                </p>
-                <p className="text-sm font-extrabold text-blue-800 mt-0.5">{cyclingKm} km</p>
-              </div>
-            </div>
-          </div>
-
-          {/* Section 3: Insignias */}
-          <div className="py-4">
-            <div className="flex items-center justify-between mb-2.5">
-              <span className="text-xs font-bold text-slate-500 uppercase tracking-wider flex items-center gap-1.5">
-                <Award className="w-3.5 h-3.5 text-amber-500" />
-                Insignias Obtenidas
-              </span>
-              <span className="text-[11px] font-bold text-slate-500">
-                {user.badges?.length || 0}
-              </span>
-            </div>
-
-            {(!user.badges || user.badges.length === 0) ? (
-              <div className="p-3 rounded-xl bg-slate-50 border border-dashed border-slate-200 text-center text-xs text-slate-500">
-                Aún no tienes insignias. Completa tus primeros trayectos y cuestionarios para desbloquearlas.
-              </div>
-            ) : (
-              <div className="flex flex-wrap gap-1.5">
-                {user.badges.map((b) => (
-                  <span
-                    key={b.id}
-                    className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-blue-50 text-[#0057d9] text-[11px] font-bold border border-blue-100"
+                <div className="flex-1">
+                  <p className="text-xs font-bold text-slate-800">Foto de perfil</p>
+                  <p className="text-[11px] text-slate-500 mb-2">Sube una foto desde tu computador</p>
+                  <button
+                    type="button"
+                    onClick={() => fileInputRef.current?.click()}
+                    className="px-3 py-1.5 rounded-xl bg-white border border-slate-200 hover:bg-slate-100 text-xs font-semibold text-slate-700 transition-colors inline-flex items-center gap-1.5 shadow-2xs"
                   >
-                    <ShieldCheck className="w-3 h-3 text-blue-600" />
-                    {b.name}
-                  </span>
-                ))}
-              </div>
-            )}
-          </div>
-
-          {/* Section 4: Edit Form (Inline toggle) */}
-          {isEditing ? (
-            <form onSubmit={handleSaveProfile} className="py-4 space-y-3">
-              <div className="flex items-center justify-between">
-                <h5 className="text-xs font-bold text-[#0a193b] uppercase tracking-wider">
-                  Editar Datos
-                </h5>
-                <button
-                  type="button"
-                  onClick={() => setIsEditing(false)}
-                  className="text-xs text-slate-400 hover:text-slate-600"
-                >
-                  Cancelar
-                </button>
+                    <Upload className="w-3.5 h-3.5 text-slate-500" />
+                    <span>Seleccionar archivo</span>
+                  </button>
+                </div>
               </div>
 
+              {/* Name */}
               <div>
-                <label className="block text-[11px] font-bold text-slate-600 mb-1">Nombre</label>
+                <label className="text-xs font-bold text-slate-700 block mb-1">Nombre completo</label>
                 <input
                   type="text"
                   value={editName}
                   onChange={(e) => setEditName(e.target.value)}
-                  className="w-full px-3 py-1.5 text-xs rounded-xl bg-slate-50 border border-slate-200 focus:bg-white focus:border-blue-500 focus:outline-none"
-                  placeholder="Tu nombre"
+                  className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 bg-[#f8f9fa] text-slate-800 text-xs font-medium focus:bg-white focus:outline-none focus:border-blue-500 transition-all"
+                  placeholder="Ej. Karen Vargas"
+                  required
                 />
               </div>
 
+              {/* Mobility Role */}
               <div>
-                <label className="block text-[11px] font-bold text-slate-600 mb-1">Rol de movilidad</label>
+                <label className="text-xs font-bold text-slate-700 block mb-1">Rol de movilidad</label>
                 <select
                   value={editRole}
                   onChange={(e) => setEditRole(e.target.value)}
-                  className="w-full px-3 py-1.5 text-xs rounded-xl bg-slate-50 border border-slate-200 focus:bg-white focus:border-blue-500 focus:outline-none"
+                  className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 bg-[#f8f9fa] text-slate-800 text-xs font-medium focus:bg-white focus:outline-none focus:border-blue-500 transition-all"
                 >
                   <option value="Ciclista Urbano">🚲 Ciclista Urbano</option>
                   <option value="Peatón Consciente">🚶 Peatón Consciente</option>
                   <option value="Conductor Preventivo">🚗 Conductor Preventivo</option>
-                  <option value="Usuario de Transporte Público">🚌 Transporte Público</option>
+                  <option value="Usuario de Transporte Público">🚌 Usuario de Transporte Público</option>
                   <option value="Motociclista">🛵 Motociclista</option>
+                  <option value="Scooter / Patineta Eléctrica">🛴 Scooter / Patineta Eléctrica</option>
                   <option value="Ciudadano">👤 Ciudadano</option>
                 </select>
               </div>
 
+              {/* City */}
               <div>
-                <label className="block text-[11px] font-bold text-slate-600 mb-1">Ciudad</label>
+                <label className="text-xs font-bold text-slate-700 block mb-1">Ciudad / Municipio</label>
                 <input
                   type="text"
                   value={editCity}
                   onChange={(e) => setEditCity(e.target.value)}
-                  className="w-full px-3 py-1.5 text-xs rounded-xl bg-slate-50 border border-slate-200 focus:bg-white focus:border-blue-500 focus:outline-none"
-                  placeholder="Ej. Medellín, Bogotá..."
+                  className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 bg-[#f8f9fa] text-slate-800 text-xs font-medium focus:bg-white focus:outline-none focus:border-blue-500 transition-all"
+                  placeholder="Ej. Medellín, Bogotá, Cali..."
                 />
               </div>
 
-              <div className="flex gap-2 pt-1">
+              <div className="flex items-center gap-3 pt-3">
+                <button
+                  type="button"
+                  onClick={() => setIsEditModalOpen(false)}
+                  className="flex-1 py-2.5 rounded-xl border border-slate-200 text-slate-600 hover:bg-slate-50 text-xs font-bold transition-colors"
+                >
+                  Cancelar
+                </button>
                 <button
                   type="submit"
-                  className="flex-1 py-2 px-3 rounded-xl bg-[#0057d9] hover:bg-[#0047b3] text-white text-xs font-bold transition-colors flex items-center justify-center gap-1.5"
+                  className="flex-1 py-2.5 rounded-xl bg-[#0057d9] hover:bg-[#0047b3] text-white text-xs font-bold transition-colors shadow-sm inline-flex items-center justify-center gap-1.5"
                 >
-                  <Check className="w-3.5 h-3.5" />
+                  <Check className="w-4 h-4" />
                   Guardar Cambios
                 </button>
               </div>
             </form>
-          ) : null}
+          </div>
+        </div>
+      )}
 
-          {/* Section 5: Action Buttons */}
-          <div className="pt-3.5 flex flex-col gap-2">
-            {!isEditing && (
+      {/* Modal: Confirmación Cerrar Sesión */}
+      {isLogoutModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-fade-in">
+          <div className="relative w-full max-w-sm rounded-3xl bg-white border border-slate-200 p-6 text-center space-y-4 shadow-2xl">
+            <div className="w-12 h-12 mx-auto rounded-2xl bg-blue-50 flex items-center justify-center text-[#0057d9]">
+              <LogOut className="w-6 h-6" />
+            </div>
+            <div>
+              <h4 className="text-base font-bold text-[#0a193b]">¿Cerrar Sesión?</h4>
+              <p className="text-xs text-slate-500 mt-1">Podrás volver a ingresar en cualquier momento con tus credenciales.</p>
+            </div>
+            <div className="flex items-center gap-3 pt-2">
               <button
                 type="button"
-                onClick={() => setIsEditing(true)}
-                className="w-full py-2.5 px-3.5 rounded-xl bg-slate-100 hover:bg-slate-200/80 text-slate-700 text-xs font-bold transition-all flex items-center justify-center gap-2"
+                onClick={() => setIsLogoutModalOpen(false)}
+                className="flex-1 py-2.5 rounded-xl border border-slate-200 text-slate-600 hover:bg-slate-50 text-xs font-bold"
               >
-                <Edit3 className="w-3.5 h-3.5" />
-                <span>Editar Información del Perfil</span>
+                Cancelar
               </button>
-            )}
+              <button
+                type="button"
+                onClick={() => {
+                  setIsLogoutModalOpen(false);
+                  onLogout();
+                }}
+                className="flex-1 py-2.5 rounded-xl bg-[#0057d9] hover:bg-[#0047b3] text-white text-xs font-bold shadow-sm"
+              >
+                Cerrar Sesión
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
-            <button
-              type="button"
-              onClick={() => {
-                setCurrentTab('perfil');
-                setIsOpen(false);
-              }}
-              className="w-full py-2.5 px-3.5 rounded-xl bg-blue-50 hover:bg-blue-100/70 text-[#0057d9] text-xs font-bold transition-all flex items-center justify-center gap-2"
-            >
-              <ExternalLink className="w-3.5 h-3.5" />
-              <span>Ver Perfil en Pantalla Completa</span>
-            </button>
-
-            <button
-              type="button"
-              onClick={() => {
-                setIsOpen(false);
-                onLogout();
-              }}
-              className="w-full py-2.5 px-3.5 rounded-xl text-rose-600 hover:bg-rose-50 text-xs font-bold transition-all flex items-center justify-center gap-2"
-            >
-              <LogOut className="w-3.5 h-3.5" />
-              <span>Cerrar Sesión</span>
-            </button>
+      {/* Modal: Confirmación Eliminar Cuenta */}
+      {isDeleteModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-fade-in">
+          <div className="relative w-full max-w-md rounded-3xl bg-white border border-slate-200 p-6 sm:p-7 shadow-2xl text-center space-y-4">
+            <div className="w-14 h-14 mx-auto rounded-2xl bg-rose-50 flex items-center justify-center text-rose-600">
+              <AlertTriangle className="w-7 h-7" />
+            </div>
+            <div>
+              <h4 className="text-lg font-bold text-[#0a193b]">¿Eliminar cuenta definitivamente?</h4>
+              <p className="text-xs text-slate-600 mt-2 leading-relaxed">
+                Esta acción eliminará de forma irreversible tu cuenta de usuario, tus rutas completadas, módulos educativos e historial de movilidad en la plataforma VIANOVA.
+              </p>
+            </div>
+            <div className="p-3 rounded-2xl bg-rose-50 border border-rose-100 text-left text-xs text-rose-800 space-y-1">
+              <p className="font-bold flex items-center gap-1.5">
+                <Trash2 className="w-3.5 h-3.5 text-rose-600 shrink-0" />
+                Se borrarán los siguientes datos:
+              </p>
+              <ul className="list-disc pl-5 text-[11px] text-rose-700/90 space-y-0.5">
+                <li>Perfil y credenciales asociadas a {userEmail}</li>
+                <li>Progreso vial y certificaciones acumuladas</li>
+                <li>Insignias y preferencias de movilidad</li>
+              </ul>
+            </div>
+            <div className="flex items-center gap-3 pt-2">
+              <button
+                type="button"
+                onClick={() => setIsDeleteModalOpen(false)}
+                className="flex-1 py-2.5 rounded-xl border border-slate-200 text-slate-600 hover:bg-slate-50 text-xs font-bold"
+              >
+                Cancelar
+              </button>
+              <button
+                type="button"
+                onClick={handleConfirmDelete}
+                className="flex-1 py-2.5 rounded-xl bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold shadow-sm inline-flex items-center justify-center gap-1.5"
+              >
+                <Trash2 className="w-4 h-4" />
+                Sí, Eliminar Cuenta
+              </button>
+            </div>
           </div>
         </div>
       )}
