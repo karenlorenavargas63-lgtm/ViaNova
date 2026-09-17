@@ -7,6 +7,8 @@ import {
   XCircle, 
   HelpCircle, 
   ArrowRight, 
+  ChevronLeft,
+  ChevronRight,
   Trophy, 
   RotateCcw, 
   ShieldCheck, 
@@ -25,29 +27,42 @@ export const QuizModal: React.FC<QuizModalProps> = ({
   onClose,
   onQuizPassed
 }) => {
-  const [currentIndex, setCurrentIndex] = React.useState(2); // Starts on question 3 as depicted in PDF page 12!
-  const [selectedOptionId, setSelectedOptionId] = React.useState<string | null>(null);
-  const [hasSubmitted, setHasSubmitted] = React.useState(false);
-  const [score, setScore] = React.useState(2); // simulated previous answers
+  const [currentIndex, setCurrentIndex] = React.useState(0);
+  const [userAnswers, setUserAnswers] = React.useState<Record<number, { selectedId: string; isSubmitted: boolean; isCorrect: boolean }>>({});
   const [isCompleted, setIsCompleted] = React.useState(false);
 
   if (!isOpen) return null;
 
   const currentQuestion: QuizQuestion = mockQuizQuestions[currentIndex] || mockQuizQuestions[0];
   const isLastQuestion = currentIndex === mockQuizQuestions.length - 1;
+  const currentAnswer = userAnswers[currentIndex];
+  const selectedOptionId = currentAnswer?.selectedId || null;
+  const hasSubmitted = currentAnswer?.isSubmitted || false;
+  const score = (Object.values(userAnswers) as Array<{ isCorrect: boolean }>).filter((a) => a.isCorrect).length;
 
   const handleSelectOption = (optionId: string) => {
     if (hasSubmitted) return;
-    setSelectedOptionId(optionId);
+    setUserAnswers(prev => ({
+      ...prev,
+      [currentIndex]: {
+        selectedId: optionId,
+        isSubmitted: false,
+        isCorrect: false
+      }
+    }));
   };
 
   const handleAnswerSubmit = () => {
     if (!selectedOptionId) return;
-    setHasSubmitted(true);
-
-    if (selectedOptionId === currentQuestion.correctAnswerId) {
-      setScore(prev => prev + 1);
-    }
+    const isCorrect = selectedOptionId === currentQuestion.correctAnswerId;
+    setUserAnswers(prev => ({
+      ...prev,
+      [currentIndex]: {
+        selectedId: selectedOptionId,
+        isSubmitted: true,
+        isCorrect
+      }
+    }));
   };
 
   const handleNextQuestion = () => {
@@ -58,20 +73,23 @@ export const QuizModal: React.FC<QuizModalProps> = ({
         spread: 70,
         origin: { y: 0.6 }
       });
-      const finalPercent = Math.round(((score + (selectedOptionId === currentQuestion.correctAnswerId ? 1 : 0)) / mockQuizQuestions.length) * 100);
+      const correctCount = (Object.values(userAnswers) as Array<{ isCorrect: boolean }>).filter((a) => a.isCorrect).length;
+      const finalPercent = Math.round((correctCount / mockQuizQuestions.length) * 100);
       onQuizPassed?.(finalPercent);
     } else {
       setCurrentIndex(prev => prev + 1);
-      setSelectedOptionId(null);
-      setHasSubmitted(false);
+    }
+  };
+
+  const handlePrevQuestion = () => {
+    if (currentIndex > 0) {
+      setCurrentIndex(prev => prev - 1);
     }
   };
 
   const handleRestart = () => {
     setCurrentIndex(0);
-    setSelectedOptionId(null);
-    setHasSubmitted(false);
-    setScore(0);
+    setUserAnswers({});
     setIsCompleted(false);
   };
 
@@ -89,7 +107,7 @@ export const QuizModal: React.FC<QuizModalProps> = ({
         {!isCompleted ? (
           <div className="space-y-6">
             {/* Top Subtitle and Question Counter (Page 12) */}
-            <div className="flex items-center justify-between border-b border-slate-100 pb-4">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-slate-100 pb-4 gap-3">
               <div>
                 <span className="text-[11px] font-extrabold uppercase tracking-widest text-slate-400 block">
                   MÓDULO 1: SEÑALIZACIÓN BÁSICA
@@ -99,10 +117,32 @@ export const QuizModal: React.FC<QuizModalProps> = ({
                 </h3>
               </div>
 
-              <div className="text-right">
-                <span className="text-xs sm:text-sm font-bold text-slate-700 bg-slate-100 px-3 py-1.5 rounded-xl">
-                  Pregunta {currentIndex + 1} de {mockQuizQuestions.length}
-                </span>
+              {/* Direct Question Pills for quick navigation and returning */}
+              <div className="flex items-center gap-1.5 bg-slate-100/90 p-1.5 rounded-2xl border border-slate-200 self-start sm:self-auto">
+                <span className="text-[11px] font-bold text-slate-500 px-2">Pregunta:</span>
+                {mockQuizQuestions.map((q, idx) => {
+                  const ans = userAnswers[idx];
+                  const isCurrent = idx === currentIndex;
+                  return (
+                    <button
+                      key={q.id}
+                      type="button"
+                      onClick={() => setCurrentIndex(idx)}
+                      className={`w-7 h-7 rounded-lg text-xs font-bold transition-all flex items-center justify-center cursor-pointer ${
+                        isCurrent
+                          ? 'bg-blue-600 text-white shadow-xs scale-105'
+                          : ans?.isSubmitted
+                          ? ans.isCorrect
+                            ? 'bg-emerald-100 text-emerald-800 hover:bg-emerald-200'
+                            : 'bg-rose-100 text-rose-800 hover:bg-rose-200'
+                          : 'bg-white text-slate-700 hover:bg-slate-200 border border-slate-200'
+                      }`}
+                      title={`Ir a pregunta ${idx + 1}`}
+                    >
+                      {idx + 1}
+                    </button>
+                  );
+                })}
               </div>
             </div>
 
@@ -149,7 +189,7 @@ export const QuizModal: React.FC<QuizModalProps> = ({
                     type="button"
                     disabled={hasSubmitted}
                     onClick={() => handleSelectOption(option.id)}
-                    className={`p-4 rounded-2xl border-2 text-left transition-all duration-150 flex items-start gap-3 relative ${cardStyle}`}
+                    className={`p-4 rounded-2xl border-2 text-left transition-all duration-150 flex items-start gap-3 relative cursor-pointer ${cardStyle}`}
                   >
                     <span className={`w-7 h-7 rounded-xl text-xs font-black flex items-center justify-center shrink-0 ${
                       isSelected ? 'bg-blue-600 text-white' : 'bg-slate-100 text-slate-700'
@@ -190,32 +230,50 @@ export const QuizModal: React.FC<QuizModalProps> = ({
               </div>
             )}
 
-            {/* Bottom Actions and Helper Text (Page 12 & 13) */}
-            <div className="pt-2 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-4">
-              <span className="text-[11px] text-slate-400 text-center sm:text-left">
-                {!selectedOptionId && 'ⓘ Selecciona una opción para habilitar el botón de respuesta.'}
-              </span>
+            {/* Bottom Actions and Helper Text */}
+            <div className="pt-3 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-4">
+              
+              {/* Botón Volver / Anterior si la persona se quiere devolver */}
+              <button
+                id="btn-quiz-modal-prev"
+                type="button"
+                onClick={handlePrevQuestion}
+                disabled={currentIndex === 0}
+                className={`w-full sm:w-auto px-5 py-2.5 rounded-xl text-xs sm:text-sm font-bold flex items-center justify-center gap-2 transition ${
+                  currentIndex > 0
+                    ? 'bg-slate-100 hover:bg-slate-200 text-slate-700 cursor-pointer border border-slate-200'
+                    : 'bg-slate-50 text-slate-300 border border-slate-100 cursor-not-allowed opacity-50'
+                }`}
+                title={currentIndex > 0 ? "Volver a la pregunta anterior" : "Primera pregunta"}
+              >
+                <ChevronLeft className="w-4 h-4" />
+                <span>Pregunta Anterior</span>
+              </button>
 
-              {!hasSubmitted ? (
-                <button
-                  id="btn-quiz-submit"
-                  disabled={!selectedOptionId}
-                  onClick={handleAnswerSubmit}
-                  className="w-full sm:w-auto px-8 py-3 bg-slate-900 hover:bg-blue-600 disabled:opacity-40 disabled:hover:bg-slate-900 text-white rounded-xl text-xs sm:text-sm font-bold shadow-md flex items-center justify-center gap-2 transition"
-                >
-                  <span>Responder</span>
-                  <ArrowRight className="w-4 h-4" />
-                </button>
-              ) : (
-                <button
-                  id="btn-quiz-next"
-                  onClick={handleNextQuestion}
-                  className="w-full sm:w-auto px-8 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs sm:text-sm font-bold shadow-md flex items-center justify-center gap-2 transition"
-                >
-                  <span>{isLastQuestion ? 'Ver Resultados' : 'Siguiente Pregunta'}</span>
-                  <ArrowRight className="w-4 h-4" />
-                </button>
-              )}
+              <div className="flex items-center gap-3 w-full sm:w-auto justify-end">
+                {!hasSubmitted ? (
+                  <button
+                    id="btn-quiz-submit"
+                    type="button"
+                    disabled={!selectedOptionId}
+                    onClick={handleAnswerSubmit}
+                    className="w-full sm:w-auto px-8 py-3 bg-slate-900 hover:bg-blue-600 disabled:opacity-40 disabled:hover:bg-slate-900 text-white rounded-xl text-xs sm:text-sm font-bold shadow-md flex items-center justify-center gap-2 transition cursor-pointer"
+                  >
+                    <span>Responder</span>
+                    <ArrowRight className="w-4 h-4" />
+                  </button>
+                ) : (
+                  <button
+                    id="btn-quiz-next"
+                    type="button"
+                    onClick={handleNextQuestion}
+                    className="w-full sm:w-auto px-8 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs sm:text-sm font-bold shadow-md flex items-center justify-center gap-2 transition cursor-pointer"
+                  >
+                    <span>{isLastQuestion ? 'Ver Resultados' : 'Siguiente Pregunta'}</span>
+                    <ChevronRight className="w-4 h-4" />
+                  </button>
+                )}
+              </div>
             </div>
           </div>
         ) : (

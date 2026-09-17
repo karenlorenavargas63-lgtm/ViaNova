@@ -231,7 +231,7 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
   return (
     <div id="vianova-profile-view" className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 animate-fade-in font-sans">
       
-      {/* Header bar with title and prominent Cerrar sesión button */}
+      {/* Header bar with title */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8 pb-4 border-b border-slate-200/80">
         <div>
           <h1 className="text-2xl sm:text-3xl font-extrabold text-[#0a193b] tracking-tight">
@@ -241,16 +241,6 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
             Gestiona tu información personal, certificaciones viales y estado de movilidad
           </p>
         </div>
-
-        <button
-          id="btn-logout-header"
-          type="button"
-          onClick={() => setIsLogoutModalOpen(true)}
-          className="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl border border-rose-200/80 bg-white hover:bg-rose-50 hover:border-rose-300 text-rose-700 text-sm font-semibold transition-all duration-200 shadow-2xs self-start sm:self-auto cursor-pointer"
-        >
-          <LogOut className="w-4 h-4 text-rose-600" />
-          <span>Cerrar sesión</span>
-        </button>
       </div>
 
       {/* 3-Column Layout Matching the Uploaded Design */}
@@ -577,14 +567,6 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
             {/* Subtle bottom note / extra space matching layout */}
             <div className="pt-4 flex items-center justify-between text-[11px] text-slate-400 border-t border-slate-100">
               <span>Actualización en tiempo real</span>
-              <button
-                type="button"
-                onClick={() => setIsLogoutModalOpen(true)}
-                className="text-slate-400 hover:text-rose-600 transition-colors font-medium flex items-center gap-1"
-              >
-                <LogOut className="w-3 h-3" />
-                <span>Cerrar sesión</span>
-              </button>
             </div>
 
           </div>

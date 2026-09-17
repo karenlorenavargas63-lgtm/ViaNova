@@ -8,6 +8,7 @@ import {
   Sparkles, 
   Trophy, 
   ChevronRight,
+  ChevronLeft,
   Info,
   Check
 } from 'lucide-react';
@@ -22,16 +23,66 @@ import incidentResponseAgent from '../assets/images/incident_response_agent_1788
 export const EducationScreen: React.FC = () => {
   const [selectedCategory, setSelectedCategory] = useState<string>('todos');
   
-  // Interactive Quiz State matching Image 2
-  const [currentQuestionNumber, setCurrentQuestionNumber] = useState<number>(3);
-  const totalQuestions = 10;
-  const [selectedOption, setSelectedOption] = useState<string | null>(null);
-  const [isAnswerSubmitted, setIsAnswerSubmitted] = useState<boolean>(false);
-  const [quizScore, setQuizScore] = useState<number>(2);
+  // Interactive Quiz State: Módulo 1 (Señalización Básica)
+  // Starts from question 1 (index 0) with no pre-completed questions
+  const [currentQuestionIndex, setCurrentQuestionIndex] = useState<number>(0);
+  const [userAnswers, setUserAnswers] = useState<Record<number, { selectedOption: string | null; isSubmitted: boolean; isCorrect: boolean }>>({});
   const [quizCompleted, setQuizCompleted] = useState<boolean>(false);
 
-  // Quiz questions list
+  // Módulo 1 quiz questions list (5 questions starting from question 1)
   const quizQuestions = [
+    {
+      number: 1,
+      category: 'MÓDULO 1: SEÑALIZACIÓN BÁSICA',
+      title: 'Evaluación de Conocimientos',
+      question: '¿Cuál es la primera prioridad en la Pirámide de la Movilidad Urbana?',
+      options: [
+        {
+          id: 'A',
+          text: 'Vehículos de carga y logística urbana.',
+        },
+        {
+          id: 'B',
+          text: 'Peatones y personas con movilidad reducida.',
+          isCorrect: true,
+        },
+        {
+          id: 'C',
+          text: 'Transporte público masivo y buses escolares.',
+        },
+        {
+          id: 'D',
+          text: 'Automóviles particulares y vehículos eléctricos.',
+        },
+      ],
+      correctExplanation: 'Los peatones y personas con movilidad reducida se sitúan en la cúspide de la pirámide por ser los usuarios más vulnerables con máxima prioridad de paso.',
+    },
+    {
+      number: 2,
+      category: 'MÓDULO 1: SEÑALIZACIÓN BÁSICA',
+      title: 'Evaluación de Conocimientos',
+      question: '¿Qué indica una línea continua pintada en el centro de la calzada?',
+      options: [
+        {
+          id: 'A',
+          text: 'Está permitido adelantar con precaución si no vienen vehículos.',
+        },
+        {
+          id: 'B',
+          text: 'Prohibición estricta de adelantar o invadir el carril en sentido opuesto.',
+          isCorrect: true,
+        },
+        {
+          id: 'C',
+          text: 'Carril exclusivo para bicicletas los fines de semana.',
+        },
+        {
+          id: 'D',
+          text: 'Zona habilitada para detenerse brevemente.',
+        },
+      ],
+      correctExplanation: 'La línea continua longitudinal prohíbe de forma terminante invadir el carril contrario o realizar maniobras de adelantamiento.',
+    },
     {
       number: 3,
       category: 'MÓDULO 1: SEÑALIZACIÓN BÁSICA',
@@ -71,31 +122,56 @@ export const EducationScreen: React.FC = () => {
       ],
       correctExplanation: 'Por normativa y seguridad vital, todo automotor debe respetar un margen mínimo de 1.5 metros al adelantar a un usuario de bicicleta.',
     },
+    {
+      number: 5,
+      category: 'MÓDULO 1: SEÑALIZACIÓN BÁSICA',
+      title: 'Evaluación de Conocimientos',
+      question: '¿Qué significa la luz amarilla fija en el semáforo vehicular?',
+      options: [
+        { id: 'A', text: 'Acelerar antes de que el semáforo cambie a luz roja.' },
+        { id: 'B', text: 'Advertencia de cambio inminente a rojo; detenerse de manera segura.', isCorrect: true },
+        { id: 'C', text: 'Paso libre preferencial para motocicletas.' },
+        { id: 'D', text: 'Giro obligatorio a la derecha sin parar.' },
+      ],
+      correctExplanation: 'La luz amarilla advierte la conclusión inminente del derecho de paso; se debe detener el vehículo antes de la línea de detención salvo que no pueda hacerse con seguridad.',
+    },
   ];
 
-  const currentQ = quizQuestions.find((q) => q.number === currentQuestionNumber) || quizQuestions[0];
+  const totalQuestions = quizQuestions.length;
+  const currentQ = quizQuestions[currentQuestionIndex] || quizQuestions[0];
+  const currentAnswer = userAnswers[currentQuestionIndex];
+  const selectedOption = currentAnswer?.selectedOption || null;
+  const isAnswerSubmitted = currentAnswer?.isSubmitted || false;
 
   const handleSelectOption = (optionId: string) => {
     if (!isAnswerSubmitted) {
-      setSelectedOption(optionId);
+      setUserAnswers((prev) => ({
+        ...prev,
+        [currentQuestionIndex]: {
+          selectedOption: optionId,
+          isSubmitted: false,
+          isCorrect: false,
+        },
+      }));
     }
   };
 
   const handleAnswerSubmit = () => {
     if (!selectedOption) return;
-    setIsAnswerSubmitted(true);
-
-    const correct = currentQ.options.find((o) => o.id === selectedOption)?.isCorrect;
-    if (correct) {
-      setQuizScore((prev) => prev + 1);
-    }
+    const correct = currentQ.options.find((o) => o.id === selectedOption)?.isCorrect || false;
+    setUserAnswers((prev) => ({
+      ...prev,
+      [currentQuestionIndex]: {
+        selectedOption,
+        isSubmitted: true,
+        isCorrect: correct,
+      },
+    }));
   };
 
   const handleNextQuestion = () => {
-    if (currentQuestionNumber < 4) {
-      setCurrentQuestionNumber(currentQuestionNumber + 1);
-      setSelectedOption(null);
-      setIsAnswerSubmitted(false);
+    if (currentQuestionIndex < totalQuestions - 1) {
+      setCurrentQuestionIndex(currentQuestionIndex + 1);
     } else {
       setQuizCompleted(true);
       try {
@@ -110,11 +186,15 @@ export const EducationScreen: React.FC = () => {
     }
   };
 
+  const handlePrevQuestion = () => {
+    if (currentQuestionIndex > 0) {
+      setCurrentQuestionIndex(currentQuestionIndex - 1);
+    }
+  };
+
   const handleRestartQuiz = () => {
-    setCurrentQuestionNumber(3);
-    setSelectedOption(null);
-    setIsAnswerSubmitted(false);
-    setQuizScore(2);
+    setCurrentQuestionIndex(0);
+    setUserAnswers({});
     setQuizCompleted(false);
   };
 
@@ -423,8 +503,8 @@ export const EducationScreen: React.FC = () => {
       <section id="evaluacion-conocimientos" className="max-w-4xl mx-auto space-y-8 pt-8 border-t border-slate-200/80">
         
         {/* Module Header Bar */}
-        <div className="space-y-3">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+        <div className="space-y-4">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div>
               <p className="text-xs font-bold uppercase tracking-wider text-[#0066ff]">
                 {currentQ.category}
@@ -433,16 +513,41 @@ export const EducationScreen: React.FC = () => {
                 {currentQ.title}
               </h2>
             </div>
-            <div className="text-xs sm:text-sm font-semibold text-slate-500">
-              Pregunta {currentQuestionNumber} de {totalQuestions}
+
+            {/* Question indicators / Direct jump pills */}
+            <div className="flex items-center gap-1.5 bg-slate-100/90 p-1.5 rounded-2xl border border-slate-200 self-start sm:self-auto">
+              <span className="text-[11px] font-bold text-slate-500 px-2">Pregunta:</span>
+              {quizQuestions.map((q, idx) => {
+                const ans = userAnswers[idx];
+                const isCurrent = idx === currentQuestionIndex;
+                return (
+                  <button
+                    key={q.number}
+                    type="button"
+                    onClick={() => setCurrentQuestionIndex(idx)}
+                    className={`w-8 h-8 rounded-xl text-xs font-bold transition-all flex items-center justify-center cursor-pointer ${
+                      isCurrent
+                        ? 'bg-[#0066ff] text-white shadow-xs scale-105'
+                        : ans?.isSubmitted
+                        ? ans.isCorrect
+                          ? 'bg-emerald-100 text-emerald-800 hover:bg-emerald-200'
+                          : 'bg-rose-100 text-rose-800 hover:bg-rose-200'
+                        : 'bg-white text-slate-700 hover:bg-slate-200 border border-slate-200'
+                    }`}
+                    title={`Ir a pregunta ${idx + 1}`}
+                  >
+                    {idx + 1}
+                  </button>
+                );
+              })}
             </div>
           </div>
 
-          {/* Progress Bar (at ~30% for Question 3 of 10) */}
+          {/* Progress Bar */}
           <div className="w-full h-2.5 bg-slate-100 rounded-full overflow-hidden">
             <div 
               className="h-full bg-[#0066ff] rounded-full transition-all duration-300"
-              style={{ width: `${(currentQuestionNumber / totalQuestions) * 100}%` }}
+              style={{ width: `${((currentQuestionIndex + 1) / totalQuestions) * 100}%` }}
             ></div>
           </div>
         </div>
@@ -491,7 +596,7 @@ export const EducationScreen: React.FC = () => {
                       key={option.id}
                       onClick={() => handleSelectOption(option.id)}
                       disabled={isAnswerSubmitted}
-                      className={`p-5 sm:p-6 rounded-2xl border text-left flex items-start gap-4 transition-all duration-200 min-h-[96px] ${borderStyle}`}
+                      className={`p-5 sm:p-6 rounded-2xl border text-left flex items-start gap-4 transition-all duration-200 min-h-[96px] cursor-pointer ${borderStyle}`}
                     >
                       <span className={`w-8 h-8 rounded-xl flex items-center justify-center font-bold text-xs shrink-0 transition-colors ${badgeStyle}`}>
                         {option.id}
@@ -518,31 +623,54 @@ export const EducationScreen: React.FC = () => {
                 </div>
               )}
 
-              {/* Divider line matching Image 2 */}
-              <div className="pt-2 border-t border-slate-100 flex flex-col sm:flex-row sm:items-center justify-end gap-4">
+              {/* Navigation Actions: Volver si se quiere devolver + Responder / Siguiente */}
+              <div className="pt-4 border-t border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 
-                {!isAnswerSubmitted ? (
-                  <button
-                    onClick={handleAnswerSubmit}
-                    disabled={!selectedOption}
-                    className={`py-3 px-6 rounded-xl font-bold text-xs sm:text-sm transition-all flex items-center justify-center gap-2 ${
-                      selectedOption
-                        ? 'bg-[#0057d9] hover:bg-[#0047b3] text-white shadow-md'
-                        : 'bg-[#718296] text-white cursor-not-allowed opacity-90'
-                    }`}
-                  >
-                    <span>Responder</span>
-                    <ArrowRight className="w-4 h-4" />
-                  </button>
-                ) : (
-                  <button
-                    onClick={handleNextQuestion}
-                    className="py-3 px-6 rounded-xl bg-[#0057d9] hover:bg-[#0047b3] text-white font-bold text-xs sm:text-sm shadow-md flex items-center justify-center gap-2 transition-all"
-                  >
-                    <span>Siguiente Pregunta</span>
-                    <ChevronRight className="w-4 h-4" />
-                  </button>
-                )}
+                {/* Botón Volver / Anterior si la persona se quiere devolver */}
+                <button
+                  id="btn-quiz-prev-question"
+                  type="button"
+                  onClick={handlePrevQuestion}
+                  disabled={currentQuestionIndex === 0}
+                  className={`py-3 px-5 rounded-xl font-bold text-xs sm:text-sm flex items-center justify-center gap-2 transition-all ${
+                    currentQuestionIndex > 0
+                      ? 'bg-slate-100 hover:bg-slate-200 text-slate-700 cursor-pointer shadow-2xs border border-slate-200'
+                      : 'bg-slate-50 text-slate-300 border border-slate-100 cursor-not-allowed opacity-60'
+                  }`}
+                  title={currentQuestionIndex > 0 ? "Devolverse a la pregunta anterior" : "Estás en la primera pregunta"}
+                >
+                  <ChevronLeft className="w-4 h-4" />
+                  <span>Pregunta Anterior</span>
+                </button>
+
+                <div className="flex items-center gap-3">
+                  {!isAnswerSubmitted ? (
+                    <button
+                      id="btn-quiz-submit-answer"
+                      type="button"
+                      onClick={handleAnswerSubmit}
+                      disabled={!selectedOption}
+                      className={`py-3 px-6 rounded-xl font-bold text-xs sm:text-sm transition-all flex items-center justify-center gap-2 ${
+                        selectedOption
+                          ? 'bg-[#0057d9] hover:bg-[#0047b3] text-white shadow-md cursor-pointer'
+                          : 'bg-[#718296] text-white cursor-not-allowed opacity-90'
+                      }`}
+                    >
+                      <span>Responder</span>
+                      <ArrowRight className="w-4 h-4" />
+                    </button>
+                  ) : (
+                    <button
+                      id="btn-quiz-next-question"
+                      type="button"
+                      onClick={handleNextQuestion}
+                      className="py-3 px-6 rounded-xl bg-[#0057d9] hover:bg-[#0047b3] text-white font-bold text-xs sm:text-sm shadow-md flex items-center justify-center gap-2 transition-all cursor-pointer"
+                    >
+                      <span>{currentQuestionIndex === totalQuestions - 1 ? 'Finalizar Evaluación' : 'Siguiente Pregunta'}</span>
+                      <ChevronRight className="w-4 h-4" />
+                    </button>
+                  )}
+                </div>
               </div>
 
               {/* Instructional note matching Image 2 */}
@@ -550,7 +678,7 @@ export const EducationScreen: React.FC = () => {
                 <div className="text-center pt-2">
                   <p className="text-xs text-slate-500 font-medium flex items-center justify-center gap-1.5">
                     <Info className="w-3.5 h-3.5 text-slate-400" />
-                    <span>Selecciona una opción para habilitar el botón de respuesta.</span>
+                    <span>Selecciona una opción para responder o usa las preguntas anteriores para revisar.</span>
                   </p>
                 </div>
               )}
@@ -565,7 +693,9 @@ export const EducationScreen: React.FC = () => {
 
               <div className="space-y-2">
                 <h3 className="text-2xl font-extrabold text-[#0a193b]">¡Evaluación Completada!</h3>
-                <p className="text-slate-600 text-sm">Has respondido correctamente las preguntas de Señalización Básica.</p>
+                <p className="text-slate-600 text-sm">
+                  Has obtenido {(Object.values(userAnswers) as Array<{ isCorrect: boolean }>).filter((a) => a.isCorrect).length} de {totalQuestions} respuestas correctas en Señalización Básica.
+                </p>
                 <div className="inline-block mt-2 px-4 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 text-xs font-bold">
                   Insignia Desbloqueada: Conductor Preventivo Nivel 1
                 </div>
@@ -573,8 +703,9 @@ export const EducationScreen: React.FC = () => {
 
               <div className="flex justify-center gap-3 pt-2">
                 <button
+                  type="button"
                   onClick={handleRestartQuiz}
-                  className="px-6 py-2.5 rounded-xl border border-slate-200 text-slate-700 hover:bg-slate-50 font-bold text-xs"
+                  className="px-6 py-2.5 rounded-xl border border-slate-200 text-slate-700 hover:bg-slate-50 font-bold text-xs cursor-pointer"
                 >
                   Repetir Evaluación
                 </button>
