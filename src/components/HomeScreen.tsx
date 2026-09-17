@@ -1,6 +1,6 @@
 import React from 'react';
 import { NavigationTab } from '../types';
-import heroSmartCityImg from '../assets/images/vianova_smart_city_hero_1788275485184.jpg';
+import { CrashHeroAnimation } from './CrashHeroAnimation';
 import { 
   ArrowRight, 
   MapPin, 
@@ -59,25 +59,9 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ setCurrentTab }) => {
             </div>
           </div>
 
-          {/* Right Column: Smart City Image with Frosted Badge (as in 99737.png) */}
+          {/* Right Column: Animated Crash Simulation with Decorated ViaNova Reveal */}
           <div className="lg:col-span-6 relative">
-            <div className="relative rounded-[2rem] overflow-hidden shadow-2xl shadow-blue-950/10 border border-slate-200/60 group bg-slate-100">
-              <img
-                src={heroSmartCityImg}
-                alt="Movilidad Inteligente en Ciudad VIANOVA"
-                className="w-full h-80 sm:h-96 object-cover object-center group-hover:scale-105 transition-transform duration-700"
-              />
-              
-              {/* Frosted Glass Overlay on Bottom-Left matching 99737.png */}
-              <div className="absolute bottom-6 left-6 max-w-xs p-4 sm:p-5 rounded-2xl bg-white/80 backdrop-blur-xl border border-white/80 shadow-2xl shadow-slate-900/15">
-                <p className="text-base font-bold text-slate-900 leading-tight">
-                  Seguridad Vial
-                </p>
-                <p className="text-xs text-slate-600 font-medium mt-1">
-                  Sistemas activos en la zona
-                </p>
-              </div>
-            </div>
+            <CrashHeroAnimation />
           </div>
 
         </div>
