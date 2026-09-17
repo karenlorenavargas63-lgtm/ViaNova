@@ -30,10 +30,10 @@ export const AuthModal: React.FC<AuthModalProps> = ({
   const [showPassword, setShowPassword] = useState(false);
 
   // Form states
-  const [email, setEmail] = useState('elena.rios@smartmobility.org');
-  const [password, setPassword] = useState('••••••••');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [name, setName] = useState('');
-  const [role, setRole] = useState('Ciclista Urbana Frecuente');
+  const [role, setRole] = useState('Ciclista Urbano');
   const [resetSent, setResetSent] = useState(false);
 
   if (!isOpen) return null;
@@ -50,54 +50,56 @@ export const AuthModal: React.FC<AuthModalProps> = ({
       return;
     }
 
-    // Authenticate user
-    const loggedUser: UserProfile = {
-      id: 'usr_active',
-      name: isRegisterMode && name ? name : 'Elena Ríos',
-      role: isRegisterMode ? role : 'Ciclista Urbana Frecuente',
-      email: email || 'elena.rios@smartmobility.org',
-      avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=300&auto=format&fit=crop&q=80',
-      city: 'Medellín / CDMX',
-      memberSince: 'Marzo 2023',
-      kmTraveled: 1245,
-      safetyScore: 0,
-      monthlyStats: {
-        routesCompleted: 24,
-        totalRoutesGoal: 30,
-        educationalModules: 8,
-        totalModulesGoal: 10,
-        co2SavedKg: 42.5,
-        cyclingKm: 186
-      },
-      badges: [
-        {
-          id: 'badge_1',
-          name: 'Ruta Segura',
-          icon: 'ShieldCheck',
-          color: 'emerald',
-          description: 'Completaste más de 20 recorridos sin incidentes.',
-          unlockedAt: '12 Ene 2024'
-        },
-        {
-          id: 'badge_2',
-          name: 'Pionera',
-          icon: 'Trophy',
-          color: 'blue',
-          description: 'Ciclista activa en la red VIANOVA.',
-          unlockedAt: '15 Mar 2023'
-        },
-        {
-          id: 'badge_3',
-          name: 'Eco Master',
-          icon: 'Leaf',
-          color: 'teal',
-          description: 'Ahorro de más de 40 kg de emisiones de CO2.',
-          unlockedAt: '02 Feb 2024'
-        }
-      ]
-    };
+    // Check localStorage for registered user
+    let userToLog: UserProfile | null = null;
+    try {
+      const stored = JSON.parse(localStorage.getItem('vianova_registered_users') || '[]');
+      const matched = stored.find((u: any) => u.email?.toLowerCase() === email.trim().toLowerCase());
+      if (matched) {
+        const { password: _p, ...profile } = matched;
+        userToLog = profile as UserProfile;
+      }
+    } catch (err) {
+      console.error('Error buscando usuario registrado', err);
+    }
 
-    onLoginSuccess(loggedUser);
+    if (!userToLog) {
+      // First-time login: clean zero-progress profile
+      userToLog = {
+        id: `usr_${Date.now()}`,
+        name: isRegisterMode && name.trim() ? name.trim() : email.split('@')[0].replace(/[._]/g, ' ') || 'Usuario VIANOVA',
+        role: isRegisterMode ? role : 'Ciudadano',
+        email: email.trim().toLowerCase(),
+        avatar: `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(name || email)}`,
+        city: 'No especificada',
+        memberSince: 'Septiembre 2026',
+        kmTraveled: 0,
+        safetyScore: 0,
+        monthlyStats: {
+          routesCompleted: 0,
+          totalRoutesGoal: 20,
+          educationalModules: 0,
+          totalModulesGoal: 10,
+          co2SavedKg: 0,
+          cyclingKm: 0
+        },
+        badges: []
+      };
+
+      if (isRegisterMode) {
+        try {
+          const stored = JSON.parse(localStorage.getItem('vianova_registered_users') || '[]');
+          stored.push({ ...userToLog, password });
+          localStorage.setItem('vianova_registered_users', JSON.stringify(stored));
+        } catch (err) {}
+      }
+    }
+
+    try {
+      localStorage.setItem('vianova_active_user', JSON.stringify(userToLog));
+    } catch (err) {}
+
+    onLoginSuccess(userToLog);
     onClose();
   };
 

@@ -237,7 +237,7 @@ export const EducationScreen: React.FC = () => {
                 />
                 <path
                   className="text-[#0066ff]"
-                  strokeDasharray="34, 100"
+                  strokeDasharray="0, 100"
                   strokeWidth="3.5"
                   strokeLinecap="round"
                   stroke="currentColor"
@@ -245,11 +245,11 @@ export const EducationScreen: React.FC = () => {
                   d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
                 />
               </svg>
-              <span className="absolute text-sm font-black text-slate-900">34%</span>
+              <span className="absolute text-sm font-black text-slate-900">0%</span>
             </div>
             <div>
               <p className="text-xs text-slate-500 font-medium">Progreso Global</p>
-              <h4 className="text-sm font-bold text-slate-900 mt-0.5">Nivel Intermedio</h4>
+              <h4 className="text-sm font-bold text-slate-900 mt-0.5">Nivel Inicial</h4>
             </div>
           </div>
         </div>
@@ -321,19 +321,19 @@ export const EducationScreen: React.FC = () => {
                 <div className="space-y-1.5">
                   <div className="flex items-center justify-between text-xs">
                     <span className="text-slate-500 font-medium">Progreso</span>
-                    <span className="text-[#0066ff] font-bold">60%</span>
+                    <span className="text-slate-400 font-bold">0%</span>
                   </div>
                   <div className="w-full h-2 bg-slate-100 rounded-full overflow-hidden">
-                    <div className="h-full bg-[#0066ff] rounded-full w-[60%]"></div>
+                    <div className="h-full bg-slate-200 rounded-full w-[0%]"></div>
                   </div>
                 </div>
 
-                {/* Continuar Curso button */}
+                {/* Iniciar Curso button */}
                 <button
                   onClick={scrollToQuiz}
                   className="w-full py-3 px-4 rounded-xl bg-[#0a193b] hover:bg-[#07132c] text-white text-xs font-bold transition-all shadow-sm"
                 >
-                  Continuar Curso
+                  Iniciar Curso
                 </button>
               </div>
             </div>
@@ -368,10 +368,10 @@ export const EducationScreen: React.FC = () => {
                 <div className="pt-2 space-y-1.5">
                   <div className="flex items-center justify-between text-xs">
                     <span className="text-slate-500 font-medium">Progreso</span>
-                    <span className="text-[#0066ff] font-bold">15%</span>
+                    <span className="text-slate-400 font-bold">0%</span>
                   </div>
                   <div className="w-full h-2 bg-slate-100 rounded-full overflow-hidden">
-                    <div className="h-full bg-[#0066ff] rounded-full w-[15%]"></div>
+                    <div className="h-full bg-slate-200 rounded-full w-[0%]"></div>
                   </div>
                 </div>
               </div>
@@ -484,10 +484,10 @@ export const EducationScreen: React.FC = () => {
                 <div className="pt-2 space-y-1.5">
                   <div className="flex items-center justify-between text-xs">
                     <span className="text-slate-500 font-medium">Progreso</span>
-                    <span className="text-[#0066ff] font-bold">40%</span>
+                    <span className="text-slate-400 font-bold">0%</span>
                   </div>
                   <div className="w-full h-2 bg-slate-100 rounded-full overflow-hidden">
-                    <div className="h-full bg-[#0066ff] rounded-full w-[40%]"></div>
+                    <div className="h-full bg-slate-200 rounded-full w-[0%]"></div>
                   </div>
                 </div>
               </div>

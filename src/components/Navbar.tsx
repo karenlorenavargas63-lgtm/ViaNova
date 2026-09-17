@@ -1,12 +1,27 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { NavigationTab, UserProfile } from '../types';
 import { 
   User as UserIcon,
   LogIn,
   Menu,
-  X
+  X,
+  ChevronDown,
+  MapPin,
+  Calendar,
+  Bike,
+  ShieldCheck,
+  Award,
+  Leaf,
+  Route,
+  BookOpen,
+  Edit3,
+  LogOut,
+  Mail,
+  UserCheck,
+  ExternalLink
 } from 'lucide-react';
 import { Logo } from './Logo';
+import { UserProfileDropdown } from './UserProfileDropdown';
 
 interface NavbarProps {
   currentTab: NavigationTab;
@@ -15,6 +30,7 @@ interface NavbarProps {
   isAuthenticated: boolean;
   onOpenAuthModal: () => void;
   onLogout: () => void;
+  onUpdateUser?: (updated: UserProfile) => void;
 }
 
 export const Navbar: React.FC<NavbarProps> = ({
@@ -24,8 +40,10 @@ export const Navbar: React.FC<NavbarProps> = ({
   isAuthenticated,
   onOpenAuthModal,
   onLogout,
+  onUpdateUser,
 }) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = React.useState(false);
+  const [isMobileProfileExpanded, setIsMobileProfileExpanded] = useState(false);
 
   const navItems: { id: NavigationTab; label: string }[] = [
     { id: 'inicio', label: 'Inicio' },
@@ -74,29 +92,16 @@ export const Navbar: React.FC<NavbarProps> = ({
             })}
           </nav>
 
-          {/* Right Action / Profile Button matching 99737.png */}
+          {/* Right Action / Profile Button with Unfolded Full User Info Dropdown */}
           <div className="hidden md:flex items-center gap-3">
-            {isAuthenticated ? (
-              <button
-                id="nav-profile-btn"
-                onClick={() => setCurrentTab('perfil')}
-                className={`flex items-center gap-2.5 px-4 py-2 rounded-full text-sm font-bold transition-all duration-200 cursor-pointer ${
-                  currentTab === 'perfil'
-                    ? 'bg-[#0057d9] text-white shadow-md shadow-blue-500/25'
-                    : 'bg-[#e0eaff] hover:bg-[#d0e0fc] text-[#003d99]'
-                }`}
-              >
-                {user?.avatar ? (
-                  <img 
-                    src={user.avatar} 
-                    alt={user.name} 
-                    className="w-6 h-6 rounded-full object-cover border border-white/80 shrink-0" 
-                  />
-                ) : (
-                  <UserIcon className="w-4 h-4" />
-                )}
-                <span className="truncate max-w-[120px]">{user?.name ? user.name.split(' ')[0] : 'Perfil'}</span>
-              </button>
+            {isAuthenticated && user ? (
+              <UserProfileDropdown
+                user={user}
+                onUpdateUser={onUpdateUser}
+                onLogout={onLogout}
+                setCurrentTab={setCurrentTab}
+                currentTab={currentTab}
+              />
             ) : (
               <button
                 id="nav-login-btn"
@@ -125,7 +130,7 @@ export const Navbar: React.FC<NavbarProps> = ({
 
       {/* Mobile Drawer */}
       {isMobileMenuOpen && (
-        <div className="md:hidden bg-white border-b border-slate-200 px-4 pt-3 pb-6 space-y-2 shadow-lg">
+        <div className="md:hidden bg-white border-b border-slate-200 px-4 pt-3 pb-6 space-y-2 shadow-lg max-h-[85vh] overflow-y-auto">
           {navItems.map((item) => {
             const isActive = currentTab === item.id;
             return (
@@ -147,25 +152,132 @@ export const Navbar: React.FC<NavbarProps> = ({
           })}
 
           <div className="pt-3 border-t border-slate-100">
-            {isAuthenticated ? (
-              <button
-                onClick={() => {
-                  setCurrentTab('perfil');
-                  setIsMobileMenuOpen(false);
-                }}
-                className="w-full flex items-center justify-center gap-2.5 p-3 rounded-xl bg-[#e0eaff] text-[#003d99] font-bold text-sm"
-              >
-                {user?.avatar ? (
-                  <img 
-                    src={user.avatar} 
-                    alt={user.name} 
-                    className="w-6 h-6 rounded-full object-cover border border-white shrink-0" 
-                  />
-                ) : (
-                  <UserIcon className="w-4 h-4" />
+            {isAuthenticated && user ? (
+              <div className="space-y-3">
+                {/* Mobile Button containing User Name: clicking expands all info */}
+                <button
+                  type="button"
+                  onClick={() => setIsMobileProfileExpanded(!isMobileProfileExpanded)}
+                  className="w-full flex items-center justify-between p-3.5 rounded-2xl bg-[#e0eaff] hover:bg-[#d0e0fc] text-[#003d99] font-bold text-sm transition-all"
+                >
+                  <div className="flex items-center gap-2.5 min-w-0">
+                    {user.avatar ? (
+                      <img 
+                        src={user.avatar} 
+                        alt={user.name} 
+                        className="w-8 h-8 rounded-full object-cover border border-white shrink-0" 
+                      />
+                    ) : (
+                      <div className="w-8 h-8 rounded-full bg-[#0057d9] text-white flex items-center justify-center text-xs font-black shrink-0">
+                        {user.name ? user.name.charAt(0).toUpperCase() : 'U'}
+                      </div>
+                    )}
+                    <div className="text-left min-w-0">
+                      <p className="truncate text-xs font-black text-[#0a193b]">{user.name || 'Usuario VIANOVA'}</p>
+                      <p className="text-[10px] text-blue-700 font-medium truncate">{user.role || 'Ciudadano'}</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-1.5 shrink-0">
+                    <span className="text-[11px] font-semibold text-blue-700">
+                      {isMobileProfileExpanded ? 'Ocultar' : 'Ver datos'}
+                    </span>
+                    <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${isMobileProfileExpanded ? 'rotate-180' : ''}`} />
+                  </div>
+                </button>
+
+                {/* Mobile Expanded Information */}
+                {isMobileProfileExpanded && (
+                  <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200/80 space-y-4 animate-fade-in text-xs text-slate-700">
+                    {/* Identity Details */}
+                    <div className="space-y-2 bg-white p-3 rounded-xl border border-slate-100">
+                      <div className="flex items-center gap-2 text-slate-600 truncate">
+                        <Mail className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                        <span className="truncate">{user.email || 'No registrado'}</span>
+                      </div>
+                      <div className="flex items-center gap-2 text-slate-600">
+                        <MapPin className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                        <span className="truncate">{user.city || 'No especificada'}</span>
+                      </div>
+                      <div className="flex items-center gap-2 text-slate-600">
+                        <Calendar className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                        <span>Miembro desde {user.memberSince || 'Septiembre 2026'}</span>
+                      </div>
+                      <div className="flex items-center gap-2 text-[#0057d9] font-bold">
+                        <Bike className="w-3.5 h-3.5 shrink-0" />
+                        <span>{(user.kmTraveled ?? 0).toLocaleString()} km recorridos</span>
+                      </div>
+                    </div>
+
+                    {/* Metrics */}
+                    <div className="space-y-2 bg-white p-3 rounded-xl border border-slate-100">
+                      <div className="flex items-center justify-between font-bold text-slate-800">
+                        <span>Avance y Seguridad</span>
+                        <span className="text-blue-600 bg-blue-50 px-2 py-0.5 rounded-full text-[10px]">
+                          Score: {user.safetyScore ?? 0}%
+                        </span>
+                      </div>
+                      <div className="flex items-center justify-between text-slate-600 text-[11px]">
+                        <span>Rutas completadas:</span>
+                        <strong className="text-slate-900">{user.monthlyStats?.routesCompleted ?? 0} / {user.monthlyStats?.totalRoutesGoal ?? 20}</strong>
+                      </div>
+                      <div className="flex items-center justify-between text-slate-600 text-[11px]">
+                        <span>Módulos de educación:</span>
+                        <strong className="text-slate-900">{user.monthlyStats?.educationalModules ?? 0} / {user.monthlyStats?.totalModulesGoal ?? 10}</strong>
+                      </div>
+                      <div className="flex items-center justify-between text-slate-600 text-[11px]">
+                        <span>CO₂ Ahorrado:</span>
+                        <strong className="text-emerald-700">{user.monthlyStats?.co2SavedKg ?? 0} kg</strong>
+                      </div>
+                    </div>
+
+                    {/* Badges */}
+                    <div className="bg-white p-3 rounded-xl border border-slate-100">
+                      <p className="font-bold text-slate-800 mb-1.5 flex items-center gap-1.5">
+                        <Award className="w-3.5 h-3.5 text-amber-500" />
+                        Insignias ({user.badges?.length || 0})
+                      </p>
+                      {(!user.badges || user.badges.length === 0) ? (
+                        <p className="text-[11px] text-slate-400">Sin insignias aún. Completa trayectos para ganarlas.</p>
+                      ) : (
+                        <div className="flex flex-wrap gap-1">
+                          {user.badges.map(b => (
+                            <span key={b.id} className="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-blue-50 text-blue-700 font-bold text-[10px]">
+                              <ShieldCheck className="w-3 h-3" /> {b.name}
+                            </span>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Mobile Actions */}
+                    <div className="flex flex-col gap-2 pt-1">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setCurrentTab('perfil');
+                          setIsMobileMenuOpen(false);
+                        }}
+                        className="w-full py-2.5 px-3 rounded-xl bg-blue-50 text-blue-700 font-bold text-xs flex items-center justify-center gap-1.5"
+                      >
+                        <ExternalLink className="w-3.5 h-3.5" />
+                        <span>Ver Pantalla Completa de Perfil</span>
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setIsMobileMenuOpen(false);
+                          onLogout();
+                        }}
+                        className="w-full py-2.5 px-3 rounded-xl text-rose-600 bg-rose-50 font-bold text-xs flex items-center justify-center gap-1.5"
+                      >
+                        <LogOut className="w-3.5 h-3.5" />
+                        <span>Cerrar Sesión</span>
+                      </button>
+                    </div>
+                  </div>
                 )}
-                <span>Mi Perfil ({user?.name || 'Usuario'})</span>
-              </button>
+              </div>
             ) : (
               <button
                 onClick={() => {
@@ -183,3 +295,4 @@ export const Navbar: React.FC<NavbarProps> = ({
     </header>
   );
 };
+

@@ -17,7 +17,7 @@ export const RegisterScreen: React.FC<RegisterScreenProps> = ({
   const [isRegisterMode, setIsRegisterMode] = useState(true);
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
-  const [city, setCity] = useState('Medellín');
+  const [city, setCity] = useState('');
   const [role, setRole] = useState('Ciclista Urbano');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -60,9 +60,9 @@ export const RegisterScreen: React.FC<RegisterScreenProps> = ({
         id: `usr_${Date.now()}`,
         name: name.trim(),
         role: role || 'Ciclista Urbano',
-        email: email.trim(),
+        email: email.trim().toLowerCase(),
         avatar: `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(name.trim())}`,
-        city: city.trim() || 'Medellín',
+        city: city.trim() || 'No especificada',
         memberSince: 'Septiembre 2026',
         kmTraveled: 0,
         safetyScore: 0,
@@ -74,17 +74,18 @@ export const RegisterScreen: React.FC<RegisterScreenProps> = ({
           co2SavedKg: 0,
           cyclingKm: 0,
         },
-        badges: [
-          {
-            id: 'badge_welcome',
-            name: 'Bienvenido a VIANOVA',
-            icon: 'ShieldCheck',
-            color: 'emerald',
-            description: 'Registro completado en la red inteligente de movilidad urbana.',
-            unlockedAt: 'Hoy',
-          },
-        ],
+        badges: [],
       };
+
+      try {
+        const stored = JSON.parse(localStorage.getItem('vianova_registered_users') || '[]');
+        const filtered = stored.filter((u: any) => u.email?.toLowerCase() !== email.trim().toLowerCase());
+        filtered.push({ ...newUser, password });
+        localStorage.setItem('vianova_registered_users', JSON.stringify(filtered));
+        localStorage.setItem('vianova_active_user', JSON.stringify(newUser));
+      } catch (err) {
+        console.error('Error guardando usuario en almacenamiento local', err);
+      }
 
       setTimeout(() => {
         setIsSubmitting(false);
@@ -94,30 +95,53 @@ export const RegisterScreen: React.FC<RegisterScreenProps> = ({
     } else {
       // Login mode
       setIsSubmitting(true);
-      const loggedUser: UserProfile = {
-        id: `usr_${Date.now()}`,
-        name: email.split('@')[0] || 'Usuario VIANOVA',
-        role: 'Ciudadano Activo',
-        email: email.trim(),
-        avatar: `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(email)}`,
-        city: city.trim() || 'Medellín',
-        memberSince: '2026',
-        kmTraveled: 120,
-        safetyScore: 0,
-        monthlyStats: {
-          routesCompleted: 5,
-          totalRoutesGoal: 20,
-          educationalModules: 2,
-          totalModulesGoal: 10,
-          co2SavedKg: 12.5,
-          cyclingKm: 34,
-        },
-        badges: [],
-      };
+
+      let loggedUser: UserProfile | null = null;
+      try {
+        const stored = JSON.parse(localStorage.getItem('vianova_registered_users') || '[]');
+        const matched = stored.find((u: any) => u.email?.toLowerCase() === email.trim().toLowerCase());
+        if (matched) {
+          const { password: _p, ...profile } = matched;
+          loggedUser = profile as UserProfile;
+        }
+      } catch (err) {
+        console.error('Error leyendo usuarios de almacenamiento local', err);
+      }
+
+      // If user logs in for the first time without prior registered profile:
+      // Absolutely 0 progress and no pre-populated fake data.
+      if (!loggedUser) {
+        loggedUser = {
+          id: `usr_${Date.now()}`,
+          name: email.split('@')[0].replace(/[._]/g, ' ') || 'Usuario VIANOVA',
+          role: 'Ciudadano',
+          email: email.trim().toLowerCase(),
+          avatar: `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(email)}`,
+          city: city.trim() || 'No especificada',
+          memberSince: 'Septiembre 2026',
+          kmTraveled: 0,
+          safetyScore: 0,
+          monthlyStats: {
+            routesCompleted: 0,
+            totalRoutesGoal: 20,
+            educationalModules: 0,
+            totalModulesGoal: 10,
+            co2SavedKg: 0,
+            cyclingKm: 0,
+          },
+          badges: [],
+        };
+      }
+
+      try {
+        localStorage.setItem('vianova_active_user', JSON.stringify(loggedUser));
+      } catch (err) {
+        console.error('Error guardando sesión activa', err);
+      }
 
       setTimeout(() => {
         setIsSubmitting(false);
-        onLoginSuccess(loggedUser);
+        onLoginSuccess(loggedUser!);
       }, 400);
     }
   };
@@ -236,7 +260,7 @@ export const RegisterScreen: React.FC<RegisterScreenProps> = ({
                     type="text"
                     value={city}
                     onChange={(e) => setCity(e.target.value)}
-                    placeholder="Ej. Medellín"
+                    placeholder="Ej. Medellín, Bogotá, Cali..."
                     className="w-full px-3 py-2.5 rounded-xl bg-[#f1f3f5] border border-transparent focus:border-blue-500 focus:bg-white focus:outline-none text-slate-800 text-xs font-medium transition-colors"
                   />
                 </div>

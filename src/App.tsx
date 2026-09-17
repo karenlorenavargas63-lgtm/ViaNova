@@ -16,30 +16,54 @@ import { Footer } from './components/Footer';
 
 export default function App() {
   const [currentTab, setCurrentTab] = useState<NavigationTab>('inicio');
-  const [user, setUser] = useState<UserProfile>(mockUserProfile);
-  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
+  const [user, setUser] = useState<UserProfile>(() => {
+    try {
+      const saved = localStorage.getItem('vianova_active_user');
+      if (saved) return JSON.parse(saved);
+    } catch (err) {}
+    return mockUserProfile;
+  });
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(() => {
+    try {
+      return !!localStorage.getItem('vianova_active_user');
+    } catch (err) {}
+    return false;
+  });
   const [isAuthModalOpen, setIsAuthModalOpen] = useState<boolean>(false);
 
   const handleRegisterSuccess = (newUser: UserProfile) => {
     setUser(newUser);
+    try {
+      localStorage.setItem('vianova_active_user', JSON.stringify(newUser));
+    } catch (err) {}
     setIsAuthenticated(true);
     setCurrentTab('inicio');
   };
 
   const handleLoginSuccess = (loggedUser: UserProfile) => {
     setUser(loggedUser);
+    try {
+      localStorage.setItem('vianova_active_user', JSON.stringify(loggedUser));
+    } catch (err) {}
     setIsAuthenticated(true);
     setIsAuthModalOpen(false);
     setCurrentTab('inicio');
   };
 
   const handleLogout = () => {
+    try {
+      localStorage.removeItem('vianova_active_user');
+    } catch (err) {}
+    setUser(mockUserProfile);
     setIsAuthenticated(false);
     setCurrentTab('inicio');
   };
 
   const handleUpdateUser = (updated: UserProfile) => {
     setUser(updated);
+    try {
+      localStorage.setItem('vianova_active_user', JSON.stringify(updated));
+    } catch (err) {}
   };
 
   // Require registration / authentication before entering the app
@@ -67,6 +91,7 @@ export default function App() {
         isAuthenticated={isAuthenticated}
         onOpenAuthModal={() => setIsAuthModalOpen(true)}
         onLogout={handleLogout}
+        onUpdateUser={handleUpdateUser}
       />
 
       {/* Primary Dynamic Main Content View */}

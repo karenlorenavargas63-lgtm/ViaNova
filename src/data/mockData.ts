@@ -1,57 +1,24 @@
 import { MobilityAlert, EducationCourse, SafetyCampaign, RouteOption, UserProfile, QuizQuestion } from '../types';
 
 export const mockUserProfile: UserProfile = {
-  id: 'usr_1',
-  name: 'Karen Lorena Vargas',
-  role: 'Ciclista Urbano',
-  email: 'karen.vargas@vianova.org',
-  avatar: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=400&auto=format&fit=crop&q=80',
-  city: 'Medellín',
-  memberSince: 'Marzo 2024',
-  kmTraveled: 1245,
+  id: 'usr_new',
+  name: '',
+  role: 'Ciudadano',
+  email: '',
+  avatar: '',
+  city: '',
+  memberSince: 'Septiembre 2026',
+  kmTraveled: 0,
   safetyScore: 0,
   monthlyStats: {
-    routesCompleted: 24,
-    totalRoutesGoal: 30,
-    educationalModules: 8,
+    routesCompleted: 0,
+    totalRoutesGoal: 20,
+    educationalModules: 0,
     totalModulesGoal: 10,
-    co2SavedKg: 42.5,
-    cyclingKm: 186
+    co2SavedKg: 0,
+    cyclingKm: 0
   },
-  badges: [
-    {
-      id: 'badge_1',
-      name: 'Ruta Segura',
-      icon: 'ShieldCheck',
-      color: 'emerald',
-      description: 'Completaste más de 20 recorridos sin reportar incidentes.',
-      unlockedAt: '12 Ene 2024'
-    },
-    {
-      id: 'badge_2',
-      name: 'Pionera',
-      icon: 'Trophy',
-      color: 'blue',
-      description: 'Una de las primeras 500 ciclistas activas en la red VIANOVA.',
-      unlockedAt: '15 Mar 2023'
-    },
-    {
-      id: 'badge_3',
-      name: 'Eco Master',
-      icon: 'Leaf',
-      color: 'teal',
-      description: 'Has ahorrado más de 40 kg de emisiones de CO2 este mes.',
-      unlockedAt: '02 Feb 2024'
-    },
-    {
-      id: 'badge_4',
-      name: 'Voz Ciudadana',
-      icon: 'BellRing',
-      color: 'amber',
-      description: 'Reportaste 5 alertas verificadas de tránsito u obras en tu zona.',
-      unlockedAt: '18 Feb 2024'
-    }
-  ]
+  badges: []
 };
 
 export const mockRouteOptions: RouteOption[] = [
@@ -204,7 +171,7 @@ export const mockCourses: EducationCourse[] = [
     level: 'Básico',
     category: 'Micromovilidad',
     duration: '2.5 hrs',
-    progress: 60,
+    progress: 0,
     recommended: true,
     lessonsCount: 6,
     image: 'https://images.unsplash.com/photo-1509099836639-18ba1795216d?w=600&auto=format&fit=crop&q=80',
@@ -223,7 +190,7 @@ export const mockCourses: EducationCourse[] = [
     level: 'Intermedio',
     category: 'Micromovilidad',
     duration: '45 min',
-    progress: 15,
+    progress: 0,
     recommended: false,
     lessonsCount: 4,
     image: 'https://images.unsplash.com/photo-1485965120184-e220f721d03e?w=600&auto=format&fit=crop&q=80',
@@ -280,7 +247,7 @@ export const mockCourses: EducationCourse[] = [
     level: 'Intermedio',
     category: 'Seguridad Peatonal',
     duration: '1.2 hrs',
-    progress: 40,
+    progress: 0,
     recommended: false,
     lessonsCount: 4,
     image: 'https://images.unsplash.com/photo-1516726817505-f5ed825624d8?w=600&auto=format&fit=crop&q=80',

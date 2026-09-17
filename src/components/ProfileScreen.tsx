@@ -54,14 +54,14 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
   // Form states
   const [editName, setEditName] = useState(user.name);
   const [editRole, setEditRole] = useState(user.role);
-  const [editCity, setEditCity] = useState(user.city || 'Medellín');
-  const [editAvatar, setEditAvatar] = useState(user.avatar || defaultAvatarImg);
+  const [editCity, setEditCity] = useState(user.city || '');
+  const [editAvatar, setEditAvatar] = useState(user.avatar || '');
 
   const handleOpenEditModal = () => {
     setEditName(user.name);
     setEditRole(user.role);
-    setEditCity(user.city || 'Medellín');
-    setEditAvatar(user.avatar || defaultAvatarImg);
+    setEditCity(user.city || '');
+    setEditAvatar(user.avatar || '');
     setIsEditing(true);
   };
 
@@ -191,13 +191,20 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
 
   const handleSaveProfile = (e: React.FormEvent) => {
     e.preventDefault();
-    onUpdateUser({
+    const updatedUser: UserProfile = {
       ...user,
       name: editName.trim() || user.name,
       role: editRole,
       city: editCity.trim() || user.city,
       avatar: editAvatar,
-    });
+    };
+    onUpdateUser(updatedUser);
+    try {
+      localStorage.setItem('vianova_active_user', JSON.stringify(updatedUser));
+      const stored = JSON.parse(localStorage.getItem('vianova_registered_users') || '[]');
+      const updatedList = stored.map((u: any) => u.email?.toLowerCase() === updatedUser.email?.toLowerCase() ? { ...u, ...updatedUser } : u);
+      localStorage.setItem('vianova_registered_users', JSON.stringify(updatedList));
+    } catch (err) {}
     setIsEditing(false);
   };
 
@@ -219,14 +226,14 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
     'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=300&auto=format&fit=crop&q=80'
   ];
 
-  // Calculated values based on user data
+  // Calculated values based on user data (no fake numbers, 0 for new user)
   const safetyScore = user.safetyScore ?? 0;
-  const routesCompleted = user.monthlyStats?.routesCompleted ?? 24;
-  const routesGoal = user.monthlyStats?.totalRoutesGoal ?? 30;
-  const modulesCompleted = user.monthlyStats?.educationalModules ?? 8;
+  const routesCompleted = user.monthlyStats?.routesCompleted ?? 0;
+  const routesGoal = user.monthlyStats?.totalRoutesGoal ?? 20;
+  const modulesCompleted = user.monthlyStats?.educationalModules ?? 0;
   const modulesGoal = user.monthlyStats?.totalModulesGoal ?? 10;
-  const routesPercentage = Math.min(100, Math.round((routesCompleted / Math.max(1, routesGoal)) * 100));
-  const modulesPercentage = Math.min(100, Math.round((modulesCompleted / Math.max(1, modulesGoal)) * 100));
+  const routesPercentage = routesGoal > 0 ? Math.min(100, Math.round((routesCompleted / routesGoal) * 100)) : 0;
+  const modulesPercentage = modulesGoal > 0 ? Math.min(100, Math.round((modulesCompleted / modulesGoal) * 100)) : 0;
 
   return (
     <div id="vianova-profile-view" className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 animate-fade-in font-sans">
@@ -352,15 +359,15 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
             <div className="space-y-3.5 w-full text-left text-sm text-slate-600">
               <div className="flex items-center gap-3">
                 <MapPin className="w-4 h-4 text-slate-400 shrink-0" />
-                <span className="truncate">{user.city || 'Medellín'}</span>
+                <span className="truncate">{user.city || 'No especificada'}</span>
               </div>
               <div className="flex items-center gap-3">
                 <Calendar className="w-4 h-4 text-slate-400 shrink-0" />
-                <span>Miembro desde {user.memberSince || 'Marzo 2024'}</span>
+                <span>Miembro desde {user.memberSince || 'Septiembre 2026'}</span>
               </div>
               <div className="flex items-center gap-3">
                 <Bike className="w-4 h-4 text-slate-400 shrink-0" />
-                <span>{(user.kmTraveled ?? 1245).toLocaleString()} km recorridos</span>
+                <span>{(user.kmTraveled ?? 0).toLocaleString()} km recorridos</span>
               </div>
             </div>
 
@@ -390,64 +397,47 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
 
           {/* Card 2: Insignias Card (Under User Profile Card) */}
           <div className="bg-white rounded-3xl p-6 sm:p-7 shadow-xs border border-slate-200/70">
-            <h3 className="text-lg font-bold text-[#0a193b] mb-4">
-              Insignias
-            </h3>
-
-            <div className="grid grid-cols-3 gap-3">
-              
-              {/* Insignia 1: Ruta Segura */}
-              <button
-                type="button"
-                onClick={() => setSelectedBadge({
-                  name: 'Ruta Segura',
-                  desc: 'Has completado múltiples trayectos sin incidentes reportados en la red vial.'
-                })}
-                className="p-3 rounded-2xl bg-[#f4f5f8] hover:bg-[#eceef2] flex flex-col items-center justify-center text-center transition-colors min-h-[96px] group"
-              >
-                <div className="w-7 h-7 mb-2 flex items-center justify-center text-slate-600 group-hover:scale-110 transition-transform">
-                  <ShieldCheck className="w-5 h-5 text-slate-600" />
-                </div>
-                <span className="text-[11px] font-medium text-slate-700 leading-tight">
-                  Ruta Segura
-                </span>
-              </button>
-
-              {/* Insignia 2: Pionera */}
-              <button
-                type="button"
-                onClick={() => setSelectedBadge({
-                  name: 'Pionera',
-                  desc: 'Formas parte de la comunidad inicial comprometida con la movilidad vial segura y sostenible.'
-                })}
-                className="p-3 rounded-2xl bg-[#f4f5f8] hover:bg-[#eceef2] flex flex-col items-center justify-center text-center transition-colors min-h-[96px] group"
-              >
-                <div className="w-7 h-7 mb-2 flex items-center justify-center text-[#0055d4] group-hover:scale-110 transition-transform">
-                  <Trophy className="w-5 h-5 text-[#0055d4]" />
-                </div>
-                <span className="text-[11px] font-medium text-slate-700 leading-tight">
-                  Pionera
-                </span>
-              </button>
-
-              {/* Insignia 3: Eco Master */}
-              <button
-                type="button"
-                onClick={() => setSelectedBadge({
-                  name: 'Eco Master',
-                  desc: 'Has contribuido a la reducción activa de emisiones de CO2 mediante transporte sostenible.'
-                })}
-                className="p-3 rounded-2xl bg-[#f4f5f8] hover:bg-[#eceef2] flex flex-col items-center justify-center text-center transition-colors min-h-[96px] group"
-              >
-                <div className="w-7 h-7 mb-2 flex items-center justify-center text-slate-400 group-hover:scale-110 transition-transform">
-                  <Leaf className="w-5 h-5 text-slate-400" />
-                </div>
-                <span className="text-[11px] font-medium text-slate-700 leading-tight">
-                  Eco Master
-                </span>
-              </button>
-
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-bold text-[#0a193b]">
+                Insignias
+              </h3>
+              <span className="text-xs font-bold text-slate-500 bg-slate-100 px-2.5 py-1 rounded-full">
+                {user.badges?.length || 0} desbloqueadas
+              </span>
             </div>
+
+            {(!user.badges || user.badges.length === 0) ? (
+              <div className="p-6 rounded-2xl bg-slate-50 border border-dashed border-slate-200 text-center flex flex-col items-center justify-center space-y-2">
+                <div className="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center text-slate-400">
+                  <Award className="w-5 h-5" />
+                </div>
+                <p className="text-xs font-bold text-slate-700">Sin insignias aún</p>
+                <p className="text-[11px] text-slate-500 max-w-[210px] leading-relaxed">
+                  Completa recorridos y módulos educativos para desbloquear tus primeros reconocimientos viales.
+                </p>
+              </div>
+            ) : (
+              <div className="grid grid-cols-3 gap-3">
+                {user.badges.map((badge) => (
+                  <button
+                    key={badge.id}
+                    type="button"
+                    onClick={() => setSelectedBadge({
+                      name: badge.name,
+                      desc: badge.description
+                    })}
+                    className="p-3 rounded-2xl bg-[#f4f5f8] hover:bg-[#eceef2] flex flex-col items-center justify-center text-center transition-colors min-h-[96px] group"
+                  >
+                    <div className="w-7 h-7 mb-2 flex items-center justify-center text-[#0055d4] group-hover:scale-110 transition-transform">
+                      <ShieldCheck className="w-5 h-5 text-[#0055d4]" />
+                    </div>
+                    <span className="text-[11px] font-medium text-slate-700 leading-tight">
+                      {badge.name}
+                    </span>
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
 
         </div>
