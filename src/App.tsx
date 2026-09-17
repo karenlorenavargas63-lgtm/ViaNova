@@ -13,65 +13,51 @@ import { ContactScreen } from './components/ContactScreen';
 import { RegisterScreen } from './components/RegisterScreen';
 import { AuthModal } from './components/AuthModal';
 import { Footer } from './components/Footer';
+import {
+  getInitialSession,
+  saveActiveSession,
+  clearActiveSession,
+  deleteAccountSession,
+  getSavedTab,
+  saveCurrentTab
+} from './utils/session';
 
 export default function App() {
-  const [currentTab, setCurrentTab] = useState<NavigationTab>('inicio');
-  const [user, setUser] = useState<UserProfile>(() => {
-    try {
-      const saved = localStorage.getItem('vianova_active_user');
-      if (saved) return JSON.parse(saved);
-    } catch (err) {}
-    return mockUserProfile;
-  });
-  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(() => {
-    try {
-      return !!localStorage.getItem('vianova_active_user');
-    } catch (err) {}
-    return false;
-  });
+  const initialSession = getInitialSession();
+  const [currentTab, setCurrentTabState] = useState<NavigationTab>(() => getSavedTab() as NavigationTab);
+  const [user, setUser] = useState<UserProfile>(initialSession.user);
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(initialSession.isAuthenticated);
   const [isAuthModalOpen, setIsAuthModalOpen] = useState<boolean>(false);
+
+  const setCurrentTab = (tab: NavigationTab) => {
+    setCurrentTabState(tab);
+    saveCurrentTab(tab);
+  };
 
   const handleRegisterSuccess = (newUser: UserProfile) => {
     setUser(newUser);
-    try {
-      localStorage.setItem('vianova_active_user', JSON.stringify(newUser));
-    } catch (err) {}
+    saveActiveSession(newUser);
     setIsAuthenticated(true);
     setCurrentTab('inicio');
   };
 
   const handleLoginSuccess = (loggedUser: UserProfile) => {
     setUser(loggedUser);
-    try {
-      localStorage.setItem('vianova_active_user', JSON.stringify(loggedUser));
-    } catch (err) {}
+    saveActiveSession(loggedUser);
     setIsAuthenticated(true);
     setIsAuthModalOpen(false);
     setCurrentTab('inicio');
   };
 
   const handleLogout = () => {
-    try {
-      localStorage.removeItem('vianova_active_user');
-    } catch (err) {}
+    clearActiveSession();
     setUser(mockUserProfile);
     setIsAuthenticated(false);
     setCurrentTab('inicio');
   };
 
   const handleDeleteAccount = () => {
-    try {
-      const active = localStorage.getItem('vianova_active_user');
-      if (active) {
-        const activeObj = JSON.parse(active);
-        const stored = JSON.parse(localStorage.getItem('vianova_registered_users') || '[]');
-        const filtered = stored.filter((u: any) => u.email?.toLowerCase() !== activeObj.email?.toLowerCase());
-        localStorage.setItem('vianova_registered_users', JSON.stringify(filtered));
-      }
-      localStorage.removeItem('vianova_active_user');
-    } catch (err) {
-      console.error('Error eliminando cuenta', err);
-    }
+    deleteAccountSession(user?.email);
     setUser(mockUserProfile);
     setIsAuthenticated(false);
     setCurrentTab('inicio');
@@ -79,9 +65,7 @@ export default function App() {
 
   const handleUpdateUser = (updated: UserProfile) => {
     setUser(updated);
-    try {
-      localStorage.setItem('vianova_active_user', JSON.stringify(updated));
-    } catch (err) {}
+    saveActiveSession(updated);
   };
 
   // Require registration / authentication before entering the app

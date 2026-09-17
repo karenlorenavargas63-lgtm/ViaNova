@@ -3,6 +3,7 @@ import { Mail, Lock, User, ArrowRight, Eye, EyeOff, ShieldCheck, CheckCircle2 } 
 import transitHubImg from '../assets/images/smart_transit_hub_1788276142198.jpg';
 import { UserProfile } from '../types';
 import { Logo } from './Logo';
+import { saveActiveSession } from '../utils/session';
 
 interface RegisterScreenProps {
   onRegisterSuccess: (user: UserProfile) => void;
@@ -82,10 +83,12 @@ export const RegisterScreen: React.FC<RegisterScreenProps> = ({
         const filtered = stored.filter((u: any) => u.email?.toLowerCase() !== email.trim().toLowerCase());
         filtered.push({ ...newUser, password });
         localStorage.setItem('vianova_registered_users', JSON.stringify(filtered));
-        localStorage.setItem('vianova_active_user', JSON.stringify(newUser));
+        sessionStorage.setItem('vianova_registered_users', JSON.stringify(filtered));
       } catch (err) {
         console.error('Error guardando usuario en almacenamiento local', err);
       }
+
+      saveActiveSession(newUser);
 
       setTimeout(() => {
         setIsSubmitting(false);
@@ -133,11 +136,7 @@ export const RegisterScreen: React.FC<RegisterScreenProps> = ({
         };
       }
 
-      try {
-        localStorage.setItem('vianova_active_user', JSON.stringify(loggedUser));
-      } catch (err) {
-        console.error('Error guardando sesión activa', err);
-      }
+      saveActiveSession(loggedUser);
 
       setTimeout(() => {
         setIsSubmitting(false);

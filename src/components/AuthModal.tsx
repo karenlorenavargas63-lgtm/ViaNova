@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { UserProfile } from '../types';
+import { saveActiveSession } from '../utils/session';
 import { 
   Lock, 
   Mail, 
@@ -95,9 +96,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
       }
     }
 
-    try {
-      localStorage.setItem('vianova_active_user', JSON.stringify(userToLog));
-    } catch (err) {}
+    saveActiveSession(userToLog);
 
     onLoginSuccess(userToLog);
     onClose();

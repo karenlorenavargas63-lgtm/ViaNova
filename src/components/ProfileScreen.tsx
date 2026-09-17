@@ -1,5 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { NavigationTab, UserProfile } from '../types';
+import { saveActiveSession } from '../utils/session';
 import { 
   MapPin, 
   Calendar, 
@@ -202,11 +203,12 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
       avatar: editAvatar,
     };
     onUpdateUser(updatedUser);
+    saveActiveSession(updatedUser);
     try {
-      localStorage.setItem('vianova_active_user', JSON.stringify(updatedUser));
       const stored = JSON.parse(localStorage.getItem('vianova_registered_users') || '[]');
       const updatedList = stored.map((u: any) => u.email?.toLowerCase() === updatedUser.email?.toLowerCase() ? { ...u, ...updatedUser } : u);
       localStorage.setItem('vianova_registered_users', JSON.stringify(updatedList));
+      sessionStorage.setItem('vianova_registered_users', JSON.stringify(updatedList));
     } catch (err) {}
     setIsEditing(false);
   };
