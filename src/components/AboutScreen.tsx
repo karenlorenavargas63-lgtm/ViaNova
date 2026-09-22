@@ -11,7 +11,7 @@ import {
   CheckCircle2, 
   Target
 } from 'lucide-react';
-import intersectionImg from '../assets/images/urban_mobility_intersection_1788442809042.jpg';
+import { AnimatedUrbanMobility } from './AnimatedUrbanMobility';
 
 interface AboutScreenProps {
   setCurrentTab: (tab: NavigationTab) => void;
@@ -57,15 +57,9 @@ export const AboutScreen: React.FC<AboutScreenProps> = ({ setCurrentTab }) => {
               </div>
             </div>
 
-            {/* Right Image: Modern Smart City Intersection with Bike Lanes */}
+            {/* Right: Modern Smart City Intersection with Animated Cyclists & Pedestrians */}
             <div className="lg:col-span-6">
-              <div className="rounded-3xl overflow-hidden shadow-lg border border-slate-200/70 bg-slate-100">
-                <img
-                  src={intersectionImg}
-                  alt="Intersección urbana inteligente con ciclovía protegida"
-                  className="w-full h-auto object-cover aspect-[4/3] transform hover:scale-[1.01] transition-transform duration-500"
-                />
-              </div>
+              <AnimatedUrbanMobility />
             </div>
 
           </div>
