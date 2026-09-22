@@ -16,7 +16,8 @@ import {
   Plus, 
   Eye,
   AlertOctagon,
-  ShieldCheck
+  ShieldCheck,
+  ArrowRight
 } from 'lucide-react';
 import obrasMonitorImg from '../assets/images/obras_asfalto_monitor_1788438254687.jpg';
 import redAlertImg from '../assets/images/red_alert_gradient_1788438272797.jpg';
@@ -314,36 +315,6 @@ export const SafetyScreen: React.FC<SafetyScreenProps> = ({ onNavigateToMapWithA
                     <p className="text-slate-600 text-xs sm:text-[13px] leading-relaxed line-clamp-3">
                       {card.description}
                     </p>
-
-                    {/* Casilla: Recomendaciones Clave Preview with Logos */}
-                    <div className="mt-4 pt-3.5 border-t border-slate-100">
-                      <div className="flex items-center justify-between mb-2">
-                        <span className="text-[11px] font-bold text-[#0a193b] flex items-center gap-1.5">
-                          <span className="w-2 h-2 rounded-full bg-[#0066ff]"></span>
-                          Recomendaciones Clave
-                        </span>
-                        <span className="text-[10px] font-semibold text-[#0066ff] hover:underline cursor-pointer" onClick={() => setSelectedGuide(card)}>
-                          Ver logos oficiales →
-                        </span>
-                      </div>
-
-                      {/* 4 Mini Logo Casillas */}
-                      <div className="grid grid-cols-4 gap-1.5">
-                        {(card.recommendations || []).slice(0, 4).map((rec: KeyRecommendation, idx: number) => (
-                          <div
-                            key={rec.id || idx}
-                            onClick={() => setSelectedGuide(card)}
-                            className="cursor-pointer"
-                          >
-                            <RecommendationLogo
-                              recommendation={rec}
-                              size="sm"
-                              index={idx}
-                            />
-                          </div>
-                        ))}
-                      </div>
-                    </div>
                   </div>
                 </div>
 
@@ -351,9 +322,10 @@ export const SafetyScreen: React.FC<SafetyScreenProps> = ({ onNavigateToMapWithA
                 <div className="p-6 sm:p-7 pt-0">
                   <button
                     onClick={() => setSelectedGuide(card)}
-                    className="w-full sm:w-auto px-5 py-2.5 rounded-xl border border-[#0a193b] text-[#0a193b] hover:bg-[#0a193b] hover:text-white text-xs font-bold transition-all duration-200 cursor-pointer flex items-center justify-center gap-2"
+                    className="w-full sm:w-auto px-5 py-2.5 rounded-xl bg-[#0a193b] text-white hover:bg-[#0055d4] text-xs font-bold transition-all duration-200 cursor-pointer flex items-center justify-center gap-2 shadow-xs"
                   >
-                    <span>Aprender más y ver recomendaciones</span>
+                    <span>Aprender más y ver símbolos clave</span>
+                    <ArrowRight className="w-3.5 h-3.5" />
                   </button>
                 </div>
               </div>
@@ -567,17 +539,17 @@ export const SafetyScreen: React.FC<SafetyScreenProps> = ({ onNavigateToMapWithA
 
               <p className="text-sm text-slate-600 leading-relaxed">{selectedGuide.description}</p>
 
-              {/* Casilla: Recomendaciones Clave con Logos Oficiales para cada recomendación */}
+              {/* Casilla: Recomendaciones Clave con Símbolos Viales Oficiales */}
               <div className="space-y-4 bg-gradient-to-b from-slate-50 to-blue-50/20 p-4 sm:p-5 rounded-2xl border border-slate-200/90 shadow-2xs">
                 <div className="flex items-center justify-between border-b border-slate-200/80 pb-2.5">
                   <div className="flex items-center gap-2">
                     <span className="w-2.5 h-2.5 rounded-full bg-[#0066ff] animate-pulse"></span>
                     <h4 className="text-xs sm:text-sm font-black uppercase tracking-wider text-[#0066ff]">
-                      Recomendaciones Clave
+                      Recomendaciones Clave • Símbolos Viales
                     </h4>
                   </div>
-                  <span className="text-[11px] font-bold text-slate-600 bg-white px-2.5 py-1 rounded-lg border border-slate-200/90 shadow-2xs">
-                    {guideRecs.length} recomendaciones con logos
+                  <span className="text-[11px] font-bold text-slate-700 bg-white px-2.5 py-1 rounded-lg border border-slate-200/90 shadow-2xs">
+                    {guideRecs.length} símbolos oficiales
                   </span>
                 </div>
 

@@ -219,46 +219,45 @@ export const RecommendationLogo: React.FC<RecommendationLogoProps> = ({
   // Large logo (for recommendation detail modal)
   return (
     <div
-      className={`relative h-28 sm:h-26 w-full sm:w-36 rounded-2xl border shrink-0 flex flex-col items-center justify-between p-2.5 select-none transition-all duration-200 shadow-2xs ${
+      className={`relative h-32 sm:h-30 w-full sm:w-36 rounded-2xl border-2 shrink-0 flex flex-col items-center justify-between p-2.5 select-none transition-all duration-200 shadow-xs ${
         isDark
           ? `${theme.darkBg} ${theme.darkBorder}`
           : `${theme.bg} ${theme.border}`
       } ${className}`}
     >
-      {/* Top Header Row with Logo Badge and Number */}
+      {/* Top Header Row: Símbolo Badge and Index */}
       <div className="w-full flex items-center justify-between gap-1">
         <span
-          className={`text-[8px] sm:text-[8.5px] font-black uppercase tracking-wider px-2 py-0.5 rounded-md shadow-2xs truncate max-w-[80%] ${
-            isDark ? 'bg-black/60 text-white border border-white/10' : `${theme.badgeBg} ${theme.badgeText}`
+          className={`text-[8.5px] font-black uppercase tracking-wider px-2 py-0.5 rounded-md shadow-2xs truncate max-w-[82%] ${
+            isDark ? 'bg-black/70 text-cyan-300 border border-cyan-500/30' : `${theme.badgeBg} ${theme.badgeText}`
           }`}
         >
-          {recommendation.tag || code}
+          {recommendation.tag || 'SÍMBOLO'}
         </span>
-        <span className={`text-[10px] font-black ${isDark ? 'text-slate-400' : 'text-slate-400'}`}>
-          0{index + 1}
+        <span className={`text-[10px] font-black ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>
+          #{index + 1}
         </span>
       </div>
 
-      {/* Central Geometric Emblem with Logo Icon */}
-      <div className="my-auto flex flex-col items-center justify-center relative">
-        {/* Emblem outer ring */}
+      {/* Central Geometric Traffic Symbol Emblem */}
+      <div className="my-auto flex flex-col items-center justify-center">
         <div
-          className={`w-12 h-12 rounded-2xl flex items-center justify-center shadow-xs border transition-transform duration-300 hover:scale-105 ${
+          className={`w-14 h-14 rounded-2xl flex items-center justify-center border-2 transition-transform duration-300 hover:scale-105 shadow-sm ${
             isDark
-              ? 'bg-slate-900/90 border-white/10'
-              : 'bg-white border-slate-200/80 shadow-2xs'
+              ? 'bg-slate-900/90 border-cyan-400/30'
+              : 'bg-white border-slate-300/80 shadow-xs'
           }`}
         >
           <IconComponent
-            className={`w-6 h-6 stroke-[2.2] ${isDark ? theme.darkText : theme.text}`}
+            className={`w-7 h-7 stroke-[2.4] ${isDark ? theme.darkText : theme.text}`}
           />
         </div>
       </div>
 
-      {/* Bottom Road Safety Logo Label */}
+      {/* Bottom Road Safety Symbol Code Label */}
       <div className="w-full text-center">
         <span
-          className={`text-[9px] font-black uppercase tracking-wider block truncate ${
+          className={`text-[9.5px] font-black uppercase tracking-wider block truncate ${
             isDark ? theme.darkText : theme.text
           }`}
         >

@@ -224,20 +224,20 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ setCurrentTab }) => {
           {/* Card: Campañas Viales */}
           <div 
             onClick={() => setCurrentTab('campanas')}
-            className="group cursor-pointer rounded-3xl bg-white border border-slate-200/80 hover:border-cyan-500/50 p-6 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl shadow-sm flex flex-col justify-between"
+            className="group cursor-pointer rounded-3xl bg-white border border-slate-200/90 hover:border-cyan-500 p-6 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl shadow-sm flex flex-col justify-between"
           >
             <div className="space-y-4">
               <div className="w-12 h-12 rounded-2xl bg-cyan-50 border border-cyan-100 flex items-center justify-center text-cyan-600 group-hover:bg-cyan-600 group-hover:text-white transition-all">
                 <Sparkles className="w-6 h-6" />
               </div>
-              <h3 className="text-lg font-bold text-[#0b1b3d] group-hover:text-cyan-600 transition-colors">
+              <h3 className="text-xl font-black text-slate-950 group-hover:text-cyan-700 transition-colors">
                 Campañas Ciudadanas
               </h3>
-              <p className="text-xs text-slate-500 leading-relaxed">
+              <p className="text-sm text-slate-800 leading-relaxed font-normal">
                 Iniciativas de concientización para peatones, ciclistas, conductores y zonas escolares.
               </p>
             </div>
-            <span className="mt-6 inline-flex items-center gap-1 text-xs font-semibold text-cyan-600">
+            <span className="mt-6 inline-flex items-center gap-1.5 text-sm font-bold text-cyan-700 group-hover:text-cyan-800">
               Conocer campañas <ChevronRight className="w-4 h-4" />
             </span>
           </div>

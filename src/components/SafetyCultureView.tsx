@@ -252,33 +252,6 @@ export const SafetyCultureView: React.FC<SafetyCultureViewProps> = ({
                   <p className="text-xs sm:text-sm text-slate-600 leading-relaxed line-clamp-3">
                     {topic.summary}
                   </p>
-
-                  {/* Casilla: Recomendaciones Clave Preview with Logos */}
-                  <div className="pt-3 border-t border-slate-100">
-                    <div className="flex items-center justify-between mb-2">
-                      <span className="text-[11px] font-bold text-slate-800 flex items-center gap-1.5">
-                        <span className="w-1.5 h-1.5 rounded-full bg-blue-600"></span>
-                        Recomendaciones Clave
-                      </span>
-                      <span className="text-[10px] font-semibold text-blue-600">4 logos oficiales</span>
-                    </div>
-
-                    <div className="grid grid-cols-4 gap-1.5">
-                      {getRecommendationsForTopic(topic.id).slice(0, 4).map((rec: KeyRecommendation, idx: number) => (
-                        <div
-                          key={rec.id || idx}
-                          onClick={() => setSelectedTopic(topic)}
-                          className="cursor-pointer"
-                        >
-                          <RecommendationLogo
-                            recommendation={rec}
-                            size="sm"
-                            index={idx}
-                          />
-                        </div>
-                      ))}
-                    </div>
-                  </div>
                 </div>
               </div>
 
@@ -287,9 +260,9 @@ export const SafetyCultureView: React.FC<SafetyCultureViewProps> = ({
                 <button
                   id={`btn-learn-more-${topic.id}`}
                   onClick={() => setSelectedTopic(topic)}
-                  className="w-full py-2.5 px-4 bg-slate-50 hover:bg-blue-600 text-slate-700 hover:text-white rounded-xl text-xs font-bold border border-slate-200 hover:border-transparent flex items-center justify-center gap-2 transition duration-150 cursor-pointer"
+                  className="w-full py-2.5 px-4 bg-slate-900 hover:bg-blue-600 text-white rounded-xl text-xs font-bold shadow-xs flex items-center justify-center gap-2 transition duration-150 cursor-pointer"
                 >
-                  <span>Aprender más</span>
+                  <span>Aprender más y ver símbolos clave</span>
                   <ArrowRight className="w-3.5 h-3.5" />
                 </button>
               </div>
@@ -373,11 +346,11 @@ export const SafetyCultureView: React.FC<SafetyCultureViewProps> = ({
                 <div className="flex items-center gap-2">
                   <span className="w-2.5 h-2.5 rounded-full bg-blue-600 animate-pulse"></span>
                   <h4 className="text-xs sm:text-sm font-black uppercase tracking-wider text-blue-600">
-                    Recomendaciones Clave
+                    Recomendaciones Clave • Símbolos Viales
                   </h4>
                 </div>
-                <span className="text-[11px] font-bold text-slate-600 bg-white px-2.5 py-1 rounded-lg border border-slate-200">
-                  {getRecommendationsForTopic(selectedTopic.id).length} recomendaciones con logos
+                <span className="text-[11px] font-bold text-slate-700 bg-white px-2.5 py-1 rounded-lg border border-slate-200">
+                  {getRecommendationsForTopic(selectedTopic.id).length} símbolos oficiales
                 </span>
               </div>
 
