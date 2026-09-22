@@ -18,6 +18,10 @@ export interface UserProfile {
   country?: string;
   countryCode?: string;
   countryFlag?: string;
+  phone?: string;
+  documentType?: string;
+  documentNumber?: string;
+  vehiclePlate?: string;
   memberSince: string;
   kmTraveled: number;
   safetyScore: number;

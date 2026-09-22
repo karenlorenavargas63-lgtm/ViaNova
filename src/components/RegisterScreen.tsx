@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { Mail, Lock, User, ArrowRight, Eye, EyeOff, ShieldCheck, CheckCircle2 } from 'lucide-react';
-import transitHubImg from '../assets/images/smart_transit_hub_1788276142198.jpg';
+import { Mail, Lock, User, ArrowRight, Eye, EyeOff } from 'lucide-react';
+import { CrashHeroAnimation } from './CrashHeroAnimation';
 import { UserProfile } from '../types';
 import { Logo } from './Logo';
 import { saveActiveSession } from '../utils/session';
@@ -14,7 +14,6 @@ export const RegisterScreen: React.FC<RegisterScreenProps> = ({
   onRegisterSuccess, 
   onLoginSuccess 
 }) => {
-  // Default to Registration mode as requested ("que cuando cualquier persona ingrese le pida un registro antes")
   const [isRegisterMode, setIsRegisterMode] = useState(true);
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
@@ -111,8 +110,6 @@ export const RegisterScreen: React.FC<RegisterScreenProps> = ({
         console.error('Error leyendo usuarios de almacenamiento local', err);
       }
 
-      // If user logs in for the first time without prior registered profile:
-      // Absolutely 0 progress and no pre-populated fake data.
       if (!loggedUser) {
         loggedUser = {
           id: `usr_${Date.now()}`,
@@ -148,26 +145,32 @@ export const RegisterScreen: React.FC<RegisterScreenProps> = ({
   return (
     <div className="min-h-screen w-full bg-white flex flex-col lg:flex-row text-slate-800">
       
-      {/* Left Visual Column matching VIANOVA style */}
-      <div className="relative w-full lg:w-1/2 min-h-[260px] sm:min-h-[380px] lg:min-h-screen bg-slate-900 overflow-hidden flex flex-col justify-end p-6 sm:p-10">
-        <img
-          src={transitHubImg}
-          alt="Centro de Movilidad VIANOVA"
-          className="absolute inset-0 w-full h-full object-cover object-center brightness-95"
-        />
-        <div className="absolute inset-0 bg-gradient-to-t from-slate-950/85 via-slate-950/25 to-transparent lg:bg-gradient-to-r lg:from-transparent lg:via-transparent lg:to-slate-950/40"></div>
-
-        {/* Informative overlay card */}
-        <div className="relative z-10 p-5 rounded-2xl bg-black/40 backdrop-blur-xl border border-white/20 text-white max-w-md hidden sm:block">
-          <div className="flex items-center gap-2 text-blue-400 text-xs font-bold uppercase tracking-wider mb-2">
-            <span className="w-2.5 h-2.5 rounded-full bg-blue-400 animate-pulse"></span>
-            <span>Acceso a la Red Inteligente VIANOVA</span>
+      {/* Left Visual Column: Cinematic Crash Animation & Futuristic ViaNova Reveal */}
+      <div className="relative w-full lg:w-1/2 min-h-[420px] lg:min-h-screen bg-slate-950 overflow-hidden flex flex-col justify-between p-4 sm:p-6 lg:p-8 border-b lg:border-b-0 lg:border-r border-slate-800">
+        {/* Top Header inside Left Visual */}
+        <div className="flex items-center justify-between z-10 mb-2">
+          <div className="flex items-center gap-2 px-3 py-1 rounded-full bg-slate-900/90 border border-sky-500/30 text-sky-300 text-xs font-bold tracking-wide">
+            <span className="w-2 h-2 rounded-full bg-[#00ff88] animate-ping" />
+            <span>Plataforma de Movilidad Urbana Inteligente</span>
           </div>
-          <p className="text-base font-bold text-white mb-1">
-            Tu portal de movilidad segura y rutas inteligentes
-          </p>
+          <span className="text-[11px] font-mono text-slate-400">
+            Full HD • 60 FPS
+          </span>
+        </div>
+
+        {/* The Animated Scene */}
+        <div className="w-full my-auto py-2">
+          <CrashHeroAnimation variant="full" />
+        </div>
+
+        {/* Informative Safety Banner */}
+        <div className="relative z-10 p-4 rounded-2xl bg-slate-900/90 backdrop-blur-xl border border-sky-500/20 text-white shadow-xl">
+          <div className="flex items-center gap-2 text-[#00ff88] text-xs font-bold uppercase tracking-wider mb-1">
+            <span className="w-2 h-2 rounded-full bg-[#00ff88] animate-pulse"></span>
+            <span>Prevención Vial y Rutas Inteligentes VIANOVA</span>
+          </div>
           <p className="text-xs text-slate-300 leading-relaxed">
-            Regístrate para planificar trayectos en tiempo real en Medellín, recibir alertas viales instantáneas y monitorear tu impacto ambiental.
+            El exceso de velocidad y la invasión de carril provocan miles de siniestros evitables. Regístrate para acceder al sistema inteligente de navegación segura, alertas en tiempo real y asistencia vial.
           </p>
         </div>
       </div>
@@ -369,7 +372,7 @@ export const RegisterScreen: React.FC<RegisterScreenProps> = ({
               type="submit"
               disabled={isSubmitting}
               id="auth-submit-action-btn"
-              className="w-full py-4 rounded-xl bg-[#0057d9] hover:bg-[#0047b3] disabled:bg-blue-400 text-white font-bold text-sm shadow-lg shadow-blue-500/25 transition-all duration-200 hover:scale-[1.01] flex items-center justify-center gap-2 mt-3"
+              className="w-full py-4 rounded-xl bg-[#0057d9] hover:bg-[#0047b3] disabled:bg-blue-400 text-white font-bold text-sm shadow-lg shadow-blue-500/25 transition-all duration-200 hover:scale-[1.01] flex items-center justify-center gap-2 mt-3 cursor-pointer"
             >
               <span>
                 {isSubmitting
@@ -392,7 +395,7 @@ export const RegisterScreen: React.FC<RegisterScreenProps> = ({
                   setIsRegisterMode(!isRegisterMode);
                   setErrorMessage('');
                 }}
-                className="font-bold text-[#0057d9] hover:underline ml-1"
+                className="font-bold text-[#0057d9] hover:underline ml-1 cursor-pointer"
               >
                 {isRegisterMode ? 'Iniciar sesión aquí' : 'Registrarse ahora'}
               </button>

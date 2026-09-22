@@ -59,9 +59,9 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ setCurrentTab }) => {
             </div>
           </div>
 
-          {/* Right Column: Animated Crash Simulation with Decorated ViaNova Reveal */}
+          {/* Right Column: ViaNova Visual Showcase with Highway Background */}
           <div className="lg:col-span-6 relative">
-            <CrashHeroAnimation />
+            <CrashHeroAnimation variant="hero" />
           </div>
 
         </div>
