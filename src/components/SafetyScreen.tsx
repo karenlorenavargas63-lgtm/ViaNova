@@ -24,7 +24,7 @@ import redAlertImg from '../assets/images/red_alert_gradient_1788438272797.jpg';
 
 // Thematic Safety Images for the 6 Culture Cards
 import signsImg from '../assets/images/traffic_signs_chart_1790078148438.jpg';
-import rulesImg from '../assets/images/traffic_rules_regulations_1788875981998.jpg';
+import rulesImg from '../assets/images/traffic_rules_signs_grid_1790078289383.jpg';
 import preventionImg from '../assets/images/accident_prevention_drive_1788875999075.jpg';
 import responsibleDrivingImg from '../assets/images/responsible_car_driving_1788876017243.jpg';
 import motorcyclistImg from '../assets/images/motorcyclist_safety_helmet_1788876032377.jpg';
@@ -286,7 +286,7 @@ export const SafetyScreen: React.FC<SafetyScreenProps> = ({ onNavigateToMapWithA
                       src={card.image}
                       alt={card.title}
                       referrerPolicy="no-referrer"
-                      className={`w-full h-full ${card.id === 'senales' ? 'object-contain bg-white p-1.5' : 'object-cover'} group-hover:scale-105 transition-transform duration-500 ease-out`}
+                      className={`w-full h-full ${card.id === 'senales' || card.id === 'normas' ? 'object-contain bg-white p-1.5' : 'object-cover'} group-hover:scale-105 transition-transform duration-500 ease-out`}
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-black/10" />
                     
@@ -528,7 +528,7 @@ export const SafetyScreen: React.FC<SafetyScreenProps> = ({ onNavigateToMapWithA
                     src={selectedGuide.image}
                     alt={selectedGuide.title}
                     referrerPolicy="no-referrer"
-                    className={`w-full h-full ${selectedGuide.id === 'senales' ? 'object-contain bg-white p-2' : 'object-cover'}`}
+                    className={`w-full h-full ${selectedGuide.id === 'senales' || selectedGuide.id === 'normas' ? 'object-contain bg-white p-2' : 'object-cover'}`}
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent pointer-events-none" />
                   <span className="absolute bottom-3 left-3.5 text-xs font-bold text-white bg-black/60 backdrop-blur-md px-3 py-1 rounded-lg border border-white/20">

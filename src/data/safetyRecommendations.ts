@@ -1,7 +1,7 @@
 // Dedicated rich data for Key Recommendations (Recomendaciones Clave) with realistic imagery
 
 import signsImg from '../assets/images/traffic_signs_chart_1790078148438.jpg';
-import rulesImg from '../assets/images/traffic_rules_regulations_1788875981998.jpg';
+import rulesImg from '../assets/images/traffic_rules_signs_grid_1790078289383.jpg';
 import preventionImg from '../assets/images/accident_prevention_drive_1788875999075.jpg';
 import responsibleDrivingImg from '../assets/images/responsible_car_driving_1788876017243.jpg';
 import motorcyclistImg from '../assets/images/motorcyclist_safety_helmet_1788876032377.jpg';
