@@ -1,6 +1,7 @@
 import React from 'react';
 import { NavigationTab } from '../types';
 import { CrashHeroAnimation } from './CrashHeroAnimation';
+import smartCityHeroImg from '../assets/images/vianova_smart_city_hero_1788275485184.jpg';
 import { 
   ArrowRight, 
   MapPin, 
@@ -42,7 +43,14 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ setCurrentTab }) => {
             <div className="flex flex-wrap items-center gap-4 pt-2">
               <button
                 id="hero-explore-btn"
-                onClick={() => setCurrentTab('rutas')}
+                onClick={() => {
+                  const el = document.getElementById('seccion-explora-mas');
+                  if (el) {
+                    el.scrollIntoView({ behavior: 'smooth' });
+                  } else {
+                    setCurrentTab('rutas');
+                  }
+                }}
                 className="group inline-flex items-center justify-center gap-2 px-8 py-4 rounded-2xl bg-[#0057d9] hover:bg-[#0047b3] text-white font-bold text-base shadow-lg shadow-blue-500/25 transition-all duration-200 hover:scale-[1.02]"
               >
                 <span>Explorar VIANOVA</span>
@@ -59,9 +67,34 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ setCurrentTab }) => {
             </div>
           </div>
 
-          {/* Right Column: ViaNova Visual Showcase with Highway Background */}
+          {/* Right Column: Movilidad Urbana Inteligente Visual */}
           <div className="lg:col-span-6 relative">
-            <CrashHeroAnimation variant="hero" />
+            <div className="relative rounded-[2.5rem] overflow-hidden shadow-2xl border-2 border-slate-200/80 bg-slate-900 group">
+              <img
+                src={smartCityHeroImg}
+                alt="Movilidad Inteligente para tu ciudad - VIANOVA"
+                className="w-full h-[380px] sm:h-[440px] object-cover opacity-95 group-hover:scale-105 transition-transform duration-700"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-black/20" />
+
+              {/* Floating Smart Badge overlay */}
+              <div className="absolute bottom-6 left-6 right-6 p-4 rounded-2xl bg-white/95 backdrop-blur-md shadow-xl border border-white/60">
+                <div className="flex items-center gap-3.5">
+                  <div className="w-11 h-11 rounded-xl bg-[#0057d9] text-white flex items-center justify-center shadow-md flex-shrink-0">
+                    <ShieldCheck className="w-6 h-6" />
+                  </div>
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <h4 className="text-sm font-bold text-slate-900">Seguridad y Movilidad Vial</h4>
+                      <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-emerald-100 text-emerald-700">
+                        Activo
+                      </span>
+                    </div>
+                    <p className="text-xs text-slate-500 font-medium">Red inteligente de monitoreo en tiempo real para Medellín</p>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
 
         </div>
@@ -149,11 +182,19 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ setCurrentTab }) => {
         </div>
       </section>
 
-      {/* Feature Navigation Bento Grid */}
-      <section className="space-y-6 pt-4">
+      {/* Feature Navigation Bento Grid with CrashHeroAnimation */}
+      <section id="seccion-explora-mas" className="space-y-6 pt-4 scroll-mt-6">
         <div className="space-y-1">
           <span className="text-xs uppercase tracking-widest text-[#0057d9] font-bold">Ecosistema Completo</span>
-          <h2 className="text-2xl sm:text-3xl font-extrabold text-[#0b1b3d] tracking-tight">Explora las funciones de VIANOVA</h2>
+          <h2 className="text-2xl sm:text-3xl font-extrabold text-[#0b1b3d] tracking-tight">Explora más: Funciones de VIANOVA</h2>
+          <p className="text-slate-500 text-sm font-medium">
+            Conoce todas las herramientas y módulos interactivos diseñados para una movilidad segura y conectada.
+          </p>
+        </div>
+
+        {/* La imagen / tarjeta tecnológica de ViaNova ubicada en 'Explora más' */}
+        <div className="w-full">
+          <CrashHeroAnimation variant="hero" />
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
