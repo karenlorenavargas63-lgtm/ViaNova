@@ -1,6 +1,7 @@
 import React from 'react';
 import { NavigationTab } from '../types';
 import { HomeHeroPedestriansAnimation } from './HomeHeroPedestriansAnimation';
+import logoImg from '../assets/images/vianova_logo.png';
 import { 
   ArrowRight, 
   Bus, 
@@ -23,6 +24,33 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ setCurrentTab }) => {
           
           {/* Left Column: Headlines & CTAs */}
           <div className="lg:col-span-6 space-y-6">
+
+            {/* Logo Oficial VIANOVA Destacado */}
+            <div className="inline-flex items-center gap-3.5 px-4 py-2.5 rounded-2xl bg-white/95 border border-slate-200/90 shadow-md hover:shadow-lg transition-all duration-300 hover:border-blue-300 group">
+              <div className="relative w-12 h-12 rounded-2xl p-1 bg-gradient-to-br from-[#0057d9] to-indigo-700 shadow-md shadow-blue-500/25 shrink-0 flex items-center justify-center group-hover:scale-105 transition-transform duration-300">
+                <div className="w-full h-full rounded-xl overflow-hidden bg-white flex items-center justify-center">
+                  <img
+                    src={logoImg}
+                    alt="Logo Oficial VIANOVA"
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+              </div>
+              <div className="flex flex-col">
+                <div className="flex items-center gap-2">
+                  <span className="text-2xl font-black tracking-tight text-[#0b1b3d]">
+                    <span className="text-[#0057d9]">Via</span>Nova
+                  </span>
+                  <span className="text-[10px] font-extrabold uppercase tracking-wider px-2 py-0.5 rounded-full bg-blue-50 text-[#0057d9] border border-blue-200/80">
+                    Oficial
+                  </span>
+                </div>
+                <span className="text-xs font-semibold text-slate-500">
+                  Sistema de Movilidad y Convivencia Vial
+                </span>
+              </div>
+            </div>
+
             <h1 className="text-4xl sm:text-5xl lg:text-[3.25rem] font-extrabold tracking-tight text-[#0b1b3d] leading-[1.15]">
               Movilidad inteligente para tu ciudad
             </h1>
@@ -144,8 +172,12 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ setCurrentTab }) => {
       {/* VIANOVA Platform Callout */}
       <div className="p-6 sm:p-8 rounded-3xl bg-slate-900 border border-slate-800 text-white shadow-xl flex flex-col sm:flex-row items-center justify-between gap-6">
         <div className="flex items-center gap-4">
-          <div className="w-12 h-12 rounded-2xl bg-[#0066ff] flex items-center justify-center text-white font-black text-xl shadow-md">
-            V
+          <div className="w-14 h-14 rounded-2xl overflow-hidden bg-white p-1 border border-white/20 shadow-lg shrink-0 flex items-center justify-center">
+            <img 
+              src={logoImg} 
+              alt="Logo VIANOVA" 
+              className="w-full h-full object-cover rounded-xl"
+            />
           </div>
           <div>
             <p className="text-xs uppercase tracking-widest text-blue-400 font-bold">Red Inteligente de Movilidad Urbana</p>

@@ -1,6 +1,7 @@
 import React from 'react';
-import { ShieldCheck, Wifi, Activity } from 'lucide-react';
+import { Wifi } from 'lucide-react';
 import smartCityHeroImg from '../assets/images/vianova_smart_city_hero_1788275485184.jpg';
+import logoImg from '../assets/images/vianova_logo.png';
 
 interface HomeHeroPedestriansAnimationProps {
   className?: string;
@@ -52,8 +53,12 @@ export const HomeHeroPedestriansAnimation: React.FC<HomeHeroPedestriansAnimation
         {/* Bottom Floating Smart Badge: Exact Brand Spec Preserved */}
         <div className="absolute bottom-6 left-6 right-6 p-4 rounded-2xl bg-white/95 backdrop-blur-md shadow-2xl border border-white/60 z-30 pointer-events-auto">
           <div className="flex items-center gap-3.5">
-            <div className="w-11 h-11 rounded-xl bg-[#0057d9] text-white flex items-center justify-center shadow-md shrink-0">
-              <ShieldCheck className="w-6 h-6" />
+            <div className="w-12 h-12 rounded-xl overflow-hidden bg-white p-0.5 border border-blue-200/80 shadow-md shrink-0 flex items-center justify-center">
+              <img 
+                src={logoImg} 
+                alt="Logo Oficial VIANOVA" 
+                className="w-full h-full object-cover rounded-lg"
+              />
             </div>
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2">
