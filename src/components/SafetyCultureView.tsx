@@ -21,8 +21,8 @@ import signsImg from '../assets/images/traffic_signs_chart_1790078148438.jpg';
 import rulesImg from '../assets/images/traffic_rules_signs_grid_1790078289383.jpg';
 import preventionImg from '../assets/images/prevention_shield_hand_icon_1790078674267.jpg';
 import responsibleDrivingImg from '../assets/images/no_phone_driving_silhouette_1790078748593.jpg';
-import motorcyclistImg from '../assets/images/motorcyclist_safety_helmet_1788876032377.jpg';
-import pedestrianImg from '../assets/images/pedestrian_safe_crosswalk_1788876049804.jpg';
+import motorcyclistImg from '../assets/images/motorcyclist_silhouette_icon_1790079069842.jpg';
+import pedestrianImg from '../assets/images/pedestrian_signs_four_grid_1790079168489.jpg';
 import { getRecommendationsForTopic, KeyRecommendation } from '../data/safetyRecommendations';
 import { RecommendationLogo } from './RecommendationLogo';
 import { ImageLightboxModal } from './ImageLightboxModal';
@@ -229,14 +229,14 @@ export const SafetyCultureView: React.FC<SafetyCultureViewProps> = ({
                       setLightboxImage({ src: topic.image, title: topic.title, category: topic.category });
                     }
                   }}
-                  className={`relative ${topic.id === 'senales' || topic.id === 'normas' || topic.id === 'prevencion' || topic.id === 'conduccion' ? 'h-60 sm:h-72' : 'h-44 sm:h-48'} w-full overflow-hidden bg-slate-100 cursor-zoom-in`}
+                  className="relative h-60 sm:h-72 w-full overflow-hidden bg-slate-100 cursor-zoom-in"
                   title="Haz clic para ampliar la lámina en pantalla completa"
                 >
                   <img
                     src={topic.image}
                     alt={topic.title}
                     referrerPolicy="no-referrer"
-                    className={`w-full h-full ${topic.id === 'senales' || topic.id === 'normas' || topic.id === 'prevencion' || topic.id === 'conduccion' ? 'object-contain bg-white p-2 sm:p-3' : 'object-cover'} group-hover:scale-105 transition-transform duration-500 ease-out`}
+                    className="w-full h-full object-contain bg-white p-2 sm:p-3 group-hover:scale-105 transition-transform duration-500 ease-out"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-black/10 pointer-events-none" />
 
@@ -348,14 +348,14 @@ export const SafetyCultureView: React.FC<SafetyCultureViewProps> = ({
             {/* Modal Image Banner with Zoom Capability */}
             <div 
               onClick={() => setLightboxImage({ src: selectedTopic.image, title: selectedTopic.title, category: selectedTopic.category })}
-              className={`relative ${selectedTopic.id === 'senales' || selectedTopic.id === 'normas' || selectedTopic.id === 'prevencion' || selectedTopic.id === 'conduccion' ? 'h-72 sm:h-96 md:h-[460px] bg-slate-50' : 'h-52 sm:h-72 bg-slate-900'} w-full rounded-2xl overflow-hidden border border-slate-200 shadow-sm group cursor-zoom-in`}
+              className="relative h-72 sm:h-96 md:h-[460px] bg-slate-50 w-full rounded-2xl overflow-hidden border border-slate-200 shadow-sm group cursor-zoom-in"
               title="Haz clic para ampliar la imagen en pantalla completa"
             >
               <img
                 src={selectedTopic.image}
                 alt={selectedTopic.title}
                 referrerPolicy="no-referrer"
-                className={`w-full h-full ${selectedTopic.id === 'senales' || selectedTopic.id === 'normas' || selectedTopic.id === 'prevencion' || selectedTopic.id === 'conduccion' ? 'object-contain bg-white p-3 sm:p-5' : 'object-cover'} group-hover:scale-[1.02] transition-transform duration-300`}
+                className="w-full h-full object-contain bg-white p-3 sm:p-5 group-hover:scale-[1.02] transition-transform duration-300"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent pointer-events-none" />
 
