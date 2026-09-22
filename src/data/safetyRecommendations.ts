@@ -2,8 +2,8 @@
 
 import signsImg from '../assets/images/traffic_signs_chart_1790078148438.jpg';
 import rulesImg from '../assets/images/traffic_rules_signs_grid_1790078289383.jpg';
-import preventionImg from '../assets/images/accident_prevention_drive_1788875999075.jpg';
-import responsibleDrivingImg from '../assets/images/responsible_car_driving_1788876017243.jpg';
+import preventionImg from '../assets/images/prevention_shield_hand_icon_1790078674267.jpg';
+import responsibleDrivingImg from '../assets/images/no_phone_driving_silhouette_1790078748593.jpg';
 import motorcyclistImg from '../assets/images/motorcyclist_safety_helmet_1788876032377.jpg';
 import pedestrianImg from '../assets/images/pedestrian_safe_crosswalk_1788876049804.jpg';
 import roundaboutImg from '../assets/images/roundabout_diagram_1788438648636.jpg';

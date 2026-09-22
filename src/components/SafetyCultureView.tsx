@@ -12,18 +12,20 @@ import {
   BookOpen, 
   Compass, 
   Lightbulb, 
-  ExternalLink 
+  ExternalLink,
+  Maximize2
 } from 'lucide-react';
 import { NavigationTab } from '../types';
 
 import signsImg from '../assets/images/traffic_signs_chart_1790078148438.jpg';
 import rulesImg from '../assets/images/traffic_rules_signs_grid_1790078289383.jpg';
-import preventionImg from '../assets/images/accident_prevention_drive_1788875999075.jpg';
-import responsibleDrivingImg from '../assets/images/responsible_car_driving_1788876017243.jpg';
+import preventionImg from '../assets/images/prevention_shield_hand_icon_1790078674267.jpg';
+import responsibleDrivingImg from '../assets/images/no_phone_driving_silhouette_1790078748593.jpg';
 import motorcyclistImg from '../assets/images/motorcyclist_safety_helmet_1788876032377.jpg';
 import pedestrianImg from '../assets/images/pedestrian_safe_crosswalk_1788876049804.jpg';
 import { getRecommendationsForTopic, KeyRecommendation } from '../data/safetyRecommendations';
 import { RecommendationLogo } from './RecommendationLogo';
+import { ImageLightboxModal } from './ImageLightboxModal';
 
 interface SafetyCultureViewProps {
   onSelectTab: (tab: NavigationTab) => void;
@@ -51,6 +53,7 @@ export const SafetyCultureView: React.FC<SafetyCultureViewProps> = ({
   onOpenQuizModal
 }) => {
   const [selectedTopic, setSelectedTopic] = React.useState<CultureTopic | null>(null);
+  const [lightboxImage, setLightboxImage] = React.useState<{ src: string; title: string; category?: string } | null>(null);
 
   const topics: CultureTopic[] = [
     {
@@ -220,14 +223,35 @@ export const SafetyCultureView: React.FC<SafetyCultureViewProps> = ({
             >
               <div>
                 {/* Topic Image Banner */}
-                <div className="relative h-44 w-full overflow-hidden bg-slate-100">
+                <div 
+                  onClick={() => {
+                    if (topic.image) {
+                      setLightboxImage({ src: topic.image, title: topic.title, category: topic.category });
+                    }
+                  }}
+                  className={`relative ${topic.id === 'senales' || topic.id === 'normas' || topic.id === 'prevencion' || topic.id === 'conduccion' ? 'h-60 sm:h-72' : 'h-44 sm:h-48'} w-full overflow-hidden bg-slate-100 cursor-zoom-in`}
+                  title="Haz clic para ampliar la lámina en pantalla completa"
+                >
                   <img
                     src={topic.image}
                     alt={topic.title}
                     referrerPolicy="no-referrer"
-                    className={`w-full h-full ${topic.id === 'senales' || topic.id === 'normas' ? 'object-contain bg-white p-1.5' : 'object-cover'} group-hover:scale-105 transition-transform duration-500 ease-out`}
+                    className={`w-full h-full ${topic.id === 'senales' || topic.id === 'normas' || topic.id === 'prevencion' || topic.id === 'conduccion' ? 'object-contain bg-white p-2 sm:p-3' : 'object-cover'} group-hover:scale-105 transition-transform duration-500 ease-out`}
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-black/10" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-black/10 pointer-events-none" />
+
+                  {/* Botón flotante para ampliar imagen */}
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setLightboxImage({ src: topic.image, title: topic.title, category: topic.category });
+                    }}
+                    className="absolute top-3.5 left-3.5 px-3 py-1.5 rounded-xl bg-slate-900/80 hover:bg-blue-600 text-white text-[11px] font-bold flex items-center gap-1.5 shadow-md backdrop-blur-md border border-white/20 transition cursor-pointer z-10"
+                    title="Ampliar lámina de señales a pantalla completa"
+                  >
+                    <Maximize2 className="w-3.5 h-3.5" />
+                    <span>Ampliar</span>
+                  </button>
 
                   {/* Top Icon Badge */}
                   <div className="absolute top-3.5 right-3.5 w-10 h-10 rounded-2xl bg-white/95 backdrop-blur-md text-blue-600 flex items-center justify-center shadow-md">
@@ -239,7 +263,7 @@ export const SafetyCultureView: React.FC<SafetyCultureViewProps> = ({
                     {topic.id === 'peatones' && <UserCheck className="w-5 h-5" />}
                   </div>
 
-                  <span className="absolute bottom-3 left-3.5 px-2.5 py-1 rounded-lg bg-black/60 backdrop-blur-md text-white text-[10px] font-bold uppercase tracking-wider border border-white/20">
+                  <span className="absolute bottom-3 left-3.5 px-2.5 py-1 rounded-lg bg-black/60 backdrop-blur-md text-white text-[10px] font-bold uppercase tracking-wider border border-white/20 pointer-events-none">
                     {topic.category}
                   </span>
                 </div>
@@ -297,9 +321,9 @@ export const SafetyCultureView: React.FC<SafetyCultureViewProps> = ({
       {/* Interactive "Aprender Más" Detail Modal */}
       {selectedTopic && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in">
-          <div className="bg-white rounded-3xl max-w-2xl w-full p-6 sm:p-8 shadow-2xl border border-slate-100 max-h-[90vh] overflow-y-auto space-y-6">
+          <div className="bg-white rounded-3xl max-w-4xl w-full p-6 sm:p-8 shadow-2xl border border-slate-100 max-h-[90vh] overflow-y-auto space-y-6">
             {/* Modal Header */}
-            <div className="flex items-start justify-between">
+            <div className="flex items-start justify-between border-b border-slate-100 pb-3">
               <div className="flex items-center gap-3">
                 <div className="w-12 h-12 rounded-2xl bg-blue-100 text-blue-700 flex items-center justify-center">
                   <BookOpen className="w-6 h-6" />
@@ -321,17 +345,34 @@ export const SafetyCultureView: React.FC<SafetyCultureViewProps> = ({
               </button>
             </div>
 
-            {/* Modal Image Banner */}
-            <div className="relative h-48 sm:h-64 w-full rounded-2xl overflow-hidden border border-slate-100 bg-white">
+            {/* Modal Image Banner with Zoom Capability */}
+            <div 
+              onClick={() => setLightboxImage({ src: selectedTopic.image, title: selectedTopic.title, category: selectedTopic.category })}
+              className={`relative ${selectedTopic.id === 'senales' || selectedTopic.id === 'normas' || selectedTopic.id === 'prevencion' || selectedTopic.id === 'conduccion' ? 'h-72 sm:h-96 md:h-[460px] bg-slate-50' : 'h-52 sm:h-72 bg-slate-900'} w-full rounded-2xl overflow-hidden border border-slate-200 shadow-sm group cursor-zoom-in`}
+              title="Haz clic para ampliar la imagen en pantalla completa"
+            >
               <img
                 src={selectedTopic.image}
                 alt={selectedTopic.title}
                 referrerPolicy="no-referrer"
-                className={`w-full h-full ${selectedTopic.id === 'senales' || selectedTopic.id === 'normas' ? 'object-contain bg-white p-2' : 'object-cover'}`}
+                className={`w-full h-full ${selectedTopic.id === 'senales' || selectedTopic.id === 'normas' || selectedTopic.id === 'prevencion' || selectedTopic.id === 'conduccion' ? 'object-contain bg-white p-3 sm:p-5' : 'object-cover'} group-hover:scale-[1.02] transition-transform duration-300`}
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent pointer-events-none" />
-              <span className="absolute bottom-3 left-3 text-xs font-bold text-white bg-black/60 backdrop-blur-md px-3 py-1 rounded-lg">
-                {selectedTopic.category}
+              <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent pointer-events-none" />
+
+              {/* Floating Action: Open Lightbox */}
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setLightboxImage({ src: selectedTopic.image, title: selectedTopic.title, category: selectedTopic.category });
+                }}
+                className="absolute top-3.5 right-3.5 px-3.5 py-2 rounded-xl bg-slate-900/85 hover:bg-blue-600 text-white text-xs font-bold flex items-center gap-2 shadow-lg backdrop-blur-md border border-white/20 transition-all cursor-pointer z-10 hover:scale-105"
+              >
+                <Maximize2 className="w-4 h-4" />
+                <span>Ampliar en Pantalla Completa (Zoom HD)</span>
+              </button>
+
+              <span className="absolute bottom-3 left-3 text-xs font-bold text-white bg-black/60 backdrop-blur-md px-3 py-1 rounded-lg pointer-events-none">
+                {selectedTopic.category} • VIANOVA Oficial
               </span>
             </div>
 
@@ -432,6 +473,16 @@ export const SafetyCultureView: React.FC<SafetyCultureViewProps> = ({
           </div>
         </div>
       )}
+
+      {/* Fullscreen HD Lightbox Modal */}
+      <ImageLightboxModal
+        isOpen={!!lightboxImage}
+        onClose={() => setLightboxImage(null)}
+        imageSrc={lightboxImage?.src || ''}
+        title={lightboxImage?.title || 'Lámina de Seguridad y Normas'}
+        category={lightboxImage?.category}
+        subtitle="Visualizador de alta definición con zoom interactivo • Ecosistema VIANOVA"
+      />
     </div>
   );
 };

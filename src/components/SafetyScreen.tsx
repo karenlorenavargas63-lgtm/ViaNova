@@ -17,7 +17,8 @@ import {
   Eye,
   AlertOctagon,
   ShieldCheck,
-  ArrowRight
+  ArrowRight,
+  Maximize2
 } from 'lucide-react';
 import obrasMonitorImg from '../assets/images/obras_asfalto_monitor_1788438254687.jpg';
 import redAlertImg from '../assets/images/red_alert_gradient_1788438272797.jpg';
@@ -25,12 +26,13 @@ import redAlertImg from '../assets/images/red_alert_gradient_1788438272797.jpg';
 // Thematic Safety Images for the 6 Culture Cards
 import signsImg from '../assets/images/traffic_signs_chart_1790078148438.jpg';
 import rulesImg from '../assets/images/traffic_rules_signs_grid_1790078289383.jpg';
-import preventionImg from '../assets/images/accident_prevention_drive_1788875999075.jpg';
-import responsibleDrivingImg from '../assets/images/responsible_car_driving_1788876017243.jpg';
+import preventionImg from '../assets/images/prevention_shield_hand_icon_1790078674267.jpg';
+import responsibleDrivingImg from '../assets/images/no_phone_driving_silhouette_1790078748593.jpg';
 import motorcyclistImg from '../assets/images/motorcyclist_safety_helmet_1788876032377.jpg';
 import pedestrianImg from '../assets/images/pedestrian_safe_crosswalk_1788876049804.jpg';
 import { TOPIC_RECOMMENDATIONS, KeyRecommendation, getRecommendationsForTopic } from '../data/safetyRecommendations';
 import { RecommendationLogo } from './RecommendationLogo';
+import { ImageLightboxModal } from './ImageLightboxModal';
 
 interface SafetyScreenProps {
   onNavigateToMapWithAlert?: (alert: any) => void;
@@ -43,6 +45,7 @@ export const SafetyScreen: React.FC<SafetyScreenProps> = ({ onNavigateToMapWithA
   const [selectedGuide, setSelectedGuide] = useState<any | null>(null);
   const [selectedAlertForMap, setSelectedAlertForMap] = useState<any | null>(null);
   const [isReportModalOpen, setIsReportModalOpen] = useState(false);
+  const [lightboxImage, setLightboxImage] = useState<{ src: string; title: string; category?: string } | null>(null);
 
   // New report form state
   const [reportTitle, setReportTitle] = useState('');
@@ -281,15 +284,36 @@ export const SafetyScreen: React.FC<SafetyScreenProps> = ({ onNavigateToMapWithA
               >
                 <div>
                   {/* Thematic Topic Image */}
-                  <div className="relative h-44 sm:h-48 w-full overflow-hidden bg-slate-100">
+                  <div 
+                    onClick={() => {
+                      if (card.image) {
+                        setLightboxImage({ src: card.image, title: card.title, category: card.badge });
+                      }
+                    }}
+                    className={`relative ${card.id === 'normas' || card.id === 'senales' || card.id === 'prevencion' || card.id === 'conduccion' ? 'h-60 sm:h-72' : 'h-44 sm:h-48'} w-full overflow-hidden bg-slate-100 cursor-zoom-in`}
+                    title="Haz clic para ver y ampliar la lámina en pantalla completa"
+                  >
                     <img
                       src={card.image}
                       alt={card.title}
                       referrerPolicy="no-referrer"
-                      className={`w-full h-full ${card.id === 'senales' || card.id === 'normas' ? 'object-contain bg-white p-1.5' : 'object-cover'} group-hover:scale-105 transition-transform duration-500 ease-out`}
+                      className={`w-full h-full ${card.id === 'senales' || card.id === 'normas' || card.id === 'prevencion' || card.id === 'conduccion' ? 'object-contain bg-white p-2 sm:p-3' : 'object-cover'} group-hover:scale-105 transition-transform duration-500 ease-out`}
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-black/10" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-black/10 pointer-events-none" />
                     
+                    {/* Botón flotante para ampliar imagen */}
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setLightboxImage({ src: card.image, title: card.title, category: card.badge });
+                      }}
+                      className="absolute top-3.5 left-3.5 px-3 py-1.5 rounded-xl bg-slate-900/80 hover:bg-blue-600 text-white text-[11px] font-bold flex items-center gap-1.5 shadow-md backdrop-blur-md border border-white/20 transition cursor-pointer z-10"
+                      title="Ampliar lámina de señales a pantalla completa"
+                    >
+                      <Maximize2 className="w-3.5 h-3.5" />
+                      <span>Ampliar</span>
+                    </button>
+
                     {/* Floating Icon */}
                     {IconComponent && (
                       <div className="absolute top-3.5 right-3.5 w-9 h-9 rounded-xl bg-white/95 backdrop-blur-md shadow-md flex items-center justify-center text-[#0066ff]">
@@ -298,7 +322,7 @@ export const SafetyScreen: React.FC<SafetyScreenProps> = ({ onNavigateToMapWithA
                     )}
 
                     {/* Badge Category */}
-                    <div className="absolute bottom-3 left-3.5 px-2.5 py-1 rounded-lg bg-black/60 backdrop-blur-md text-white text-[11px] font-bold tracking-wide flex items-center gap-1.5 border border-white/20">
+                    <div className="absolute bottom-3 left-3.5 px-2.5 py-1 rounded-lg bg-black/60 backdrop-blur-md text-white text-[11px] font-bold tracking-wide flex items-center gap-1.5 border border-white/20 pointer-events-none">
                       <span className="w-2 h-2 rounded-full bg-blue-400"></span>
                       <span>{card.badge}</span>
                     </div>
@@ -505,7 +529,7 @@ export const SafetyScreen: React.FC<SafetyScreenProps> = ({ onNavigateToMapWithA
 
         return (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-950/70 backdrop-blur-sm animate-fade-in">
-            <div className="relative w-full max-w-2xl rounded-3xl bg-white border border-slate-200 p-5 sm:p-7 text-slate-900 shadow-2xl space-y-5 max-h-[92vh] overflow-y-auto">
+            <div className="relative w-full max-w-4xl rounded-3xl bg-white border border-slate-200 p-5 sm:p-7 text-slate-900 shadow-2xl space-y-5 max-h-[92vh] overflow-y-auto">
               <div className="flex items-center justify-between border-b border-slate-100 pb-3">
                 <div>
                   <span className="text-[10px] font-bold uppercase tracking-wider text-blue-600 bg-blue-50 px-2.5 py-0.5 rounded-md border border-blue-100">
@@ -521,17 +545,34 @@ export const SafetyScreen: React.FC<SafetyScreenProps> = ({ onNavigateToMapWithA
                 </button>
               </div>
 
-              {/* Guide Image Banner */}
+              {/* Guide Image Banner with Zoom Capability */}
               {selectedGuide.image && (
-                <div className="relative h-48 sm:h-64 w-full rounded-2xl overflow-hidden border border-slate-100 bg-white shadow-xs">
+                <div 
+                  onClick={() => setLightboxImage({ src: selectedGuide.image, title: selectedGuide.title, category: selectedGuide.badge })}
+                  className={`relative ${selectedGuide.id === 'senales' || selectedGuide.id === 'normas' || selectedGuide.id === 'prevencion' || selectedGuide.id === 'conduccion' ? 'h-72 sm:h-96 md:h-[460px] bg-slate-50' : 'h-52 sm:h-72 bg-slate-900'} w-full rounded-2xl overflow-hidden border border-slate-200 shadow-sm group cursor-zoom-in`}
+                  title="Haz clic para ampliar la imagen en pantalla completa"
+                >
                   <img
                     src={selectedGuide.image}
                     alt={selectedGuide.title}
                     referrerPolicy="no-referrer"
-                    className={`w-full h-full ${selectedGuide.id === 'senales' || selectedGuide.id === 'normas' ? 'object-contain bg-white p-2' : 'object-cover'}`}
+                    className={`w-full h-full ${selectedGuide.id === 'senales' || selectedGuide.id === 'normas' || selectedGuide.id === 'prevencion' || selectedGuide.id === 'conduccion' ? 'object-contain bg-white p-3 sm:p-5' : 'object-cover'} group-hover:scale-[1.02] transition-transform duration-300`}
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent pointer-events-none" />
-                  <span className="absolute bottom-3 left-3.5 text-xs font-bold text-white bg-black/60 backdrop-blur-md px-3 py-1 rounded-lg border border-white/20">
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent pointer-events-none" />
+                  
+                  {/* Floating Action: Open Lightbox */}
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setLightboxImage({ src: selectedGuide.image, title: selectedGuide.title, category: selectedGuide.badge });
+                    }}
+                    className="absolute top-3.5 right-3.5 px-3.5 py-2 rounded-xl bg-slate-900/85 hover:bg-blue-600 text-white text-xs font-bold flex items-center gap-2 shadow-lg backdrop-blur-md border border-white/20 transition-all cursor-pointer z-10 hover:scale-105"
+                  >
+                    <Maximize2 className="w-4 h-4" />
+                    <span>Ampliar en Pantalla Completa (Zoom HD)</span>
+                  </button>
+
+                  <span className="absolute bottom-3 left-3.5 text-xs font-bold text-white bg-black/60 backdrop-blur-md px-3 py-1 rounded-lg border border-white/20 pointer-events-none">
                     Guía Oficial VIANOVA • Ecosistema Inteligente
                   </span>
                 </div>
@@ -756,6 +797,16 @@ export const SafetyScreen: React.FC<SafetyScreenProps> = ({ onNavigateToMapWithA
           </div>
         </div>
       )}
+
+      {/* Fullscreen HD Lightbox Modal */}
+      <ImageLightboxModal
+        isOpen={!!lightboxImage}
+        onClose={() => setLightboxImage(null)}
+        imageSrc={lightboxImage?.src || ''}
+        title={lightboxImage?.title || 'Lámina de Seguridad Vial'}
+        category={lightboxImage?.category}
+        subtitle="Visualizador de alta definición con zoom interactivo • Ecosistema VIANOVA"
+      />
 
     </div>
   );
