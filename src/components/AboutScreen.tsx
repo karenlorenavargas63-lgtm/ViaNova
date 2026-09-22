@@ -57,7 +57,7 @@ export const AboutScreen: React.FC<AboutScreenProps> = ({ setCurrentTab }) => {
               </div>
             </div>
 
-            {/* Right: Modern Smart City Intersection with Animated Cyclists & Pedestrians */}
+            {/* Right: Modern Smart City Urban Mobility Visual */}
             <div className="lg:col-span-6">
               <AnimatedUrbanMobility />
             </div>
