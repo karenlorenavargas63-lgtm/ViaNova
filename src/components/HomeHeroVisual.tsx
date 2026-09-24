@@ -1,17 +1,17 @@
 import React from 'react';
-import { Wifi } from 'lucide-react';
+import { Wifi, ShieldCheck } from 'lucide-react';
 import smartCityHeroImg from '../assets/images/vianova_smart_city_hero_1788275485184.jpg';
 import logoImg from '../assets/images/vianova_logo.png';
 
-interface HomeHeroPedestriansAnimationProps {
+interface HomeHeroVisualProps {
   className?: string;
 }
 
-export const HomeHeroPedestriansAnimation: React.FC<HomeHeroPedestriansAnimationProps> = ({ className = '' }) => {
+export const HomeHeroVisual: React.FC<HomeHeroVisualProps> = ({ className = '' }) => {
   return (
     <div className={`relative rounded-[2.5rem] overflow-hidden shadow-2xl border-2 border-slate-200/80 bg-slate-900 group select-none ${className}`}>
       
-      {/* 1. Base Image: Smart City Medellín / Modern Urban Center */}
+      {/* Base Image: Smart City Medellín / Modern Urban Center (Clean Real Photography) */}
       <div className="relative w-full h-[380px] sm:h-[440px] overflow-hidden">
         <img
           src={smartCityHeroImg}
@@ -19,20 +19,8 @@ export const HomeHeroPedestriansAnimation: React.FC<HomeHeroPedestriansAnimation
           className="w-full h-full object-cover opacity-95 group-hover:scale-105 transition-transform duration-700"
         />
 
-        {/* Cinematic Overlays */}
+        {/* Cinematic Clean Overlays */}
         <div className="absolute inset-0 bg-gradient-to-t from-slate-950/85 via-slate-950/20 to-black/20 pointer-events-none" />
-
-        {/* Smart Pedestrian Crossing Zone (Subtle IoT Path) */}
-        <div className="absolute left-0 right-0 top-[56%] h-[24%] pointer-events-none">
-          {/* Subtle safe-crossing lane glow */}
-          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-blue-500/10 to-transparent border-y border-blue-400/20" />
-          
-          {/* Smart Crossing Marker */}
-          <div className="absolute left-6 top-1 text-[9px] font-mono font-bold text-blue-300 bg-blue-950/80 px-2.5 py-0.5 rounded-full border border-blue-400/30 flex items-center gap-1.5 backdrop-blur-xs">
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping" />
-            <span>PASO PEATONAL INTELIGENTE • PRIORIDAD ACTIVA</span>
-          </div>
-        </div>
 
         {/* Top Floating Status Pill */}
         <div className="absolute top-4 left-4 right-4 flex items-center justify-between gap-2 z-20 pointer-events-auto">
@@ -50,7 +38,7 @@ export const HomeHeroPedestriansAnimation: React.FC<HomeHeroPedestriansAnimation
           </div>
         </div>
 
-        {/* Bottom Floating Smart Badge: Exact Brand Spec Preserved */}
+        {/* Bottom Floating Smart Badge: Exact Brand Spec */}
         <div className="absolute bottom-6 left-6 right-6 p-4 rounded-2xl bg-white/95 backdrop-blur-md shadow-2xl border border-white/60 z-30 pointer-events-auto">
           <div className="flex items-center gap-3.5">
             <div className="w-12 h-12 rounded-xl overflow-hidden bg-white p-0.5 border border-blue-200/80 shadow-md shrink-0 flex items-center justify-center">

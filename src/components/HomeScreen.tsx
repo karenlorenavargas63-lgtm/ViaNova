@@ -1,6 +1,6 @@
 import React from 'react';
 import { NavigationTab } from '../types';
-import { HomeHeroPedestriansAnimation } from './HomeHeroPedestriansAnimation';
+import { HomeHeroVisual } from './HomeHeroVisual';
 import logoImg from '../assets/images/vianova_logo.png';
 import { 
   ArrowRight, 
@@ -79,9 +79,9 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ setCurrentTab }) => {
             </div>
           </div>
 
-          {/* Right Column: Movilidad Urbana Inteligente Visual with Animated Pedestrians */}
+          {/* Right Column: Movilidad Urbana Inteligente Visual */}
           <div className="lg:col-span-6 relative">
-            <HomeHeroPedestriansAnimation />
+            <HomeHeroVisual />
           </div>
 
         </div>
