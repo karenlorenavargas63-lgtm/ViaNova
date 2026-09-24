@@ -49,7 +49,7 @@ export const Footer: React.FC<FooterProps> = ({ setCurrentTab }) => {
           </div>
 
           {/* Col 2: Navigation Links matching 99737.png */}
-          <div className="lg:col-span-2 space-y-2.5">
+          <div className="lg:col-span-3 space-y-2.5">
             <p>
               <button
                 onClick={() => setCurrentTab('contacto')}
@@ -77,7 +77,7 @@ export const Footer: React.FC<FooterProps> = ({ setCurrentTab }) => {
           </div>
 
           {/* Col 3: Terms matching 99737.png */}
-          <div className="lg:col-span-3 space-y-2.5">
+          <div className="lg:col-span-4 space-y-2.5">
             <p>
               <button
                 onClick={() => openLegalDoc('terminos')}
@@ -86,37 +86,6 @@ export const Footer: React.FC<FooterProps> = ({ setCurrentTab }) => {
                 Términos y Condiciones
               </button>
             </p>
-          </div>
-
-          {/* Col 4: Social Links matching 99737.png */}
-          <div className="lg:col-span-3 space-y-2.5">
-            <a
-              href="https://facebook.com"
-              target="_blank"
-              rel="noreferrer"
-              className="text-slate-300 hover:text-white font-medium transition-colors flex items-center gap-1.5"
-            >
-              <ExternalLink className="w-3.5 h-3.5 text-slate-400" />
-              <span>Facebook</span>
-            </a>
-            <a
-              href="https://twitter.com"
-              target="_blank"
-              rel="noreferrer"
-              className="text-slate-300 hover:text-white font-medium transition-colors flex items-center gap-1.5"
-            >
-              <ExternalLink className="w-3.5 h-3.5 text-slate-400" />
-              <span>Twitter</span>
-            </a>
-            <a
-              href="https://linkedin.com"
-              target="_blank"
-              rel="noreferrer"
-              className="text-slate-300 hover:text-white font-medium transition-colors flex items-center gap-1.5"
-            >
-              <ExternalLink className="w-3.5 h-3.5 text-slate-400" />
-              <span>LinkedIn</span>
-            </a>
           </div>
 
         </div>

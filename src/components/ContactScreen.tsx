@@ -104,22 +104,8 @@ export const ContactScreen: React.FC = () => {
             </div>
           </div>
 
-          {/* Social Networks & Map Graphic (PDF Page 19 & 20) */}
+          {/* Map Graphic (PDF Page 19 & 20) */}
           <div className="space-y-4 pt-4 border-t border-white/10">
-            <p className="text-xs font-semibold text-slate-400">Síguenos en redes sociales</p>
-            <div className="flex items-center gap-3">
-              {['Facebook', 'Twitter', 'LinkedIn', 'Instagram'].map((network, idx) => (
-                <a
-                  key={idx}
-                  href={`#${network.toLowerCase()}`}
-                  onClick={(e) => e.preventDefault()}
-                  className="px-3 py-1.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-xs font-medium text-slate-300 hover:text-white transition-colors"
-                >
-                  {network}
-                </a>
-              ))}
-            </div>
-
             {/* Simulated Location Map Snapshot */}
             <div className="rounded-2xl overflow-hidden border border-white/10 h-36 relative mt-4">
               <img

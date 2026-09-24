@@ -83,26 +83,6 @@ export const ContactView: React.FC = () => {
                 </div>
               </div>
             </div>
-
-            {/* Social Icons Row (Page 19) */}
-            <div className="border-t border-slate-100 pt-4">
-              <span className="text-xs font-bold text-slate-400 uppercase tracking-wider block mb-2.5">
-                Síguenos en redes sociales
-              </span>
-              <div className="flex items-center gap-3">
-                {['Facebook', 'Twitter', 'LinkedIn'].map((network) => (
-                  <a
-                    key={network}
-                    href={`https://${network.toLowerCase()}.com`}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="px-3 py-1.5 rounded-xl bg-slate-50 border border-slate-200 hover:bg-blue-50 hover:border-blue-200 text-xs font-bold text-slate-700 hover:text-blue-600 transition"
-                  >
-                    {network}
-                  </a>
-                ))}
-              </div>
-            </div>
           </div>
 
           {/* Location Map (Page 19) */}
