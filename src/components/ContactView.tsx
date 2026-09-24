@@ -64,9 +64,9 @@ export const ContactView: React.FC = () => {
                   <Mail className="w-5 h-5" />
                 </div>
                 <div>
-                  <span className="font-bold text-slate-900 block">Correo Electrónico</span>
-                  <a href="mailto:contacto@vianova.com" className="text-blue-600 hover:underline text-xs mt-0.5 block">
-                    contacto@vianova.com
+                  <span className="font-black text-slate-950 block">Correo Electrónico</span>
+                  <a href="mailto:karenlorenavargas63@gmail.com" className="text-blue-800 hover:text-blue-950 font-bold text-xs mt-0.5 block underline">
+                    karenlorenavargas63@gmail.com
                   </a>
                 </div>
               </div>
