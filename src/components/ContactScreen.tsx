@@ -163,9 +163,12 @@ export const ContactScreen: React.FC = () => {
                 </div>
                 <div>
                   <p className="font-black text-slate-950 text-sm">Teléfono de Atención</p>
-                  <p className="text-slate-900 font-bold text-xs mt-1">
-                    +52 (55) 1234-5678 / +57 (4) 444-9090
-                  </p>
+                  <a 
+                    href="tel:+573226070492"
+                    className="text-slate-950 hover:text-blue-800 font-black text-sm mt-1 block tracking-wide hover:underline transition-colors"
+                  >
+                    +57 322 607 0492
+                  </a>
                   <div className="flex items-center gap-1.5 mt-1 text-[11px] text-slate-700 font-medium">
                     <Clock className="w-3.5 h-3.5 text-slate-600" />
                     <span>Lunes a Viernes 08:00 - 18:00</span>

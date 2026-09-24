@@ -89,10 +89,13 @@ export const ContactView: React.FC = () => {
                   <Phone className="w-5 h-5" />
                 </div>
                 <div>
-                  <span className="font-bold text-slate-900 block">Teléfono de Atención</span>
-                  <p className="text-slate-600 text-xs mt-0.5">
-                    +52 (55) 1234-5678 (Lunes a Viernes 08:00 - 18:00)
-                  </p>
+                  <span className="font-black text-slate-950 block">Teléfono de Atención</span>
+                  <a 
+                    href="tel:+573226070492" 
+                    className="text-slate-950 hover:text-blue-700 font-bold text-xs mt-0.5 block hover:underline"
+                  >
+                    +57 322 607 0492 (Lunes a Viernes 08:00 - 18:00)
+                  </a>
                 </div>
               </div>
             </div>
