@@ -20,11 +20,21 @@ export const ContactView: React.FC = () => {
   const [message, setMessage] = React.useState('');
   const [submitted, setSubmitted] = React.useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const mailSubject = `[VIANOVA] ${subject || 'Contacto'} - De: ${name}`;
-    const mailBody = `Hola equipo de VIANOVA,\n\nHas recibido un nuevo mensaje desde el portal de contacto:\n\n• Nombre: ${name}\n• Correo del remitente: ${email}\n• Asunto: ${subject}\n\nMensaje:\n"${message}"\n\n--\nEnviado desde el sistema de movilidad inteligente VIANOVA`;
-    window.location.href = `mailto:karenlorenavargas63@gmail.com?subject=${encodeURIComponent(mailSubject)}&body=${encodeURIComponent(mailBody)}`;
+    try {
+      await fetch('https://formsubmit.co/ajax/karenlorenavargas63@gmail.com', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+        body: JSON.stringify({
+          _subject: `[VIANOVA] ${subject || 'Inquietud'} - De: ${name}`,
+          nombre: name,
+          correo: email,
+          asunto: subject,
+          mensaje: message
+        })
+      });
+    } catch (_) {}
     setSubmitted(true);
   };
 

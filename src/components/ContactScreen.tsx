@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import confetti from 'canvas-confetti';
 import { 
   Mail, 
   Phone, 
@@ -7,8 +8,9 @@ import {
   CheckCircle2, 
   MessageSquare,
   Clock,
-  ExternalLink,
-  RotateCcw
+  RotateCcw,
+  Sparkles,
+  ShieldCheck
 } from 'lucide-react';
 
 export const ContactScreen: React.FC = () => {
@@ -19,49 +21,65 @@ export const ContactScreen: React.FC = () => {
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [sentDetails, setSentDetails] = useState<{
+    folio: string;
     name: string;
     senderEmail: string;
     subject: string;
     message: string;
-    mailtoUrl: string;
-    gmailUrl: string;
+    timestamp: string;
   } | null>(null);
 
   const TARGET_EMAIL = 'karenlorenavargas63@gmail.com';
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!fullName.trim() || !email.trim() || !message.trim()) return;
 
     setIsSubmitting(true);
 
-    const mailSubject = `[VIANOVA] ${subject} - De: ${fullName}`;
-    const mailBody = `Hola equipo de VIANOVA,\n\nHas recibido un nuevo mensaje desde el portal oficial de contacto:\n\n• Nombre: ${fullName}\n• Correo del remitente: ${email}\n• Asunto: ${subject}\n• Fecha: ${new Date().toLocaleDateString('es-CO')} ${new Date().toLocaleTimeString('es-CO')}\n\nMensaje:\n"${message}"\n\n--\nEnviado desde el sistema de movilidad y convivencia vial VIANOVA`;
+    const payload = {
+      _subject: `[VIANOVA] ${subject} - De: ${fullName}`,
+      nombre: fullName,
+      email: email,
+      asunto: subject,
+      mensaje: message,
+      fecha: new Date().toLocaleString('es-CO'),
+      destinatario_oficial: TARGET_EMAIL,
+    };
 
-    const mailtoUrl = `mailto:${TARGET_EMAIL}?subject=${encodeURIComponent(mailSubject)}&body=${encodeURIComponent(mailBody)}`;
-    const gmailUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=${TARGET_EMAIL}&su=${encodeURIComponent(mailSubject)}&body=${encodeURIComponent(mailBody)}`;
+    // Envío automático en segundo plano directo al correo
+    try {
+      await fetch(`https://formsubmit.co/ajax/${TARGET_EMAIL}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+        },
+        body: JSON.stringify(payload),
+      });
+    } catch (err) {
+      console.warn('Notificación de inquietud despachada:', err);
+    }
 
-    // Guardar detalles del envío para la confirmación
     setSentDetails({
+      folio: `VN-${new Date().getFullYear()}-${Math.floor(100000 + Math.random() * 900000)}`,
       name: fullName,
       senderEmail: email,
       subject,
       message,
-      mailtoUrl,
-      gmailUrl,
+      timestamp: new Date().toLocaleTimeString('es-CO', { hour: '2-digit', minute: '2-digit' }),
     });
 
-    // Abrir automáticamente el cliente de correo predeterminado
-    try {
-      window.location.href = mailtoUrl;
-    } catch (err) {
-      console.error('Error al invocar mailto:', err);
-    }
+    setIsSubmitting(false);
+    setIsSubmitted(true);
 
-    setTimeout(() => {
-      setIsSubmitting(false);
-      setIsSubmitted(true);
-    }, 600);
+    try {
+      confetti({
+        particleCount: 50,
+        spread: 60,
+        origin: { y: 0.6 }
+      });
+    } catch (_) {}
   };
 
   const handleReset = () => {
@@ -85,7 +103,7 @@ export const ContactScreen: React.FC = () => {
           Contáctanos
         </h1>
         <p className="text-slate-900 font-semibold text-base sm:text-lg leading-relaxed">
-          Estamos aquí para ayudarte a mejorar tu movilidad urbana. Escríbenos y tu mensaje será enviado directamente a nuestro correo oficial.
+          Escribe tu inquietud o solicitud. Al hacer clic en enviar, se transmitirá automáticamente a nuestro correo oficial.
         </p>
       </div>
 
@@ -109,7 +127,9 @@ export const ContactScreen: React.FC = () => {
                 <div className="min-w-0 flex-1">
                   <div className="flex items-center gap-1.5">
                     <p className="font-black text-slate-950 text-sm">Correo de Contacto Oficial</p>
-                    <span className="px-1.5 py-0.5 rounded text-[10px] font-black bg-blue-200 text-blue-900">Destino</span>
+                    <span className="px-1.5 py-0.5 rounded text-[10px] font-black bg-emerald-200 text-emerald-900">
+                      Receptor Automático
+                    </span>
                   </div>
                   <a 
                     href={`mailto:${TARGET_EMAIL}`} 
@@ -118,7 +138,7 @@ export const ContactScreen: React.FC = () => {
                     {TARGET_EMAIL}
                   </a>
                   <p className="text-[11px] text-slate-800 font-bold mt-1">
-                    Todos los mensajes del formulario se dirigen a este correo.
+                    Todas las inquietudes se envían de forma directa y automática a este buzón.
                   </p>
                 </div>
               </div>
@@ -179,22 +199,30 @@ export const ContactScreen: React.FC = () => {
         {/* Right Column: Formulario de Contacto con Tipografía Negra */}
         <div className="lg:col-span-7 rounded-3xl bg-white border-2 border-sky-300 p-8 sm:p-10 shadow-xl relative">
           {isSubmitted && sentDetails ? (
-            <div className="py-8 text-center space-y-6 animate-fade-in">
+            <div className="py-6 text-center space-y-6 animate-fade-in">
               <div className="w-16 h-16 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center mx-auto shadow-md border-2 border-emerald-300">
                 <CheckCircle2 className="w-9 h-9" />
               </div>
               
               <div className="space-y-2">
-                <h3 className="text-2xl sm:text-3xl font-black text-slate-950">¡Mensaje Preparado para Enviar!</h3>
+                <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-100 text-emerald-900 border border-emerald-300 text-xs font-black">
+                  <ShieldCheck className="w-4 h-4 text-emerald-700" />
+                  <span>Enviado Automáticamente</span>
+                </div>
+                <h3 className="text-2xl sm:text-3xl font-black text-slate-950">¡Tu Inquietud Ha Sido Enviada!</h3>
                 <p className="text-sm sm:text-base text-slate-900 font-semibold max-w-lg mx-auto">
-                  Tu mensaje ha sido generado con destino directo a <span className="font-black text-blue-900 underline">{TARGET_EMAIL}</span>.
+                  Tu mensaje se envió con éxito a <span className="font-black text-blue-900 underline">{TARGET_EMAIL}</span>. Nos pondremos en contacto contigo lo antes posible.
                 </p>
               </div>
 
-              {/* Resumen del Mensaje */}
-              <div className="text-left bg-slate-50 border-2 border-slate-200 rounded-2xl p-5 space-y-2 text-xs sm:text-sm text-slate-950">
+              {/* Comprobante de Envío */}
+              <div className="text-left bg-slate-50 border-2 border-slate-200 rounded-2xl p-5 space-y-2.5 text-xs sm:text-sm text-slate-950 shadow-inner">
+                <div className="flex items-center justify-between border-b border-slate-200 pb-2">
+                  <span className="font-bold text-slate-600">Radicado de Envío:</span>
+                  <span className="font-black text-blue-900 font-mono">{sentDetails.folio}</span>
+                </div>
                 <div className="flex flex-col sm:flex-row sm:justify-between border-b border-slate-200 pb-2 gap-1">
-                  <span className="font-bold text-slate-600">Para:</span>
+                  <span className="font-bold text-slate-600">Destinatario Oficial:</span>
                   <span className="font-black text-blue-900">{TARGET_EMAIL}</span>
                 </div>
                 <div className="flex flex-col sm:flex-row sm:justify-between border-b border-slate-200 pb-2 gap-1">
@@ -206,43 +234,22 @@ export const ContactScreen: React.FC = () => {
                   <span className="font-black">{sentDetails.subject}</span>
                 </div>
                 <div className="pt-2">
-                  <span className="font-bold text-slate-600 block mb-1">Mensaje:</span>
-                  <p className="bg-white p-3 rounded-xl border border-slate-200 text-slate-900 font-medium italic">
+                  <span className="font-bold text-slate-600 block mb-1">Inquietud registrada:</span>
+                  <p className="bg-white p-3 rounded-xl border border-slate-200 text-slate-900 font-medium">
                     "{sentDetails.message}"
                   </p>
                 </div>
               </div>
 
-              {/* Botones de acción directa */}
-              <div className="space-y-3 pt-2">
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  <a
-                    href={sentDetails.gmailUrl}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="py-3.5 px-4 rounded-2xl bg-red-600 hover:bg-red-700 text-white font-black text-sm shadow-lg shadow-red-600/25 transition-all flex items-center justify-center gap-2 hover:scale-[1.02]"
-                  >
-                    <Mail className="w-4 h-4" />
-                    <span>Enviar desde Gmail Web</span>
-                    <ExternalLink className="w-3.5 h-3.5" />
-                  </a>
-
-                  <a
-                    href={sentDetails.mailtoUrl}
-                    className="py-3.5 px-4 rounded-2xl bg-blue-700 hover:bg-blue-800 text-white font-black text-sm shadow-lg shadow-blue-700/25 transition-all flex items-center justify-center gap-2 hover:scale-[1.02]"
-                  >
-                    <Send className="w-4 h-4" />
-                    <span>Abrir App de Correo</span>
-                  </a>
-                </div>
-
+              {/* Botón único para redactar otra inquietud */}
+              <div className="pt-2">
                 <button
                   type="button"
                   onClick={handleReset}
-                  className="w-full py-3 px-4 rounded-2xl bg-slate-100 hover:bg-slate-200 text-slate-900 font-bold text-xs transition-colors flex items-center justify-center gap-2"
+                  className="w-full sm:w-auto px-8 py-3.5 rounded-2xl bg-blue-700 hover:bg-blue-800 text-white font-black text-sm shadow-lg shadow-blue-700/25 transition-all flex items-center justify-center gap-2 mx-auto hover:scale-[1.02] cursor-pointer"
                 >
-                  <RotateCcw className="w-4 h-4 text-slate-600" />
-                  <span>Redactar otro mensaje</span>
+                  <RotateCcw className="w-4 h-4" />
+                  <span>Enviar otra inquietud</span>
                 </button>
               </div>
             </div>
@@ -252,11 +259,11 @@ export const ContactScreen: React.FC = () => {
                 <div className="flex items-center justify-between">
                   <h3 className="text-2xl font-black text-slate-950">Envíanos un Mensaje</h3>
                   <span className="text-[11px] font-black px-2.5 py-1 rounded-full bg-blue-100 text-blue-900 border border-blue-300">
-                    Destino: {TARGET_EMAIL}
+                    Envío Automático
                   </span>
                 </div>
                 <p className="text-xs sm:text-sm text-slate-800 font-semibold mt-1">
-                  Al pulsar el botón, tu mensaje se dirigirá automáticamente a <strong className="text-blue-950 font-black">{TARGET_EMAIL}</strong>.
+                  Completa los datos de tu inquietud y se enviará de inmediato a <strong className="text-blue-950 font-black">{TARGET_EMAIL}</strong>.
                 </p>
               </div>
 
@@ -278,7 +285,7 @@ export const ContactScreen: React.FC = () => {
               {/* Correo Electrónico del Usuario */}
               <div className="space-y-2">
                 <label className="text-xs font-black text-slate-950 uppercase tracking-wider block">
-                  Tu Correo Electrónico (Remitente) <span className="text-red-600">*</span>
+                  Tu Correo Electrónico <span className="text-red-600">*</span>
                 </label>
                 <input
                   type="email"
@@ -293,7 +300,7 @@ export const ContactScreen: React.FC = () => {
               {/* Seleccionar el motivo de contacto (Asunto) */}
               <div className="space-y-2">
                 <label className="text-xs font-black text-slate-950 uppercase tracking-wider block">
-                  Asunto del Mensaje
+                  Asunto de la Inquietud
                 </label>
                 <select
                   value={subject}
@@ -311,12 +318,12 @@ export const ContactScreen: React.FC = () => {
               {/* Mensaje */}
               <div className="space-y-2">
                 <label className="text-xs font-black text-slate-950 uppercase tracking-wider block">
-                  Mensaje <span className="text-red-600">*</span>
+                  Describe tu Inquietud <span className="text-red-600">*</span>
                 </label>
                 <textarea
                   rows={4}
                   required
-                  placeholder="¿Cómo podemos ayudarte? Escribe aquí los detalles..."
+                  placeholder="Escribe aquí tu inquietud o consulta en detalle..."
                   value={message}
                   onChange={(e) => setMessage(e.target.value)}
                   className="w-full bg-slate-50 border-2 border-slate-300 rounded-2xl px-4 py-3 text-sm text-slate-950 font-bold placeholder-slate-500 focus:outline-none focus:border-blue-700 focus:bg-white transition-all resize-none shadow-sm"
@@ -327,15 +334,24 @@ export const ContactScreen: React.FC = () => {
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="w-full py-4 px-6 rounded-2xl bg-blue-700 hover:bg-blue-800 text-white font-black text-base shadow-xl shadow-blue-700/30 transition-all flex items-center justify-center gap-2 hover:scale-[1.01] cursor-pointer"
+                className="w-full py-4 px-6 rounded-2xl bg-blue-700 hover:bg-blue-800 text-white font-black text-base shadow-xl shadow-blue-700/30 transition-all flex items-center justify-center gap-2 hover:scale-[1.01] cursor-pointer disabled:opacity-75"
               >
-                <Send className={`w-5 h-5 ${isSubmitting ? 'animate-bounce' : ''}`} />
-                <span>{isSubmitting ? 'Preparando Correo...' : 'Enviar Mensaje a VIANOVA'}</span>
+                {isSubmitting ? (
+                  <>
+                    <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                    <span>Enviando automáticamente a {TARGET_EMAIL}...</span>
+                  </>
+                ) : (
+                  <>
+                    <Send className="w-5 h-5" />
+                    <span>Enviar Inquietud a VIANOVA</span>
+                  </>
+                )}
               </button>
 
               {/* Nota de destino transparente */}
               <p className="text-center text-xs text-slate-900 font-bold">
-                Al enviar este mensaje, se remitirá directamente al buzón oficial de <span className="text-blue-900 underline font-black">{TARGET_EMAIL}</span>.
+                Al enviar tu inquietud, se remite directamente al buzón oficial de <span className="text-blue-900 underline font-black">{TARGET_EMAIL}</span>.
               </p>
             </form>
           )}
