@@ -2,14 +2,14 @@
 
 @layer base {
   :root {
-    --sky-blue-bg: #e0f2fe;
-    --sky-blue-card: #eaf5fe;
-    --sky-blue-border: #bae6fd;
-    --sky-blue-input: #f0f9ff;
+    --sky-blue-bg: #b9e3fc;
+    --sky-blue-card: #caeafc;
+    --sky-blue-border: #7dd3fc;
+    --sky-blue-input: #d8effe;
   }
 
   body {
-    background-color: #e0f2fe;
+    background-color: #b9e3fc;
     font-family: 'Plus Jakarta Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
   }
   h1, h2, h3, h4, h5, h6 {
@@ -17,25 +17,25 @@
   }
 }
 
-/* Transición integral de todas las áreas blancas a Azul Cielo */
+/* Transición integral de todas las áreas blancas a Azul Cielo más definido y oscuro */
 .bg-white {
-  background-color: #eaf5fe !important;
+  background-color: #caeafc !important;
 }
 
 .bg-white\/95 {
-  background-color: rgba(234, 245, 254, 0.95) !important;
+  background-color: rgba(202, 234, 252, 0.95) !important;
 }
 
 .bg-white\/90 {
-  background-color: rgba(234, 245, 254, 0.9) !important;
+  background-color: rgba(202, 234, 252, 0.9) !important;
 }
 
 .bg-white\/80 {
-  background-color: rgba(234, 245, 254, 0.8) !important;
+  background-color: rgba(202, 234, 252, 0.8) !important;
 }
 
 .bg-white\/70 {
-  background-color: rgba(234, 245, 254, 0.7) !important;
+  background-color: rgba(202, 234, 252, 0.7) !important;
 }
 
 .bg-slate-50,
@@ -43,7 +43,7 @@
 .bg-\[\#f4f5f8\],
 .bg-\[\#f1f3f5\],
 .bg-\[\#eceef2\] {
-  background-color: #dbeafe !important;
+  background-color: #b0defc !important;
 }
 
 /* Custom dark frosted glass scrollbar */

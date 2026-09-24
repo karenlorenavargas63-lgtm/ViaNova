@@ -79,7 +79,7 @@ export default function App() {
   }
 
   return (
-    <div className="min-h-screen bg-[#e0f2fe] text-slate-900 font-sans flex flex-col relative overflow-x-hidden selection:bg-blue-600 selection:text-white">
+    <div className="min-h-screen bg-[#b9e3fc] text-slate-900 font-sans flex flex-col relative overflow-x-hidden selection:bg-blue-600 selection:text-white">
       
       {/* Soft Ambient Accents */}
       <div className="fixed top-[-10%] left-[-5%] w-[450px] sm:w-[600px] h-[450px] sm:h-[600px] bg-blue-400/5 rounded-full blur-[140px] pointer-events-none z-0"></div>

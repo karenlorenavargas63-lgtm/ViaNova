@@ -24,7 +24,7 @@ export const AboutScreen: React.FC<AboutScreenProps> = ({ setCurrentTab }) => {
     <div id="vianova-about-page" className="w-full font-sans text-slate-800">
       
       {/* 1. Hero Section: Conoce VIANOVA */}
-      <section className="w-full bg-[#e0f2fe] py-12 sm:py-16 md:py-20 border-b border-sky-300">
+      <section className="w-full bg-[#b9e3fc] py-12 sm:py-16 md:py-20 border-b border-sky-300">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-center">
             
@@ -50,7 +50,7 @@ export const AboutScreen: React.FC<AboutScreenProps> = ({ setCurrentTab }) => {
                 <button
                   id="btn-about-contact"
                   onClick={() => setCurrentTab('contacto')}
-                  className="px-8 py-3.5 rounded-xl bg-[#eaf5fe] hover:bg-[#bae6fd] text-[#0055d4] border border-[#0055d4] font-semibold text-sm transition-all duration-200 shadow-xs"
+                  className="px-8 py-3.5 rounded-xl bg-[#caeafc] hover:bg-[#a8d8fc] text-[#0055d4] border border-[#0055d4] font-semibold text-sm transition-all duration-200 shadow-xs"
                 >
                   Contacto
                 </button>
@@ -67,7 +67,7 @@ export const AboutScreen: React.FC<AboutScreenProps> = ({ setCurrentTab }) => {
       </section>
 
       {/* 2. Nuestros Pilares Section */}
-      <section className="w-full bg-[#d4ebfd] py-16 sm:py-20 border-b border-sky-300">
+      <section className="w-full bg-[#a8d8fc] py-16 sm:py-20 border-b border-sky-300">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           
           <div className="text-center max-w-2xl mx-auto space-y-3">
@@ -82,7 +82,7 @@ export const AboutScreen: React.FC<AboutScreenProps> = ({ setCurrentTab }) => {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8 mt-12 sm:mt-14">
             
             {/* Pilar 1: Tecnología */}
-            <div className="bg-[#eaf5fe] border border-sky-300 rounded-3xl p-8 sm:p-9 shadow-xs hover:shadow-md transition-shadow duration-300 flex flex-col">
+            <div className="bg-[#caeafc] border border-sky-300 rounded-3xl p-8 sm:p-9 shadow-xs hover:shadow-md transition-shadow duration-300 flex flex-col">
               <div className="w-12 h-12 rounded-full bg-[#0a193b] flex items-center justify-center text-white mb-6 shrink-0 shadow-sm">
                 <Cpu className="w-6 h-6" />
               </div>
@@ -95,7 +95,7 @@ export const AboutScreen: React.FC<AboutScreenProps> = ({ setCurrentTab }) => {
             </div>
 
             {/* Pilar 2: Movilidad */}
-            <div className="bg-[#eaf5fe] border border-sky-300 rounded-3xl p-8 sm:p-9 shadow-xs hover:shadow-md transition-shadow duration-300 flex flex-col">
+            <div className="bg-[#caeafc] border border-sky-300 rounded-3xl p-8 sm:p-9 shadow-xs hover:shadow-md transition-shadow duration-300 flex flex-col">
               <div className="w-12 h-12 rounded-full bg-[#0055d4] flex items-center justify-center text-white mb-6 shrink-0 shadow-sm">
                 <Bus className="w-6 h-6" />
               </div>
@@ -108,7 +108,7 @@ export const AboutScreen: React.FC<AboutScreenProps> = ({ setCurrentTab }) => {
             </div>
 
             {/* Pilar 3: Educación */}
-            <div className="bg-[#eaf5fe] border border-sky-300 rounded-3xl p-8 sm:p-9 shadow-xs hover:shadow-md transition-shadow duration-300 flex flex-col">
+            <div className="bg-[#caeafc] border border-sky-300 rounded-3xl p-8 sm:p-9 shadow-xs hover:shadow-md transition-shadow duration-300 flex flex-col">
               <h3 className="text-xl font-bold text-[#0a193b] mb-3 pt-1">
                 Educación
               </h3>
@@ -123,7 +123,7 @@ export const AboutScreen: React.FC<AboutScreenProps> = ({ setCurrentTab }) => {
       </section>
 
       {/* 3. Dirigido a Section */}
-      <section className="w-full bg-[#e0f2fe] py-16 sm:py-20">
+      <section className="w-full bg-[#b9e3fc] py-16 sm:py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           
           <div className="text-center max-w-2xl mx-auto space-y-3">
@@ -138,7 +138,7 @@ export const AboutScreen: React.FC<AboutScreenProps> = ({ setCurrentTab }) => {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mt-12 sm:mt-14">
             
             {/* Ciclistas */}
-            <div className="bg-[#d4ebfd] hover:bg-[#bde0fb] border border-sky-300/60 rounded-2xl py-8 px-4 flex flex-col items-center justify-center text-center transition-colors duration-200">
+            <div className="bg-[#caeafc] hover:bg-[#a8d8fc] border border-sky-300 rounded-2xl py-8 px-4 flex flex-col items-center justify-center text-center transition-colors duration-200">
               <Bike className="w-9 h-9 text-[#0055d4] mb-3" strokeWidth={2.2} />
               <span className="font-bold text-sm text-[#0a193b]">
                 Ciclistas
@@ -146,7 +146,7 @@ export const AboutScreen: React.FC<AboutScreenProps> = ({ setCurrentTab }) => {
             </div>
 
             {/* Peatones */}
-            <div className="bg-[#d4ebfd] hover:bg-[#bde0fb] border border-sky-300/60 rounded-2xl py-8 px-4 flex flex-col items-center justify-center text-center transition-colors duration-200">
+            <div className="bg-[#caeafc] hover:bg-[#a8d8fc] border border-sky-300 rounded-2xl py-8 px-4 flex flex-col items-center justify-center text-center transition-colors duration-200">
               <PersonStanding className="w-9 h-9 text-[#0055d4] mb-3" strokeWidth={2.2} />
               <span className="font-bold text-sm text-[#0a193b]">
                 Peatones
@@ -154,7 +154,7 @@ export const AboutScreen: React.FC<AboutScreenProps> = ({ setCurrentTab }) => {
             </div>
 
             {/* Conductores */}
-            <div className="bg-[#d4ebfd] hover:bg-[#bde0fb] border border-sky-300/60 rounded-2xl py-8 px-4 flex flex-col items-center justify-center text-center transition-colors duration-200">
+            <div className="bg-[#caeafc] hover:bg-[#a8d8fc] border border-sky-300 rounded-2xl py-8 px-4 flex flex-col items-center justify-center text-center transition-colors duration-200">
               <Car className="w-9 h-9 text-[#0055d4] mb-3" strokeWidth={2.2} />
               <span className="font-bold text-sm text-[#0a193b]">
                 Conductores
@@ -162,7 +162,7 @@ export const AboutScreen: React.FC<AboutScreenProps> = ({ setCurrentTab }) => {
             </div>
 
             {/* Ayuntamientos */}
-            <div className="bg-[#d4ebfd] hover:bg-[#bde0fb] border border-sky-300/60 rounded-2xl py-8 px-4 flex flex-col items-center justify-center text-center transition-colors duration-200">
+            <div className="bg-[#caeafc] hover:bg-[#a8d8fc] border border-sky-300 rounded-2xl py-8 px-4 flex flex-col items-center justify-center text-center transition-colors duration-200">
               <Building2 className="w-9 h-9 text-[#0055d4] mb-3" strokeWidth={2.2} />
               <span className="font-bold text-sm text-[#0a193b]">
                 Ayuntamientos
@@ -177,7 +177,7 @@ export const AboutScreen: React.FC<AboutScreenProps> = ({ setCurrentTab }) => {
       {/* Vision Modal */}
       {isVisionModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-fade-in">
-          <div className="relative w-full max-w-lg rounded-3xl bg-[#eaf5fe] border border-sky-300 p-6 sm:p-8 text-slate-800 shadow-2xl space-y-6">
+          <div className="relative w-full max-w-lg rounded-3xl bg-[#caeafc] border border-sky-300 p-6 sm:p-8 text-slate-800 shadow-2xl space-y-6">
             <div className="flex items-center justify-between border-b border-slate-100 pb-4">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center text-[#0055d4]">

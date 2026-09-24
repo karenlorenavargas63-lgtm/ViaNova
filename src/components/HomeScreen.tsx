@@ -26,9 +26,9 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ setCurrentTab }) => {
           <div className="lg:col-span-6 space-y-6">
 
             {/* Logo Oficial VIANOVA Destacado */}
-            <div className="inline-flex items-center gap-3.5 px-4 py-2.5 rounded-2xl bg-[#eaf5fe] border border-sky-300 shadow-md hover:shadow-lg transition-all duration-300 hover:border-blue-400 group">
+            <div className="inline-flex items-center gap-3.5 px-4 py-2.5 rounded-2xl bg-[#caeafc] border border-sky-300 shadow-md hover:shadow-lg transition-all duration-300 hover:border-blue-400 group">
               <div className="relative w-12 h-12 rounded-2xl p-1 bg-gradient-to-br from-[#0057d9] to-indigo-700 shadow-md shadow-blue-500/25 shrink-0 flex items-center justify-center group-hover:scale-105 transition-transform duration-300">
-                <div className="w-full h-full rounded-xl overflow-hidden bg-[#dbeafe] flex items-center justify-center">
+                <div className="w-full h-full rounded-xl overflow-hidden bg-[#a8d8fc] flex items-center justify-center">
                   <img
                     src={logoImg}
                     alt="Logo Oficial VIANOVA"
@@ -72,7 +72,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ setCurrentTab }) => {
               <button
                 id="hero-routes-btn"
                 onClick={() => setCurrentTab('rutas')}
-                className="inline-flex items-center justify-center px-8 py-4 rounded-2xl bg-[#e0f2fe] hover:bg-[#bae6fd] text-[#0b1b3d] font-bold text-base border-2 border-[#0b1b3d] transition-all duration-200 hover:scale-[1.02] shadow-sm"
+                className="inline-flex items-center justify-center px-8 py-4 rounded-2xl bg-[#b9e3fc] hover:bg-[#a8d8fc] text-[#0b1b3d] font-bold text-base border-2 border-[#0b1b3d] transition-all duration-200 hover:scale-[1.02] shadow-sm"
               >
                 <span>Ver rutas</span>
               </button>
@@ -104,7 +104,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ setCurrentTab }) => {
           {/* Card 1: Tráfico Urbano (Sky blue card with blue icon and 'Fluido' pill) */}
           <div 
             onClick={() => setCurrentTab('rutas')}
-            className="cursor-pointer group relative rounded-[1.75rem] bg-[#eaf5fe] border border-sky-300/80 p-6 sm:p-7 hover:shadow-xl hover:border-blue-400 transition-all duration-300 shadow-sm"
+            className="cursor-pointer group relative rounded-[1.75rem] bg-[#caeafc] border border-sky-300/80 p-6 sm:p-7 hover:shadow-xl hover:border-blue-400 transition-all duration-300 shadow-sm"
           >
             <div className="flex items-start justify-between mb-5">
               <div className="w-12 h-12 rounded-2xl bg-[#0057d9] flex items-center justify-center text-white shadow-md shadow-blue-500/20 group-hover:scale-105 transition-transform">
@@ -128,7 +128,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ setCurrentTab }) => {
           {/* Card 2: Transporte Público (Sky blue card with dark blue icon and '98% Operativo' pill) */}
           <div 
             onClick={() => setCurrentTab('rutas')}
-            className="cursor-pointer group relative rounded-[1.75rem] bg-[#eaf5fe] border border-sky-300/80 p-6 sm:p-7 hover:shadow-xl hover:border-blue-400 transition-all duration-300 shadow-sm"
+            className="cursor-pointer group relative rounded-[1.75rem] bg-[#caeafc] border border-sky-300/80 p-6 sm:p-7 hover:shadow-xl hover:border-blue-400 transition-all duration-300 shadow-sm"
           >
             <div className="flex items-start justify-between mb-5">
               <div className="w-12 h-12 rounded-2xl bg-[#0b254a] flex items-center justify-center text-white shadow-md shadow-slate-900/10 group-hover:scale-105 transition-transform">
@@ -153,7 +153,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ setCurrentTab }) => {
             <AlertTriangle className="absolute -right-4 -bottom-4 w-36 h-36 text-white/[0.07] pointer-events-none" />
             
             <div className="relative z-10 flex items-start justify-between mb-5">
-              <div className="w-12 h-12 rounded-2xl bg-[#e0f2fe] flex items-center justify-center text-[#b91c1c] shadow-md group-hover:scale-105 transition-transform">
+              <div className="w-12 h-12 rounded-2xl bg-[#caeafc] flex items-center justify-center text-[#b91c1c] shadow-md group-hover:scale-105 transition-transform">
                 <Wrench className="w-6 h-6" />
               </div>
               <span className="px-3.5 py-1 rounded-full text-xs font-bold bg-white/20 text-white backdrop-blur-sm">

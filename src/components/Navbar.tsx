@@ -49,7 +49,7 @@ export const Navbar: React.FC<NavbarProps> = ({
   ];
 
   return (
-    <header className="sticky top-0 z-40 w-full bg-[#e0f2fe]/95 backdrop-blur-md border-b border-sky-300 transition-all duration-300 shadow-sm">
+    <header className="sticky top-0 z-40 w-full bg-[#b9e3fc]/95 backdrop-blur-md border-b border-sky-300 transition-all duration-300 shadow-sm">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-20">
           
@@ -125,7 +125,7 @@ export const Navbar: React.FC<NavbarProps> = ({
 
       {/* Mobile Drawer */}
       {isMobileMenuOpen && (
-        <div className="md:hidden bg-[#e0f2fe] border-b border-sky-300 px-4 pt-3 pb-6 space-y-2 shadow-lg max-h-[85vh] overflow-y-auto">
+        <div className="md:hidden bg-[#b9e3fc] border-b border-sky-300 px-4 pt-3 pb-6 space-y-2 shadow-lg max-h-[85vh] overflow-y-auto">
           {navItems.map((item) => {
             const isActive = currentTab === item.id;
             return (
@@ -138,7 +138,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                 className={`w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm font-semibold transition-all ${
                   isActive
                     ? 'bg-blue-100 text-[#0057d9] border border-sky-300'
-                    : 'text-slate-700 hover:bg-[#bae6fd]/50'
+                    : 'text-slate-700 hover:bg-[#a8d8fc]'
                 }`}
               >
                 <span>{item.label}</span>
