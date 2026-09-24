@@ -22,19 +22,70 @@ interface QuizModalProps {
   onQuizPassed?: (scorePercent: number) => void;
 }
 
+// Randomizes option positions across A, B, C, D (so correct answers are not all B)
+const randomizeModalQuestions = (baseList: QuizQuestion[]): QuizQuestion[] => {
+  const letters = ['A', 'B', 'C', 'D'];
+  const baseIndices = [0, 1, 2, 3];
+  const targetIndices = [...baseIndices, Math.floor(Math.random() * 4)].sort(() => Math.random() - 0.5);
+
+  return baseList.map((q, qIdx) => {
+    const correctOpt = q.options.find(o => o.id === q.correctAnswerId) || q.options[0];
+    const incorrectOpts = q.options
+      .filter(o => o.id !== q.correctAnswerId)
+      .sort(() => Math.random() - 0.5);
+
+    const targetPos = targetIndices[qIdx % targetIndices.length];
+    const newOptions: Array<{ id: string; text: string }> = [];
+    let incIdx = 0;
+    let newCorrectId = 'A';
+
+    for (let i = 0; i < 4; i++) {
+      if (i === targetPos) {
+        newOptions.push({
+          id: letters[i],
+          text: correctOpt.text,
+        });
+        newCorrectId = letters[i];
+      } else {
+        newOptions.push({
+          id: letters[i],
+          text: incorrectOpts[incIdx++]?.text || '',
+        });
+      }
+    }
+
+    return {
+      ...q,
+      options: newOptions,
+      correctAnswerId: newCorrectId,
+    };
+  });
+};
+
 export const QuizModal: React.FC<QuizModalProps> = ({
   isOpen,
   onClose,
   onQuizPassed
 }) => {
+  const [questions, setQuestions] = React.useState<QuizQuestion[]>(() => randomizeModalQuestions(mockQuizQuestions));
   const [currentIndex, setCurrentIndex] = React.useState(0);
   const [userAnswers, setUserAnswers] = React.useState<Record<number, { selectedId: string; isSubmitted: boolean; isCorrect: boolean }>>({});
   const [isCompleted, setIsCompleted] = React.useState(false);
 
+  // Re-randomize whenever modal opens
+  React.useEffect(() => {
+    if (isOpen) {
+      setQuestions(randomizeModalQuestions(mockQuizQuestions));
+      setCurrentIndex(0);
+      setUserAnswers({});
+      setIsCompleted(false);
+    }
+  }, [isOpen]);
+
   if (!isOpen) return null;
 
-  const currentQuestion: QuizQuestion = mockQuizQuestions[currentIndex] || mockQuizQuestions[0];
-  const isLastQuestion = currentIndex === mockQuizQuestions.length - 1;
+  const currentQuestion: QuizQuestion = questions[currentIndex] || questions[0];
+  const isLastQuestion = currentIndex === questions.length - 1;
   const currentAnswer = userAnswers[currentIndex];
   const selectedOptionId = currentAnswer?.selectedId || null;
   const hasSubmitted = currentAnswer?.isSubmitted || false;
@@ -74,7 +125,7 @@ export const QuizModal: React.FC<QuizModalProps> = ({
         origin: { y: 0.6 }
       });
       const correctCount = (Object.values(userAnswers) as Array<{ isCorrect: boolean }>).filter((a) => a.isCorrect).length;
-      const finalPercent = Math.round((correctCount / mockQuizQuestions.length) * 100);
+      const finalPercent = Math.round((correctCount / questions.length) * 100);
       onQuizPassed?.(finalPercent);
     } else {
       setCurrentIndex(prev => prev + 1);
@@ -88,6 +139,7 @@ export const QuizModal: React.FC<QuizModalProps> = ({
   };
 
   const handleRestart = () => {
+    setQuestions(randomizeModalQuestions(mockQuizQuestions));
     setCurrentIndex(0);
     setUserAnswers({});
     setIsCompleted(false);
@@ -120,7 +172,7 @@ export const QuizModal: React.FC<QuizModalProps> = ({
               {/* Direct Question Pills for quick navigation and returning */}
               <div className="flex items-center gap-1.5 bg-slate-100/90 p-1.5 rounded-2xl border border-slate-200 self-start sm:self-auto">
                 <span className="text-[11px] font-bold text-slate-500 px-2">Pregunta:</span>
-                {mockQuizQuestions.map((q, idx) => {
+                {questions.map((q, idx) => {
                   const ans = userAnswers[idx];
                   const isCurrent = idx === currentIndex;
                   return (
@@ -150,7 +202,7 @@ export const QuizModal: React.FC<QuizModalProps> = ({
             <div className="w-full h-2 bg-slate-100 rounded-full overflow-hidden">
               <div
                 className="h-full bg-blue-600 rounded-full transition-all duration-300"
-                style={{ width: `${((currentIndex + 1) / mockQuizQuestions.length) * 100}%` }}
+                style={{ width: `${((currentIndex + 1) / questions.length) * 100}%` }}
               />
             </div>
 
@@ -298,10 +350,10 @@ export const QuizModal: React.FC<QuizModalProps> = ({
             <div className="p-6 bg-slate-50 rounded-2xl border border-slate-200 inline-block text-center min-w-[240px]">
               <span className="text-xs font-bold text-slate-400 uppercase">Puntuación Final</span>
               <p className="text-4xl font-black text-blue-600 font-display mt-1">
-                {score} / {mockQuizQuestions.length}
+                {score} / {questions.length}
               </p>
               <span className="text-xs text-emerald-600 font-bold">
-                +{Math.round((score / mockQuizQuestions.length) * 10)} Puntos de Certificación
+                +{Math.round((score / questions.length) * 10)} Puntos de Certificación
               </span>
             </div>
 

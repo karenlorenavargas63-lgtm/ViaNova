@@ -20,122 +20,139 @@ import pedestrianSignDusk from '../assets/images/pedestrian_sign_dusk_1788438631
 import roundaboutDiagram from '../assets/images/roundabout_diagram_1788438648636.jpg';
 import incidentResponseAgent from '../assets/images/incident_response_agent_1788438663707.jpg';
 
+// Módulo 1 base quiz questions with designated correct and incorrect choices
+interface QuizOptionItem {
+  id: string;
+  text: string;
+  isCorrect?: boolean;
+}
+
+interface QuizQuestionItem {
+  number: number;
+  category: string;
+  title: string;
+  question: string;
+  options: QuizOptionItem[];
+  correctExplanation: string;
+}
+
+const BASE_QUIZ_QUESTIONS = [
+  {
+    number: 1,
+    category: 'MÓDULO 1: SEÑALIZACIÓN BÁSICA',
+    title: 'Evaluación de Conocimientos',
+    question: '¿Cuál es la primera prioridad en la Pirámide de la Movilidad Urbana?',
+    correctText: 'Peatones y personas con movilidad reducida.',
+    incorrectTexts: [
+      'Vehículos de carga y logística urbana.',
+      'Transporte público masivo y buses escolares.',
+      'Automóviles particulares y vehículos eléctricos.',
+    ],
+    correctExplanation: 'Los peatones y personas con movilidad reducida se sitúan en la cúspide de la pirámide por ser los usuarios más vulnerables con máxima prioridad de paso.',
+  },
+  {
+    number: 2,
+    category: 'MÓDULO 1: SEÑALIZACIÓN BÁSICA',
+    title: 'Evaluación de Conocimientos',
+    question: '¿Qué indica una línea continua pintada en el centro de la calzada?',
+    correctText: 'Prohibición estricta de adelantar o invadir el carril en sentido opuesto.',
+    incorrectTexts: [
+      'Está permitido adelantar con precaución si no vienen vehículos.',
+      'Carril exclusivo para bicicletas los fines de semana.',
+      'Zona habilitada para detenerse brevemente.',
+    ],
+    correctExplanation: 'La línea continua longitudinal prohíbe de forma terminante invadir el carril contrario o realizar maniobras de adelantamiento.',
+  },
+  {
+    number: 3,
+    category: 'MÓDULO 1: SEÑALIZACIÓN BÁSICA',
+    title: 'Evaluación de Conocimientos',
+    question: '¿Qué debes hacer cuando encuentras una señal de PARE?',
+    correctText: 'Detenerse por completo antes de la línea de pare o cruce peatonal.',
+    incorrectTexts: [
+      'Disminuir la velocidad y continuar si no viene nadie por la vía transversal.',
+      'Tocar la bocina para alertar a otros conductores que vas a cruzar la intersección.',
+      'Ceder el paso exclusivamente a los vehículos que se aproximan por la derecha.',
+    ],
+    correctExplanation: 'La señal reglamentaria de PARE (R1) exige detención total y obligatoria antes de la demarcación o cruce, sin excepción, verificando ambos sentidos de circulación.',
+  },
+  {
+    number: 4,
+    category: 'MÓDULO 1: SEÑALIZACIÓN BÁSICA',
+    title: 'Evaluación de Conocimientos',
+    question: '¿Cuál es la distancia lateral mínima que debe guardar un vehículo al adelantar a un ciclista?',
+    correctText: '1.5 metros de distancia lateral.',
+    incorrectTexts: [
+      '50 centímetros de separación.',
+      'Solo la distancia del retrovisor.',
+      'No se requiere distancia si el carril es amplio.',
+    ],
+    correctExplanation: 'Por normativa y seguridad vital, todo automotor debe respetar un margen mínimo de 1.5 metros al adelantar a un usuario de bicicleta.',
+  },
+  {
+    number: 5,
+    category: 'MÓDULO 1: SEÑALIZACIÓN BÁSICA',
+    title: 'Evaluación de Conocimientos',
+    question: '¿Qué significa la luz amarilla fija en el semáforo vehicular?',
+    correctText: 'Advertencia de cambio inminente a rojo; detenerse de manera segura.',
+    incorrectTexts: [
+      'Acelerar antes de que el semáforo cambie a luz roja.',
+      'Paso libre preferencial para motocicletas.',
+      'Giro obligatorio a la derecha sin parar.',
+    ],
+    correctExplanation: 'La luz amarilla advierte la conclusión inminente del derecho de paso; se debe detener el vehículo antes de la línea de detención salvo que no pueda hacerse con seguridad.',
+  },
+];
+
+// Generates randomized options distributed across A, B, C, D (ensuring questions are never all B)
+const getRandomizedQuizQuestions = (): QuizQuestionItem[] => {
+  const letters = ['A', 'B', 'C', 'D'];
+  // Ensure every option letter (A, B, C, D) gets used across the 5 questions, randomized
+  const targetPositions = [0, 1, 2, 3, Math.floor(Math.random() * 4)].sort(() => Math.random() - 0.5);
+
+  return BASE_QUIZ_QUESTIONS.map((base, idx) => {
+    const targetIdx = targetPositions[idx % targetPositions.length];
+    const shuffledIncorrect = [...base.incorrectTexts].sort(() => Math.random() - 0.5);
+
+    const options: QuizOptionItem[] = [];
+    let incIdx = 0;
+
+    for (let i = 0; i < 4; i++) {
+      if (i === targetIdx) {
+        options.push({
+          id: letters[i],
+          text: base.correctText,
+          isCorrect: true,
+        });
+      } else {
+        options.push({
+          id: letters[i],
+          text: shuffledIncorrect[incIdx++],
+          isCorrect: false,
+        });
+      }
+    }
+
+    return {
+      number: base.number,
+      category: base.category,
+      title: base.title,
+      question: base.question,
+      options,
+      correctExplanation: base.correctExplanation,
+    };
+  });
+};
+
 export const EducationScreen: React.FC = () => {
   const [selectedCategory, setSelectedCategory] = useState<string>('todos');
   
   // Interactive Quiz State: Módulo 1 (Señalización Básica)
-  // Starts from question 1 (index 0) with no pre-completed questions
+  // Options are dynamically randomized among A, B, C, D so the correct answer is never always B
+  const [quizQuestions, setQuizQuestions] = useState<QuizQuestionItem[]>(() => getRandomizedQuizQuestions());
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState<number>(0);
   const [userAnswers, setUserAnswers] = useState<Record<number, { selectedOption: string | null; isSubmitted: boolean; isCorrect: boolean }>>({});
   const [quizCompleted, setQuizCompleted] = useState<boolean>(false);
-
-  // Módulo 1 quiz questions list (5 questions starting from question 1)
-  const quizQuestions = [
-    {
-      number: 1,
-      category: 'MÓDULO 1: SEÑALIZACIÓN BÁSICA',
-      title: 'Evaluación de Conocimientos',
-      question: '¿Cuál es la primera prioridad en la Pirámide de la Movilidad Urbana?',
-      options: [
-        {
-          id: 'A',
-          text: 'Vehículos de carga y logística urbana.',
-        },
-        {
-          id: 'B',
-          text: 'Peatones y personas con movilidad reducida.',
-          isCorrect: true,
-        },
-        {
-          id: 'C',
-          text: 'Transporte público masivo y buses escolares.',
-        },
-        {
-          id: 'D',
-          text: 'Automóviles particulares y vehículos eléctricos.',
-        },
-      ],
-      correctExplanation: 'Los peatones y personas con movilidad reducida se sitúan en la cúspide de la pirámide por ser los usuarios más vulnerables con máxima prioridad de paso.',
-    },
-    {
-      number: 2,
-      category: 'MÓDULO 1: SEÑALIZACIÓN BÁSICA',
-      title: 'Evaluación de Conocimientos',
-      question: '¿Qué indica una línea continua pintada en el centro de la calzada?',
-      options: [
-        {
-          id: 'A',
-          text: 'Está permitido adelantar con precaución si no vienen vehículos.',
-        },
-        {
-          id: 'B',
-          text: 'Prohibición estricta de adelantar o invadir el carril en sentido opuesto.',
-          isCorrect: true,
-        },
-        {
-          id: 'C',
-          text: 'Carril exclusivo para bicicletas los fines de semana.',
-        },
-        {
-          id: 'D',
-          text: 'Zona habilitada para detenerse brevemente.',
-        },
-      ],
-      correctExplanation: 'La línea continua longitudinal prohíbe de forma terminante invadir el carril contrario o realizar maniobras de adelantamiento.',
-    },
-    {
-      number: 3,
-      category: 'MÓDULO 1: SEÑALIZACIÓN BÁSICA',
-      title: 'Evaluación de Conocimientos',
-      question: '¿Qué debes hacer cuando encuentras una señal de PARE?',
-      options: [
-        {
-          id: 'A',
-          text: 'Disminuir la velocidad y continuar si no viene nadie por la vía transversal.',
-        },
-        {
-          id: 'B',
-          text: 'Detenerse por completo antes de la línea de pare o cruce peatonal.',
-          isCorrect: true,
-        },
-        {
-          id: 'C',
-          text: 'Tocar la bocina para alertar a otros conductores que vas a cruzar la intersección.',
-        },
-        {
-          id: 'D',
-          text: 'Ceder el paso exclusivamente a los vehículos que se aproximan por la derecha.',
-        },
-      ],
-      correctExplanation: 'La señal reglamentaria de PARE (R1) exige detención total y obligatoria antes de la demarcación o cruce, sin excepción, verificando ambos sentidos de circulación.',
-    },
-    {
-      number: 4,
-      category: 'MÓDULO 1: SEÑALIZACIÓN BÁSICA',
-      title: 'Evaluación de Conocimientos',
-      question: '¿Cuál es la distancia lateral mínima que debe guardar un vehículo al adelantar a un ciclista?',
-      options: [
-        { id: 'A', text: '50 centímetros de separación.' },
-        { id: 'B', text: '1.5 metros de distancia lateral.', isCorrect: true },
-        { id: 'C', text: 'Solo la distancia del retrovisor.' },
-        { id: 'D', text: 'No se requiere distancia si el carril es amplio.' },
-      ],
-      correctExplanation: 'Por normativa y seguridad vital, todo automotor debe respetar un margen mínimo de 1.5 metros al adelantar a un usuario de bicicleta.',
-    },
-    {
-      number: 5,
-      category: 'MÓDULO 1: SEÑALIZACIÓN BÁSICA',
-      title: 'Evaluación de Conocimientos',
-      question: '¿Qué significa la luz amarilla fija en el semáforo vehicular?',
-      options: [
-        { id: 'A', text: 'Acelerar antes de que el semáforo cambie a luz roja.' },
-        { id: 'B', text: 'Advertencia de cambio inminente a rojo; detenerse de manera segura.', isCorrect: true },
-        { id: 'C', text: 'Paso libre preferencial para motocicletas.' },
-        { id: 'D', text: 'Giro obligatorio a la derecha sin parar.' },
-      ],
-      correctExplanation: 'La luz amarilla advierte la conclusión inminente del derecho de paso; se debe detener el vehículo antes de la línea de detención salvo que no pueda hacerse con seguridad.',
-    },
-  ];
 
   const totalQuestions = quizQuestions.length;
   const currentQ = quizQuestions[currentQuestionIndex] || quizQuestions[0];
@@ -193,6 +210,7 @@ export const EducationScreen: React.FC = () => {
   };
 
   const handleRestartQuiz = () => {
+    setQuizQuestions(getRandomizedQuizQuestions());
     setCurrentQuestionIndex(0);
     setUserAnswers({});
     setQuizCompleted(false);

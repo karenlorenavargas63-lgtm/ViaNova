@@ -267,11 +267,11 @@ export const mockQuizQuestions: QuizQuestion[] = [
     question: '¿Cuál es la primera prioridad en la Pirámide de la Movilidad Urbana?',
     options: [
       { id: 'A', text: 'Vehículos de carga y logística' },
-      { id: 'B', text: 'Peatones y personas con movilidad reducida' },
-      { id: 'C', text: 'Transporte público masivo' },
+      { id: 'B', text: 'Transporte público masivo' },
+      { id: 'C', text: 'Peatones y personas con movilidad reducida' },
       { id: 'D', text: 'Automóviles particulares eléctricos' }
     ],
-    correctAnswerId: 'B',
+    correctAnswerId: 'C',
     explanation: 'Los peatones y personas con movilidad reducida se sitúan en la cúspide de la pirámide por ser los usuarios más vulnerables del entorno urbano.'
   },
   {
@@ -291,11 +291,11 @@ export const mockQuizQuestions: QuizQuestion[] = [
     question: '¿Qué debes hacer cuando encuentras una señal de PARE?',
     options: [
       { id: 'A', text: 'Disminuir la velocidad y continuar si no viene nadie por la vía transversal.' },
-      { id: 'B', text: 'Detenerse por completo antes de la línea de pare o cruce peatonal.' },
-      { id: 'C', text: 'Tocar la bocina para alertar a otros conductores que vas a cruzar la intersección.' },
-      { id: 'D', text: 'Ceder el paso exclusivamente a los vehículos que se aproximan por la derecha.' }
+      { id: 'B', text: 'Tocar la bocina para alertar a otros conductores que vas a cruzar la intersección.' },
+      { id: 'C', text: 'Ceder el paso exclusivamente a los vehículos que se aproximan por la derecha.' },
+      { id: 'D', text: 'Detenerse por completo antes de la línea de pare o cruce peatonal.' }
     ],
-    correctAnswerId: 'B',
+    correctAnswerId: 'D',
     explanation: 'La señal de PARE exige detención total y absoluta de las ruedas del vehículo detrás de la línea de parada para verificar el flujo antes de avanzar.'
   },
   {
@@ -314,12 +314,12 @@ export const mockQuizQuestions: QuizQuestion[] = [
     id: 5,
     question: '¿Cuál es la velocidad máxima permitida comúnmente en zonas escolares y hospitalarias?',
     options: [
-      { id: 'A', text: '20 km/h o 30 km/h según la reglamentación local' },
-      { id: 'B', text: '50 km/h' },
-      { id: 'C', text: '60 km/h si no hay niños a la vista' },
+      { id: 'A', text: '50 km/h' },
+      { id: 'B', text: '60 km/h si no hay niños a la vista' },
+      { id: 'C', text: '20 km/h o 30 km/h según la reglamentación local' },
       { id: 'D', text: '80 km/h con luces intermitentes' }
     ],
-    correctAnswerId: 'A',
+    correctAnswerId: 'C',
     explanation: 'Las zonas escolares exigen reducción a 20 o 30 km/h debido al tiempo de reacción necesario y la impredecibilidad de infantes.'
   }
 ];
