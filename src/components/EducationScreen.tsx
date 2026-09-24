@@ -25,12 +25,44 @@ import scooterBikewayPov from '../assets/images/scooter_bikeway_pov_178843861791
 import pedestrianSignDusk from '../assets/images/pedestrian_sign_dusk_1788438631922.jpg';
 import roundaboutDiagram from '../assets/images/roundabout_diagram_1788438648636.jpg';
 import incidentResponseAgent from '../assets/images/incident_response_agent_1788438663707.jpg';
+import pedestrianSafeCrosswalk from '../assets/images/pedestrian_safe_crosswalk_1788876049804.jpg';
+
+// Categories Configuration
+export type CourseCategoryType = 'micromovilidad' | 'peatonal' | 'normativa';
+
+export interface CategoryTabItem {
+  id: CourseCategoryType;
+  label: string;
+  badge: string;
+  description: string;
+}
+
+export const CATEGORY_TABS: CategoryTabItem[] = [
+  {
+    id: 'micromovilidad',
+    label: 'Micromovilidad',
+    badge: 'Bicis y Patinetas',
+    description: 'Cursos específicos para ciclorrutas, movilidad ligera, puntos ciegos y convivencia segura.',
+  },
+  {
+    id: 'peatonal',
+    label: 'Seguridad Peatonal',
+    badge: 'Peatones y Cruces Seguros',
+    description: 'Capacitación dedicada a pasos de cebra, visibilidad del peatón y protocolo PAS de respuesta a incidentes.',
+  },
+  {
+    id: 'normativa',
+    label: 'Normativa Urbana',
+    badge: 'Leyes y Señalización',
+    description: 'Normativa de tránsito, semaforización adaptativa, zonas 30 y jerarquía vial.',
+  },
+];
 
 // Base Course Information
 export interface CourseItem {
   id: string;
   title: string;
-  categoryKey: 'micromovilidad' | 'peatonal' | 'normativa';
+  categoryKey: CourseCategoryType;
   categoryLabel: string;
   level: string;
   duration: string;
@@ -49,7 +81,7 @@ export const COURSES_DATA: CourseItem[] = [
     categoryLabel: 'Micromovilidad',
     level: 'Básico',
     duration: '2.5 hrs',
-    description: 'Aprende los fundamentos para moverte por la ciudad minimizando riesgos. Ideal para nuevos usuarios de micromovilidad y peatones.',
+    description: 'Aprende los fundamentos para moverte por la ciudad en bicicleta o patineta minimizando riesgos y compartiendo la vía.',
     image: cyclistsGreenBikeway,
     recommended: true,
     featured: true,
@@ -73,7 +105,7 @@ export const COURSES_DATA: CourseItem[] = [
     lessons: [
       'Señales manuales de viraje y frenado',
       'Velocidades máximas en carriles bici (25 km/h)',
-      'Prioridad al peatón en intersecciones',
+      'Prioridad al peatón en intersecciones de ciclorrutas',
       'Mantenimiento básico de frenos y presión de llantas'
     ]
   },
@@ -95,7 +127,7 @@ export const COURSES_DATA: CourseItem[] = [
   },
   {
     id: 'course_4',
-    title: 'Prioridad y Flujo',
+    title: 'Prioridad y Flujo Vial',
     categoryKey: 'normativa',
     categoryLabel: 'Normativa Urbana',
     level: 'Avanzado',
@@ -111,7 +143,7 @@ export const COURSES_DATA: CourseItem[] = [
   },
   {
     id: 'course_5',
-    title: 'Respuesta a Incidentes',
+    title: 'Respuesta a Incidentes y Primeros Auxilios',
     categoryKey: 'peatonal',
     categoryLabel: 'Seguridad Peatonal',
     level: 'Intermedio',
@@ -123,6 +155,23 @@ export const COURSES_DATA: CourseItem[] = [
       'Cómo asegurar el perímetro del siniestro',
       'Uso del botón de auxilio y SOS en VIANOVA',
       'Documentación fotográfica para peritajes viales'
+    ]
+  },
+  {
+    id: 'course_6',
+    title: 'Cruces Seguros y Prioridad Peatonal',
+    categoryKey: 'peatonal',
+    categoryLabel: 'Seguridad Peatonal',
+    level: 'Básico',
+    duration: '1.0 hr',
+    description: 'Normas de paso en cebras peatonales, interacción en esquinas, visibilidad nocturna y protección en zonas escolares.',
+    image: pedestrianSafeCrosswalk,
+    recommended: true,
+    lessons: [
+      'Derecho de paso y prioridad en pasos peatonales',
+      'Interacción segura en cruces sin semáforo',
+      'Uso de prendas reflectivas y visibilidad en horario nocturno',
+      'Zonas escolares y protección a personas con movilidad reducida'
     ]
   }
 ];
@@ -251,9 +300,9 @@ const getRandomizedQuizQuestions = (): QuizQuestionItem[] => {
 };
 
 export const EducationScreen: React.FC = () => {
-  const [selectedCategory, setSelectedCategory] = useState<string>('todos');
+  const [selectedCategory, setSelectedCategory] = useState<CourseCategoryType>('micromovilidad');
 
-  // Track progress of each of the 5 courses in state and localStorage
+  // Track progress of each course in state and localStorage
   const [coursesProgress, setCoursesProgress] = useState<Record<string, number>>(() => {
     try {
       const saved = localStorage.getItem('vianova_courses_progress');
@@ -265,6 +314,7 @@ export const EducationScreen: React.FC = () => {
       course_3: 0,
       course_4: 0,
       course_5: 0,
+      course_6: 0,
     };
   });
 
@@ -456,17 +506,15 @@ export const EducationScreen: React.FC = () => {
     } catch (_) {}
   };
 
-  // Filtered courses
-  const filteredCourses = COURSES_DATA.filter((course) => {
-    if (selectedCategory === 'todos') return true;
-    return course.categoryKey === selectedCategory;
-  });
+  // Filtered courses based strictly on selected category
+  const filteredCourses = COURSES_DATA.filter((course) => course.categoryKey === selectedCategory);
+  const activeCategoryInfo = CATEGORY_TABS.find((tab) => tab.id === selectedCategory);
 
   return (
     <div className="w-full py-8 sm:py-12 space-y-20 animate-fade-in text-slate-800">
       
       {/* ========================================================================= */}
-      {/* 1. PRIMERA SECCIÓN: APRENDE MIENTRAS AVANZAS (Exactamente como Imagen 1)  */}
+      {/* 1. PRIMERA SECCIÓN: APRENDE MIENTRAS AVANZAS                              */}
       {/* ========================================================================= */}
       <section className="max-w-6xl mx-auto space-y-8">
         
@@ -481,7 +529,7 @@ export const EducationScreen: React.FC = () => {
             </p>
           </div>
 
-          {/* Top Right Radial Progress Widget: Now 100% Dynamic & Animated */}
+          {/* Top Right Radial Progress Widget: Dynamic & Animated */}
           <div className="shrink-0 bg-white rounded-2xl p-4 sm:p-5 border-2 border-slate-200/90 shadow-[0_4px_20px_rgba(0,0,0,0.04)] flex items-center gap-4 transition-all">
             <div className="relative w-16 h-16 flex items-center justify-center">
               <svg className="w-full h-full -rotate-90" viewBox="0 0 36 36">
@@ -521,48 +569,63 @@ export const EducationScreen: React.FC = () => {
           </div>
         </div>
 
-        {/* Filter Pills matching Image 1 */}
-        <div className="flex flex-wrap gap-2.5 pt-1">
-          {[
-            { id: 'todos', label: 'Todos los cursos' },
-            { id: 'micromovilidad', label: 'Micromovilidad' },
-            { id: 'peatonal', label: 'Seguridad Peatonal' },
-            { id: 'normativa', label: 'Normativa Urbana' },
-          ].map((tab) => (
-            <button
-              key={tab.id}
-              onClick={() => setSelectedCategory(tab.id)}
-              className={`px-4 py-2 rounded-full text-xs font-semibold transition-all cursor-pointer ${
-                selectedCategory === tab.id
-                  ? 'bg-[#0a193b] text-white shadow-sm'
-                  : 'bg-white border border-slate-200 text-slate-700 hover:border-slate-300'
-              }`}
-            >
-              {tab.label}
-            </button>
-          ))}
+        {/* Category Tabs: Specific Categories Only (Micromovilidad, Seguridad Peatonal, Normativa Urbana) */}
+        <div className="space-y-3.5 pt-1">
+          <div className="flex flex-wrap gap-2.5 sm:gap-3">
+            {CATEGORY_TABS.map((tab) => {
+              const isSelected = selectedCategory === tab.id;
+              const count = COURSES_DATA.filter((c) => c.categoryKey === tab.id).length;
+
+              return (
+                <button
+                  key={tab.id}
+                  type="button"
+                  onClick={() => setSelectedCategory(tab.id)}
+                  className={`px-5 py-2.5 rounded-full text-xs sm:text-sm font-bold transition-all cursor-pointer flex items-center gap-2.5 ${
+                    isSelected
+                      ? 'bg-[#0a193b] text-white shadow-md ring-2 ring-[#0a193b]/20 scale-[1.02]'
+                      : 'bg-white border border-slate-200 text-slate-700 hover:border-slate-300 hover:bg-slate-50'
+                  }`}
+                >
+                  <span>{tab.label}</span>
+                  <span
+                    className={`px-2 py-0.5 rounded-full text-[11px] font-extrabold ${
+                      isSelected ? 'bg-white/20 text-white' : 'bg-slate-100 text-slate-500'
+                    }`}
+                  >
+                    {count} {count === 1 ? 'curso' : 'cursos'}
+                  </span>
+                </button>
+              );
+            })}
+          </div>
+
+          {/* Active Category Description Notice */}
+          {activeCategoryInfo && (
+            <div className="p-3.5 sm:p-4 rounded-2xl bg-blue-50/70 border border-blue-100 flex items-center justify-between gap-4 text-xs text-blue-900 animate-fade-in">
+              <div className="flex items-center gap-2.5">
+                <Info className="w-4 h-4 text-[#0066ff] shrink-0" />
+                <span className="font-medium text-slate-700">{activeCategoryInfo.description}</span>
+              </div>
+              <span className="text-[11px] font-bold text-[#0066ff] shrink-0 hidden sm:inline">
+                Cursos de {activeCategoryInfo.label}
+              </span>
+            </div>
+          )}
         </div>
 
-        {/* Courses Grid matching Image 1 Layout */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 pt-2">
-          
+        {/* Courses Grid: Displays only the courses that concord with the selected category */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-2">
           {filteredCourses.map((course) => {
             const progress = coursesProgress[course.id] || 0;
-            const isFeatured = course.featured;
 
             return (
               <div
                 key={course.id}
-                className={`${
-                  isFeatured ? 'lg:col-span-2 flex flex-col sm:flex-row' : 'flex flex-col justify-between'
-                } bg-white rounded-[24px] border border-slate-200/90 shadow-[0_4px_16px_rgba(0,0,0,0.03)] overflow-hidden hover:shadow-[0_8px_24px_rgba(0,0,0,0.06)] hover:border-slate-300 transition-all duration-300`}
+                className="flex flex-col justify-between bg-white rounded-[24px] border border-slate-200/90 shadow-[0_4px_16px_rgba(0,0,0,0.03)] overflow-hidden hover:shadow-[0_8px_24px_rgba(0,0,0,0.06)] hover:border-slate-300 transition-all duration-300"
               >
                 {/* Image section */}
-                <div
-                  className={`relative ${
-                    isFeatured ? 'sm:w-1/2 min-h-[220px] sm:min-h-full' : 'h-44 w-full'
-                  } overflow-hidden bg-slate-100`}
-                >
+                <div className="relative h-48 sm:h-52 w-full overflow-hidden bg-slate-100">
                   <img
                     src={course.image}
                     alt={course.title}
@@ -583,23 +646,22 @@ export const EducationScreen: React.FC = () => {
                 </div>
 
                 {/* Content section */}
-                <div
-                  className={`${
-                    isFeatured ? 'sm:w-1/2 p-6 sm:p-7' : 'p-6'
-                  } flex flex-col justify-between space-y-4 flex-1`}
-                >
+                <div className="p-6 sm:p-7 flex flex-col justify-between space-y-4 flex-1">
                   <div className="space-y-3">
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-2 flex-wrap">
                       <span className="px-2.5 py-0.5 rounded-md bg-blue-50 text-[#0066ff] text-xs font-bold">
                         {course.level}
                       </span>
-                      <span className="flex items-center gap-1 text-slate-500 text-xs font-medium">
+                      <span className="px-2.5 py-0.5 rounded-md bg-slate-100 text-slate-700 text-xs font-semibold">
+                        {course.categoryLabel}
+                      </span>
+                      <span className="flex items-center gap-1 text-slate-500 text-xs font-medium ml-auto">
                         <Clock className="w-3.5 h-3.5" />
                         {course.duration}
                       </span>
                     </div>
 
-                    <h3 className={`${isFeatured ? 'text-xl' : 'text-lg'} font-bold text-slate-900 tracking-tight`}>
+                    <h3 className="text-xl font-bold text-slate-900 tracking-tight">
                       {course.title}
                     </h3>
                     
@@ -667,7 +729,6 @@ export const EducationScreen: React.FC = () => {
               </div>
             );
           })}
-
         </div>
       </section>
 
