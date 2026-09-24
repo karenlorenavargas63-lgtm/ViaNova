@@ -143,7 +143,7 @@ export const RegisterScreen: React.FC<RegisterScreenProps> = ({
   };
 
   return (
-    <div className="min-h-screen w-full bg-white flex flex-col lg:flex-row text-slate-800">
+    <div className="min-h-screen w-full bg-[#e0f2fe] flex flex-col lg:flex-row text-slate-800">
       
       {/* Left Visual Column: Cinematic Crash Animation & Futuristic ViaNova Reveal */}
       <div className="relative w-full lg:w-1/2 min-h-[420px] lg:min-h-screen bg-slate-950 overflow-hidden flex flex-col justify-between p-4 sm:p-6 lg:p-8 border-b lg:border-b-0 lg:border-r border-slate-800">
@@ -176,7 +176,7 @@ export const RegisterScreen: React.FC<RegisterScreenProps> = ({
       </div>
 
       {/* Right Form Column */}
-      <div className="w-full lg:w-1/2 min-h-screen flex flex-col justify-center items-center px-6 sm:px-12 lg:px-16 py-10 bg-white">
+      <div className="w-full lg:w-1/2 min-h-screen flex flex-col justify-center items-center px-6 sm:px-12 lg:px-16 py-10 bg-[#e0f2fe]">
         <div className="w-full max-w-md space-y-6">
           
           {/* Logo VIANOVA */}
@@ -225,7 +225,7 @@ export const RegisterScreen: React.FC<RegisterScreenProps> = ({
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                     placeholder="Ingresa tu nombre completo"
-                    className="w-full pl-10 pr-4 py-3 rounded-xl bg-[#f1f3f5] border border-transparent focus:border-blue-500 focus:bg-white focus:outline-none text-slate-800 text-sm placeholder:text-slate-400 transition-colors font-medium"
+                    className="w-full pl-10 pr-4 py-3 rounded-xl bg-[#d4ebfd] border border-sky-300 focus:border-blue-500 focus:bg-[#eaf5fe] focus:outline-none text-slate-800 text-sm placeholder:text-slate-500 transition-colors font-medium"
                   />
                 </div>
               </div>
@@ -246,7 +246,7 @@ export const RegisterScreen: React.FC<RegisterScreenProps> = ({
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="Pon tu correo electrónico"
-                  className="w-full pl-10 pr-4 py-3 rounded-xl bg-[#f1f3f5] border border-transparent focus:border-blue-500 focus:bg-white focus:outline-none text-slate-800 text-sm placeholder:text-slate-400 transition-colors font-medium"
+                  className="w-full pl-10 pr-4 py-3 rounded-xl bg-[#d4ebfd] border border-sky-300 focus:border-blue-500 focus:bg-[#eaf5fe] focus:outline-none text-slate-800 text-sm placeholder:text-slate-500 transition-colors font-medium"
                 />
               </div>
             </div>
@@ -263,7 +263,7 @@ export const RegisterScreen: React.FC<RegisterScreenProps> = ({
                     value={city}
                     onChange={(e) => setCity(e.target.value)}
                     placeholder="Ej. Medellín, Bogotá, Cali..."
-                    className="w-full px-3 py-2.5 rounded-xl bg-[#f1f3f5] border border-transparent focus:border-blue-500 focus:bg-white focus:outline-none text-slate-800 text-xs font-medium transition-colors"
+                    className="w-full px-3 py-2.5 rounded-xl bg-[#d4ebfd] border border-sky-300 focus:border-blue-500 focus:bg-[#eaf5fe] focus:outline-none text-slate-800 text-xs font-medium transition-colors"
                   />
                 </div>
 
@@ -274,7 +274,7 @@ export const RegisterScreen: React.FC<RegisterScreenProps> = ({
                   <select
                     value={role}
                     onChange={(e) => setRole(e.target.value)}
-                    className="w-full px-3 py-2.5 rounded-xl bg-[#f1f3f5] border border-transparent focus:border-blue-500 focus:bg-white focus:outline-none text-slate-800 text-xs font-medium transition-colors"
+                    className="w-full px-3 py-2.5 rounded-xl bg-[#d4ebfd] border border-sky-300 focus:border-blue-500 focus:bg-[#eaf5fe] focus:outline-none text-slate-800 text-xs font-medium transition-colors"
                   >
                     <option value="Ciclista Urbano">🚲 Ciclista Urbano</option>
                     <option value="Peatón / Caminante">🚶 Peatón / Caminante</option>
@@ -319,7 +319,7 @@ export const RegisterScreen: React.FC<RegisterScreenProps> = ({
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="Escribe tu contraseña"
-                  className="w-full pl-10 pr-10 py-3 rounded-xl bg-[#f1f3f5] border border-transparent focus:border-blue-500 focus:bg-white focus:outline-none text-slate-800 text-sm placeholder:text-slate-400 transition-colors font-medium tracking-wider"
+                  className="w-full pl-10 pr-10 py-3 rounded-xl bg-[#d4ebfd] border border-sky-300 focus:border-blue-500 focus:bg-[#eaf5fe] focus:outline-none text-slate-800 text-sm placeholder:text-slate-500 transition-colors font-medium tracking-wider"
                 />
                 <button
                   type="button"
@@ -346,7 +346,7 @@ export const RegisterScreen: React.FC<RegisterScreenProps> = ({
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
                     placeholder="Repite tu contraseña"
-                    className="w-full pl-10 pr-10 py-3 rounded-xl bg-[#f1f3f5] border border-transparent focus:border-blue-500 focus:bg-white focus:outline-none text-slate-800 text-sm placeholder:text-slate-400 transition-colors font-medium tracking-wider"
+                    className="w-full pl-10 pr-10 py-3 rounded-xl bg-[#d4ebfd] border border-sky-300 focus:border-blue-500 focus:bg-[#eaf5fe] focus:outline-none text-slate-800 text-sm placeholder:text-slate-500 transition-colors font-medium tracking-wider"
                   />
                 </div>
               </div>

@@ -26,9 +26,9 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ setCurrentTab }) => {
           <div className="lg:col-span-6 space-y-6">
 
             {/* Logo Oficial VIANOVA Destacado */}
-            <div className="inline-flex items-center gap-3.5 px-4 py-2.5 rounded-2xl bg-white/95 border border-slate-200/90 shadow-md hover:shadow-lg transition-all duration-300 hover:border-blue-300 group">
+            <div className="inline-flex items-center gap-3.5 px-4 py-2.5 rounded-2xl bg-[#eaf5fe] border border-sky-300 shadow-md hover:shadow-lg transition-all duration-300 hover:border-blue-400 group">
               <div className="relative w-12 h-12 rounded-2xl p-1 bg-gradient-to-br from-[#0057d9] to-indigo-700 shadow-md shadow-blue-500/25 shrink-0 flex items-center justify-center group-hover:scale-105 transition-transform duration-300">
-                <div className="w-full h-full rounded-xl overflow-hidden bg-white flex items-center justify-center">
+                <div className="w-full h-full rounded-xl overflow-hidden bg-[#dbeafe] flex items-center justify-center">
                   <img
                     src={logoImg}
                     alt="Logo Oficial VIANOVA"
@@ -41,11 +41,11 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ setCurrentTab }) => {
                   <span className="text-2xl font-black tracking-tight text-[#0b1b3d]">
                     <span className="text-[#0057d9]">Via</span>Nova
                   </span>
-                  <span className="text-[10px] font-extrabold uppercase tracking-wider px-2 py-0.5 rounded-full bg-blue-50 text-[#0057d9] border border-blue-200/80">
+                  <span className="text-[10px] font-extrabold uppercase tracking-wider px-2 py-0.5 rounded-full bg-blue-100/80 text-[#0057d9] border border-sky-300">
                     Oficial
                   </span>
                 </div>
-                <span className="text-xs font-semibold text-slate-500">
+                <span className="text-xs font-semibold text-slate-600">
                   Sistema de Movilidad y Convivencia Vial
                 </span>
               </div>
@@ -55,7 +55,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ setCurrentTab }) => {
               Movilidad inteligente para tu ciudad
             </h1>
 
-            <p className="text-slate-600 text-base sm:text-lg leading-relaxed max-w-xl font-normal">
+            <p className="text-slate-700 text-base sm:text-lg leading-relaxed max-w-xl font-normal">
               Navega de forma eficiente y segura. Descubre rutas optimizadas en tiempo real, mantente informado con alertas de seguridad vial y accede a herramientas digitales diseñadas para mejorar la experiencia urbana.
             </p>
 
@@ -72,7 +72,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ setCurrentTab }) => {
               <button
                 id="hero-routes-btn"
                 onClick={() => setCurrentTab('rutas')}
-                className="inline-flex items-center justify-center px-8 py-4 rounded-2xl bg-white hover:bg-slate-50 text-[#0b1b3d] font-bold text-base border-2 border-[#0b1b3d] transition-all duration-200 hover:scale-[1.02] shadow-sm"
+                className="inline-flex items-center justify-center px-8 py-4 rounded-2xl bg-[#e0f2fe] hover:bg-[#bae6fd] text-[#0b1b3d] font-bold text-base border-2 border-[#0b1b3d] transition-all duration-200 hover:scale-[1.02] shadow-sm"
               >
                 <span>Ver rutas</span>
               </button>
@@ -101,10 +101,10 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ setCurrentTab }) => {
         {/* 3 Status Cards Matching 99737.png Exactly */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           
-          {/* Card 1: Tráfico Urbano (White card with blue icon and 'Fluido' pill) */}
+          {/* Card 1: Tráfico Urbano (Sky blue card with blue icon and 'Fluido' pill) */}
           <div 
             onClick={() => setCurrentTab('rutas')}
-            className="cursor-pointer group relative rounded-[1.75rem] bg-white border border-slate-200/80 p-6 sm:p-7 hover:shadow-xl hover:border-blue-300 transition-all duration-300 shadow-sm"
+            className="cursor-pointer group relative rounded-[1.75rem] bg-[#eaf5fe] border border-sky-300/80 p-6 sm:p-7 hover:shadow-xl hover:border-blue-400 transition-all duration-300 shadow-sm"
           >
             <div className="flex items-start justify-between mb-5">
               <div className="w-12 h-12 rounded-2xl bg-[#0057d9] flex items-center justify-center text-white shadow-md shadow-blue-500/20 group-hover:scale-105 transition-transform">
@@ -115,31 +115,31 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ setCurrentTab }) => {
                   <span className="w-2.5 h-2.5 rounded-full bg-white/40"></span>
                 </div>
               </div>
-              <span className="px-3.5 py-1 rounded-full text-xs font-bold bg-[#e8edff] text-[#335cff]">
+              <span className="px-3.5 py-1 rounded-full text-xs font-bold bg-blue-100 text-[#0057d9] border border-sky-300">
                 Fluido
               </span>
             </div>
             <h3 className="text-xl font-bold text-[#0b1b3d] mb-2">Tráfico Urbano</h3>
-            <p className="text-sm text-slate-500 leading-relaxed">
+            <p className="text-sm text-slate-600 leading-relaxed">
               Las vías principales operan con normalidad.
             </p>
           </div>
 
-          {/* Card 2: Transporte Público (White card with dark blue icon and '98% Operativo' pill) */}
+          {/* Card 2: Transporte Público (Sky blue card with dark blue icon and '98% Operativo' pill) */}
           <div 
             onClick={() => setCurrentTab('rutas')}
-            className="cursor-pointer group relative rounded-[1.75rem] bg-white border border-slate-200/80 p-6 sm:p-7 hover:shadow-xl hover:border-slate-400 transition-all duration-300 shadow-sm"
+            className="cursor-pointer group relative rounded-[1.75rem] bg-[#eaf5fe] border border-sky-300/80 p-6 sm:p-7 hover:shadow-xl hover:border-blue-400 transition-all duration-300 shadow-sm"
           >
             <div className="flex items-start justify-between mb-5">
               <div className="w-12 h-12 rounded-2xl bg-[#0b254a] flex items-center justify-center text-white shadow-md shadow-slate-900/10 group-hover:scale-105 transition-transform">
                 <Bus className="w-6 h-6" />
               </div>
-              <span className="px-3.5 py-1 rounded-full text-xs font-semibold bg-slate-100 text-slate-700">
+              <span className="px-3.5 py-1 rounded-full text-xs font-semibold bg-sky-100 text-slate-800 border border-sky-300">
                 98% Operativo
               </span>
             </div>
             <h3 className="text-xl font-bold text-[#0b1b3d] mb-2">Transporte Público</h3>
-            <p className="text-sm text-slate-500 leading-relaxed">
+            <p className="text-sm text-slate-600 leading-relaxed">
               Rutas activas y circulando en horario.
             </p>
           </div>
@@ -153,7 +153,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ setCurrentTab }) => {
             <AlertTriangle className="absolute -right-4 -bottom-4 w-36 h-36 text-white/[0.07] pointer-events-none" />
             
             <div className="relative z-10 flex items-start justify-between mb-5">
-              <div className="w-12 h-12 rounded-2xl bg-white flex items-center justify-center text-[#b91c1c] shadow-md group-hover:scale-105 transition-transform">
+              <div className="w-12 h-12 rounded-2xl bg-[#e0f2fe] flex items-center justify-center text-[#b91c1c] shadow-md group-hover:scale-105 transition-transform">
                 <Wrench className="w-6 h-6" />
               </div>
               <span className="px-3.5 py-1 rounded-full text-xs font-bold bg-white/20 text-white backdrop-blur-sm">

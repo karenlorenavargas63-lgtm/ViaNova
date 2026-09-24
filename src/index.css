@@ -1,12 +1,49 @@
 @import "tailwindcss";
 
 @layer base {
+  :root {
+    --sky-blue-bg: #e0f2fe;
+    --sky-blue-card: #eaf5fe;
+    --sky-blue-border: #bae6fd;
+    --sky-blue-input: #f0f9ff;
+  }
+
   body {
+    background-color: #e0f2fe;
     font-family: 'Plus Jakarta Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
   }
   h1, h2, h3, h4, h5, h6 {
     font-family: 'Outfit', 'Plus Jakarta Sans', sans-serif;
   }
+}
+
+/* Transición integral de todas las áreas blancas a Azul Cielo */
+.bg-white {
+  background-color: #eaf5fe !important;
+}
+
+.bg-white\/95 {
+  background-color: rgba(234, 245, 254, 0.95) !important;
+}
+
+.bg-white\/90 {
+  background-color: rgba(234, 245, 254, 0.9) !important;
+}
+
+.bg-white\/80 {
+  background-color: rgba(234, 245, 254, 0.8) !important;
+}
+
+.bg-white\/70 {
+  background-color: rgba(234, 245, 254, 0.7) !important;
+}
+
+.bg-slate-50,
+.bg-\[\#f8fafc\],
+.bg-\[\#f4f5f8\],
+.bg-\[\#f1f3f5\],
+.bg-\[\#eceef2\] {
+  background-color: #dbeafe !important;
 }
 
 /* Custom dark frosted glass scrollbar */

@@ -8,7 +8,7 @@ interface AnimatedUrbanMobilityProps {
 
 export const AnimatedUrbanMobility: React.FC<AnimatedUrbanMobilityProps> = ({ className = '' }) => {
   return (
-    <div className={`relative rounded-3xl overflow-hidden shadow-2xl border border-slate-200/80 bg-slate-900 group select-none ${className}`}>
+    <div className={`relative rounded-3xl overflow-hidden shadow-2xl border-2 border-sky-300 bg-slate-900 group select-none ${className}`}>
       
       {/* 1. Base Image: High quality smart city intersection (Clean Real Photography, no overlays/muñecos) */}
       <div className="relative w-full aspect-[4/3] overflow-hidden">

@@ -38,10 +38,10 @@ export const HomeHeroVisual: React.FC<HomeHeroVisualProps> = ({ className = '' }
           </div>
         </div>
 
-        {/* Bottom Floating Smart Badge: Exact Brand Spec */}
-        <div className="absolute bottom-6 left-6 right-6 p-4 rounded-2xl bg-white/95 backdrop-blur-md shadow-2xl border border-white/60 z-30 pointer-events-auto">
+        {/* Bottom Floating Smart Badge: Sky Blue Theme */}
+        <div className="absolute bottom-6 left-6 right-6 p-4 rounded-2xl bg-[#eaf5fe]/95 backdrop-blur-md shadow-2xl border border-sky-300 z-30 pointer-events-auto">
           <div className="flex items-center gap-3.5">
-            <div className="w-12 h-12 rounded-xl overflow-hidden bg-white p-0.5 border border-blue-200/80 shadow-md shrink-0 flex items-center justify-center">
+            <div className="w-12 h-12 rounded-xl overflow-hidden bg-[#dbeafe] p-0.5 border border-sky-300 shadow-md shrink-0 flex items-center justify-center">
               <img 
                 src={logoImg} 
                 alt="Logo Oficial VIANOVA" 
