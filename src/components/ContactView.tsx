@@ -22,6 +22,9 @@ export const ContactView: React.FC = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    const mailSubject = `[VIANOVA] ${subject || 'Contacto'} - De: ${name}`;
+    const mailBody = `Hola equipo de VIANOVA,\n\nHas recibido un nuevo mensaje desde el portal de contacto:\n\n• Nombre: ${name}\n• Correo del remitente: ${email}\n• Asunto: ${subject}\n\nMensaje:\n"${message}"\n\n--\nEnviado desde el sistema de movilidad inteligente VIANOVA`;
+    window.location.href = `mailto:karenlorenavargas63@gmail.com?subject=${encodeURIComponent(mailSubject)}&body=${encodeURIComponent(mailBody)}`;
     setSubmitted(true);
   };
 
