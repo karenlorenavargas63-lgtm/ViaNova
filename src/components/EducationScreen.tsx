@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   Clock, 
   RotateCcw, 
@@ -7,10 +7,16 @@ import {
   HelpCircle, 
   Sparkles, 
   Trophy, 
-  ChevronRight,
-  ChevronLeft,
-  Info,
-  Check
+  ChevronRight, 
+  ChevronLeft, 
+  Info, 
+  Check,
+  BookOpen,
+  X,
+  Award,
+  CheckSquare,
+  Square,
+  PlayCircle
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 
@@ -19,6 +25,107 @@ import scooterBikewayPov from '../assets/images/scooter_bikeway_pov_178843861791
 import pedestrianSignDusk from '../assets/images/pedestrian_sign_dusk_1788438631922.jpg';
 import roundaboutDiagram from '../assets/images/roundabout_diagram_1788438648636.jpg';
 import incidentResponseAgent from '../assets/images/incident_response_agent_1788438663707.jpg';
+
+// Base Course Information
+export interface CourseItem {
+  id: string;
+  title: string;
+  categoryKey: 'micromovilidad' | 'peatonal' | 'normativa';
+  categoryLabel: string;
+  level: string;
+  duration: string;
+  description: string;
+  image: string;
+  recommended?: boolean;
+  featured?: boolean;
+  lessons: string[];
+}
+
+export const COURSES_DATA: CourseItem[] = [
+  {
+    id: 'course_1',
+    title: 'Navegación Urbana Segura',
+    categoryKey: 'micromovilidad',
+    categoryLabel: 'Micromovilidad',
+    level: 'Básico',
+    duration: '2.5 hrs',
+    description: 'Aprende los fundamentos para moverte por la ciudad minimizando riesgos. Ideal para nuevos usuarios de micromovilidad y peatones.',
+    image: cyclistsGreenBikeway,
+    recommended: true,
+    featured: true,
+    lessons: [
+      'Identificación de puntos ciegos vehiculares',
+      'Uso correcto de luces y cascos certificados',
+      'Convivencia con transporte público masivo',
+      'Anticipación a puertas de autos estacionados',
+      'Evaluación práctica de conocimientos viales'
+    ]
+  },
+  {
+    id: 'course_2',
+    title: 'Dominio de Ciclovías',
+    categoryKey: 'micromovilidad',
+    categoryLabel: 'Micromovilidad',
+    level: 'Intermedio',
+    duration: '45 min',
+    description: 'Conoce las normativas técnicas de circulación en ciclorrutas, señalización de giros con los brazos y respeto a pasos de cebra.',
+    image: scooterBikewayPov,
+    lessons: [
+      'Señales manuales de viraje y frenado',
+      'Velocidades máximas en carriles bici (25 km/h)',
+      'Prioridad al peatón en intersecciones',
+      'Mantenimiento básico de frenos y presión de llantas'
+    ]
+  },
+  {
+    id: 'course_3',
+    title: 'Señales Inteligentes',
+    categoryKey: 'normativa',
+    categoryLabel: 'Normativa Urbana',
+    level: 'Básico',
+    duration: '1.5 hrs',
+    description: 'Aprende a interpretar la semaforización adaptativa, señales dinámicas LED y sistemas de cruce con detección de presencia.',
+    image: pedestrianSignDusk,
+    lessons: [
+      'Semáforos peatonales con cuenta regresiva',
+      'Señalización de carriles reversibles',
+      'Zonas escolares y reducción obligatoria a 20 km/h',
+      'Marcas viales termoplásticas y su significado con lluvia'
+    ]
+  },
+  {
+    id: 'course_4',
+    title: 'Prioridad y Flujo',
+    categoryKey: 'normativa',
+    categoryLabel: 'Normativa Urbana',
+    level: 'Avanzado',
+    duration: '3 hrs',
+    description: 'Estructura de jerarquía vial según la pirámide de movilidad urbana y protocolos de paso en rotondas complejas.',
+    image: roundaboutDiagram,
+    lessons: [
+      'Pirámide de la movilidad urbana sostenible',
+      'Reglas de ingreso y permanencia en glorietas',
+      'Carriles preferenciales para buses de tránsito rápido (BRT)',
+      'Resolución pacífica de conflictos viales'
+    ]
+  },
+  {
+    id: 'course_5',
+    title: 'Respuesta a Incidentes',
+    categoryKey: 'peatonal',
+    categoryLabel: 'Seguridad Peatonal',
+    level: 'Intermedio',
+    duration: '1.2 hrs',
+    description: 'Protocolo PAS (Proteger, Avisar, Socorrer) y uso de la plataforma digital para emitir alertas georreferenciadas con precisión.',
+    image: incidentResponseAgent,
+    lessons: [
+      'Protocolo PAS en la vía pública',
+      'Cómo asegurar el perímetro del siniestro',
+      'Uso del botón de auxilio y SOS en VIANOVA',
+      'Documentación fotográfica para peritajes viales'
+    ]
+  }
+];
 
 // Módulo 1 base quiz questions with designated correct and incorrect choices
 interface QuizOptionItem {
@@ -107,7 +214,6 @@ const BASE_QUIZ_QUESTIONS = [
 // Generates randomized options distributed across A, B, C, D (ensuring questions are never all B)
 const getRandomizedQuizQuestions = (): QuizQuestionItem[] => {
   const letters = ['A', 'B', 'C', 'D'];
-  // Ensure every option letter (A, B, C, D) gets used across the 5 questions, randomized
   const targetPositions = [0, 1, 2, 3, Math.floor(Math.random() * 4)].sort(() => Math.random() - 0.5);
 
   return BASE_QUIZ_QUESTIONS.map((base, idx) => {
@@ -146,14 +252,98 @@ const getRandomizedQuizQuestions = (): QuizQuestionItem[] => {
 
 export const EducationScreen: React.FC = () => {
   const [selectedCategory, setSelectedCategory] = useState<string>('todos');
-  
-  // Interactive Quiz State: Módulo 1 (Señalización Básica)
-  // Options are dynamically randomized among A, B, C, D so the correct answer is never always B
+
+  // Track progress of each of the 5 courses in state and localStorage
+  const [coursesProgress, setCoursesProgress] = useState<Record<string, number>>(() => {
+    try {
+      const saved = localStorage.getItem('vianova_courses_progress');
+      if (saved) return JSON.parse(saved);
+    } catch (_) {}
+    return {
+      course_1: 0,
+      course_2: 0,
+      course_3: 0,
+      course_4: 0,
+      course_5: 0,
+    };
+  });
+
+  // Track completed lessons inside each course
+  const [completedLessons, setCompletedLessons] = useState<Record<string, string[]>>(() => {
+    try {
+      const saved = localStorage.getItem('vianova_completed_lessons');
+      if (saved) return JSON.parse(saved);
+    } catch (_) {}
+    return {};
+  });
+
+  // Active modal for studying a course module
+  const [activeCourseModal, setActiveCourseModal] = useState<CourseItem | null>(null);
+
+  // Quiz evaluation state (Module 1)
   const [quizQuestions, setQuizQuestions] = useState<QuizQuestionItem[]>(() => getRandomizedQuizQuestions());
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState<number>(0);
   const [userAnswers, setUserAnswers] = useState<Record<number, { selectedOption: string | null; isSubmitted: boolean; isCorrect: boolean }>>({});
   const [quizCompleted, setQuizCompleted] = useState<boolean>(false);
 
+  // Sync courses progress to localStorage
+  useEffect(() => {
+    try {
+      localStorage.setItem('vianova_courses_progress', JSON.stringify(coursesProgress));
+    } catch (_) {}
+  }, [coursesProgress]);
+
+  // Sync completed lessons to localStorage
+  useEffect(() => {
+    try {
+      localStorage.setItem('vianova_completed_lessons', JSON.stringify(completedLessons));
+    } catch (_) {}
+  }, [completedLessons]);
+
+  // Helper to update progress of any course
+  const updateCourseProgress = (courseId: string, progress: number) => {
+    const clamped = Math.min(100, Math.max(0, Math.round(progress)));
+    setCoursesProgress((prev) => ({
+      ...prev,
+      [courseId]: clamped,
+    }));
+  };
+
+  // Calculate Global Progress based on the average of all courses
+  const totalCourses = COURSES_DATA.length;
+  const globalProgress = Math.round(
+    COURSES_DATA.reduce((sum, c) => sum + (coursesProgress[c.id] || 0), 0) / totalCourses
+  );
+
+  const completedCoursesCount = COURSES_DATA.filter((c) => (coursesProgress[c.id] || 0) >= 100).length;
+
+  const getGlobalLevel = (progress: number) => {
+    if (progress === 0) return 'Nivel Inicial';
+    if (progress < 25) return 'Nivel Principiante';
+    if (progress < 50) return 'Nivel Aprendiz';
+    if (progress < 75) return 'Nivel Intermedio';
+    if (progress < 100) return 'Nivel Avanzado';
+    return 'Experto Vial Certificado';
+  };
+
+  // Scroll to Módulo 1 Quiz smoothly
+  const scrollToQuiz = () => {
+    const el = document.getElementById('evaluacion-conocimientos');
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
+  // Handle Starting Course 1 (Navegación Urbana Segura)
+  const handleStartCourse1 = () => {
+    // If not started yet, advance to 15% immediately so user sees immediate progress
+    if (!coursesProgress['course_1'] || coursesProgress['course_1'] === 0) {
+      updateCourseProgress('course_1', 15);
+    }
+    scrollToQuiz();
+  };
+
+  // Handle Quiz Answers & Auto Progression
   const totalQuestions = quizQuestions.length;
   const currentQ = quizQuestions[currentQuestionIndex] || quizQuestions[0];
   const currentAnswer = userAnswers[currentQuestionIndex];
@@ -176,14 +366,21 @@ export const EducationScreen: React.FC = () => {
   const handleAnswerSubmit = () => {
     if (!selectedOption) return;
     const correct = currentQ.options.find((o) => o.id === selectedOption)?.isCorrect || false;
-    setUserAnswers((prev) => ({
-      ...prev,
+    const updated = {
+      ...userAnswers,
       [currentQuestionIndex]: {
         selectedOption,
         isSubmitted: true,
         isCorrect: correct,
       },
-    }));
+    };
+    setUserAnswers(updated);
+
+    // Dynamic progression: each answered question increases Course 1 and Global Progress
+    const answeredCount = Object.keys(updated).filter((k) => updated[Number(k)]?.isSubmitted).length;
+    // 1 answered: 32%, 2: 49%, 3: 66%, 4: 83%, 5: 95% (or 100% when finished)
+    const newCourseProgress = Math.min(95, Math.max(15, 15 + answeredCount * 17));
+    updateCourseProgress('course_1', newCourseProgress);
   };
 
   const handleNextQuestion = () => {
@@ -191,6 +388,8 @@ export const EducationScreen: React.FC = () => {
       setCurrentQuestionIndex(currentQuestionIndex + 1);
     } else {
       setQuizCompleted(true);
+      // Course 1 is 100% completed
+      updateCourseProgress('course_1', 100);
       try {
         confetti({
           particleCount: 90,
@@ -214,14 +413,54 @@ export const EducationScreen: React.FC = () => {
     setCurrentQuestionIndex(0);
     setUserAnswers({});
     setQuizCompleted(false);
+    updateCourseProgress('course_1', 15);
   };
 
-  const scrollToQuiz = () => {
-    const el = document.getElementById('evaluacion-conocimientos');
-    if (el) {
-      el.scrollIntoView({ behavior: 'smooth' });
+  // Toggle a lesson as completed inside the modal
+  const handleToggleLesson = (courseId: string, lessonTitle: string, totalCourseLessons: number) => {
+    const currentList = completedLessons[courseId] || [];
+    const isAlreadyDone = currentList.includes(lessonTitle);
+
+    let updatedList: string[];
+    if (isAlreadyDone) {
+      updatedList = currentList.filter((l) => l !== lessonTitle);
+    } else {
+      updatedList = [...currentList, lessonTitle];
+    }
+
+    setCompletedLessons((prev) => ({
+      ...prev,
+      [courseId]: updatedList,
+    }));
+
+    // Calculate new progress for this course
+    const newPercent = Math.round((updatedList.length / totalCourseLessons) * 100);
+    updateCourseProgress(courseId, newPercent);
+
+    if (newPercent === 100) {
+      try {
+        confetti({ particleCount: 50, spread: 60, origin: { y: 0.7 } });
+      } catch (_) {}
     }
   };
+
+  // Mark an entire module as 100% completed
+  const handleCompleteAllLessons = (course: CourseItem) => {
+    setCompletedLessons((prev) => ({
+      ...prev,
+      [course.id]: [...course.lessons],
+    }));
+    updateCourseProgress(course.id, 100);
+    try {
+      confetti({ particleCount: 80, spread: 70, origin: { y: 0.6 } });
+    } catch (_) {}
+  };
+
+  // Filtered courses
+  const filteredCourses = COURSES_DATA.filter((course) => {
+    if (selectedCategory === 'todos') return true;
+    return course.categoryKey === selectedCategory;
+  });
 
   return (
     <div className="w-full py-8 sm:py-12 space-y-20 animate-fade-in text-slate-800">
@@ -238,12 +477,12 @@ export const EducationScreen: React.FC = () => {
               Aprende mientras avanzas
             </h1>
             <p className="text-slate-600 text-sm sm:text-base leading-relaxed">
-              Mejora tu conocimiento sobre seguridad vial, micromovilidad y normativas urbanas. Completa los módulos para desbloquear beneficios en la plataforma.
+              Mejora tu conocimiento sobre seguridad vial, micromovilidad y normativas urbanas. A medida que inicias y avanzas en tus cursos, tu progreso global se actualiza en tiempo real.
             </p>
           </div>
 
-          {/* Top Right Radial Progress Widget matching Image 1 */}
-          <div className="shrink-0 bg-white rounded-2xl p-4 sm:p-5 border border-slate-200/90 shadow-[0_4px_20px_rgba(0,0,0,0.03)] flex items-center gap-4">
+          {/* Top Right Radial Progress Widget: Now 100% Dynamic & Animated */}
+          <div className="shrink-0 bg-white rounded-2xl p-4 sm:p-5 border-2 border-slate-200/90 shadow-[0_4px_20px_rgba(0,0,0,0.04)] flex items-center gap-4 transition-all">
             <div className="relative w-16 h-16 flex items-center justify-center">
               <svg className="w-full h-full -rotate-90" viewBox="0 0 36 36">
                 <path
@@ -254,8 +493,8 @@ export const EducationScreen: React.FC = () => {
                   d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
                 />
                 <path
-                  className="text-[#0066ff]"
-                  strokeDasharray="0, 100"
+                  className="text-[#0066ff] transition-all duration-700 ease-out"
+                  strokeDasharray={`${globalProgress}, 100`}
                   strokeWidth="3.5"
                   strokeLinecap="round"
                   stroke="currentColor"
@@ -263,11 +502,21 @@ export const EducationScreen: React.FC = () => {
                   d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
                 />
               </svg>
-              <span className="absolute text-sm font-black text-slate-900">0%</span>
+              <span className="absolute text-sm font-black text-slate-900 transition-all">
+                {globalProgress}%
+              </span>
             </div>
             <div>
-              <p className="text-xs text-slate-500 font-medium">Progreso Global</p>
-              <h4 className="text-sm font-bold text-slate-900 mt-0.5">Nivel Inicial</h4>
+              <div className="flex items-center gap-1.5">
+                <p className="text-xs text-slate-500 font-bold uppercase tracking-wider">Progreso Global</p>
+                {globalProgress > 0 && (
+                  <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" title="Progreso activo" />
+                )}
+              </div>
+              <h4 className="text-sm font-black text-slate-900 mt-0.5">{getGlobalLevel(globalProgress)}</h4>
+              <p className="text-[11px] text-slate-500 font-medium">
+                {completedCoursesCount} de {totalCourses} módulos completados
+              </p>
             </div>
           </div>
         </div>
@@ -283,7 +532,7 @@ export const EducationScreen: React.FC = () => {
             <button
               key={tab.id}
               onClick={() => setSelectedCategory(tab.id)}
-              className={`px-4 py-2 rounded-full text-xs font-semibold transition-all ${
+              className={`px-4 py-2 rounded-full text-xs font-semibold transition-all cursor-pointer ${
                 selectedCategory === tab.id
                   ? 'bg-[#0a193b] text-white shadow-sm'
                   : 'bg-white border border-slate-200 text-slate-700 hover:border-slate-300'
@@ -297,220 +546,127 @@ export const EducationScreen: React.FC = () => {
         {/* Courses Grid matching Image 1 Layout */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 pt-2">
           
-          {/* Card 1: Featured Large Card (Spans 2 columns on desktop) */}
-          <div className="lg:col-span-2 bg-white rounded-[24px] border border-slate-200/90 shadow-[0_4px_16px_rgba(0,0,0,0.03)] overflow-hidden flex flex-col sm:flex-row hover:shadow-[0_8px_24px_rgba(0,0,0,0.06)] hover:border-slate-300 transition-all duration-300">
-            {/* Left Image half with Recomendado Badge */}
-            <div className="relative sm:w-1/2 min-h-[220px] sm:min-h-full overflow-hidden bg-slate-100">
-              <img
-                src={cyclistsGreenBikeway}
-                alt="Navegación Urbana Segura"
-                className="w-full h-full object-cover"
-              />
-              <div className="absolute top-4 left-4 inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/90 backdrop-blur-sm text-[#0066ff] text-[11px] font-bold shadow-sm">
-                <Sparkles className="w-3.5 h-3.5 text-[#0066ff]" />
-                <span>Recomendado</span>
-              </div>
-            </div>
+          {filteredCourses.map((course) => {
+            const progress = coursesProgress[course.id] || 0;
+            const isFeatured = course.featured;
 
-            {/* Right Content half */}
-            <div className="sm:w-1/2 p-6 sm:p-7 flex flex-col justify-between space-y-4">
-              <div className="space-y-3">
-                <div className="flex items-center gap-2">
-                  <span className="px-2.5 py-0.5 rounded-md bg-blue-50 text-[#0066ff] text-xs font-bold">
-                    Básico
-                  </span>
-                  <span className="flex items-center gap-1 text-slate-500 text-xs font-medium">
-                    <Clock className="w-3.5 h-3.5" />
-                    2.5 hrs
-                  </span>
-                </div>
-
-                <h3 className="text-xl font-bold text-slate-900 tracking-tight">
-                  Navegación Urbana Segura
-                </h3>
-                
-                <p className="text-slate-600 text-xs sm:text-[13px] leading-relaxed">
-                  Aprende los fundamentos para moverte por la ciudad minimizando riesgos. Ideal para nuevos usuarios de micromovilidad y...
-                </p>
-              </div>
-
-              <div className="space-y-4 pt-2">
-                {/* Progress */}
-                <div className="space-y-1.5">
-                  <div className="flex items-center justify-between text-xs">
-                    <span className="text-slate-500 font-medium">Progreso</span>
-                    <span className="text-slate-400 font-bold">0%</span>
-                  </div>
-                  <div className="w-full h-2 bg-slate-100 rounded-full overflow-hidden">
-                    <div className="h-full bg-slate-200 rounded-full w-[0%]"></div>
-                  </div>
-                </div>
-
-                {/* Iniciar Curso button */}
-                <button
-                  onClick={scrollToQuiz}
-                  className="w-full py-3 px-4 rounded-xl bg-[#0a193b] hover:bg-[#07132c] text-white text-xs font-bold transition-all shadow-sm"
+            return (
+              <div
+                key={course.id}
+                className={`${
+                  isFeatured ? 'lg:col-span-2 flex flex-col sm:flex-row' : 'flex flex-col justify-between'
+                } bg-white rounded-[24px] border border-slate-200/90 shadow-[0_4px_16px_rgba(0,0,0,0.03)] overflow-hidden hover:shadow-[0_8px_24px_rgba(0,0,0,0.06)] hover:border-slate-300 transition-all duration-300`}
+              >
+                {/* Image section */}
+                <div
+                  className={`relative ${
+                    isFeatured ? 'sm:w-1/2 min-h-[220px] sm:min-h-full' : 'h-44 w-full'
+                  } overflow-hidden bg-slate-100`}
                 >
-                  Iniciar Curso
-                </button>
-              </div>
-            </div>
-          </div>
-
-          {/* Card 2: Dominio de Ciclovías (Top Right) */}
-          <div className="bg-white rounded-[24px] border border-slate-200/90 shadow-[0_4px_16px_rgba(0,0,0,0.03)] overflow-hidden flex flex-col justify-between hover:shadow-[0_8px_24px_rgba(0,0,0,0.06)] hover:border-slate-300 transition-all duration-300">
-            <div>
-              <div className="relative h-44 w-full overflow-hidden bg-slate-100">
-                <img
-                  src={scooterBikewayPov}
-                  alt="Dominio de Ciclovías"
-                  className="w-full h-full object-cover"
-                />
-              </div>
-
-              <div className="p-6 space-y-3">
-                <div className="flex items-center gap-2">
-                  <span className="px-2.5 py-0.5 rounded-md bg-blue-50 text-[#0066ff] text-xs font-bold">
-                    Intermedio
-                  </span>
-                  <span className="flex items-center gap-1 text-slate-500 text-xs font-medium">
-                    <Clock className="w-3.5 h-3.5" />
-                    45 min
-                  </span>
+                  <img
+                    src={course.image}
+                    alt={course.title}
+                    className="w-full h-full object-cover"
+                  />
+                  {course.recommended && (
+                    <div className="absolute top-4 left-4 inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/95 backdrop-blur-sm text-[#0066ff] text-[11px] font-bold shadow-sm">
+                      <Sparkles className="w-3.5 h-3.5 text-[#0066ff]" />
+                      <span>Recomendado</span>
+                    </div>
+                  )}
+                  {progress === 100 && (
+                    <div className="absolute top-4 right-4 inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-emerald-600 text-white text-[11px] font-bold shadow-md">
+                      <Check className="w-3.5 h-3.5" />
+                      <span>Completado</span>
+                    </div>
+                  )}
                 </div>
 
-                <h3 className="text-lg font-bold text-slate-900 tracking-tight">
-                  Dominio de Ciclovías
-                </h3>
+                {/* Content section */}
+                <div
+                  className={`${
+                    isFeatured ? 'sm:w-1/2 p-6 sm:p-7' : 'p-6'
+                  } flex flex-col justify-between space-y-4 flex-1`}
+                >
+                  <div className="space-y-3">
+                    <div className="flex items-center gap-2">
+                      <span className="px-2.5 py-0.5 rounded-md bg-blue-50 text-[#0066ff] text-xs font-bold">
+                        {course.level}
+                      </span>
+                      <span className="flex items-center gap-1 text-slate-500 text-xs font-medium">
+                        <Clock className="w-3.5 h-3.5" />
+                        {course.duration}
+                      </span>
+                    </div>
 
-                <div className="pt-2 space-y-1.5">
-                  <div className="flex items-center justify-between text-xs">
-                    <span className="text-slate-500 font-medium">Progreso</span>
-                    <span className="text-slate-400 font-bold">0%</span>
+                    <h3 className={`${isFeatured ? 'text-xl' : 'text-lg'} font-bold text-slate-900 tracking-tight`}>
+                      {course.title}
+                    </h3>
+                    
+                    <p className="text-slate-600 text-xs sm:text-[13px] leading-relaxed">
+                      {course.description}
+                    </p>
                   </div>
-                  <div className="w-full h-2 bg-slate-100 rounded-full overflow-hidden">
-                    <div className="h-full bg-slate-200 rounded-full w-[0%]"></div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
 
-          {/* Card 3: Señales Inteligentes (Bottom Left) */}
-          <div className="bg-white rounded-[24px] border border-slate-200/90 shadow-[0_4px_16px_rgba(0,0,0,0.03)] overflow-hidden flex flex-col justify-between hover:shadow-[0_8px_24px_rgba(0,0,0,0.06)] hover:border-slate-300 transition-all duration-300">
-            <div>
-              <div className="relative h-44 w-full overflow-hidden bg-slate-100">
-                <img
-                  src={pedestrianSignDusk}
-                  alt="Señales Inteligentes"
-                  className="w-full h-full object-cover"
-                />
-              </div>
+                  <div className="space-y-4 pt-2">
+                    {/* Dynamic Progress Bar */}
+                    <div className="space-y-1.5">
+                      <div className="flex items-center justify-between text-xs">
+                        <span className="text-slate-500 font-medium">Progreso</span>
+                        <span className={`font-bold transition-colors ${progress > 0 ? 'text-[#0066ff]' : 'text-slate-400'}`}>
+                          {progress}%
+                        </span>
+                      </div>
+                      <div className="w-full h-2 bg-slate-100 rounded-full overflow-hidden">
+                        <div
+                          className="h-full bg-[#0066ff] rounded-full transition-all duration-500 ease-out"
+                          style={{ width: `${progress}%` }}
+                        />
+                      </div>
+                    </div>
 
-              <div className="p-6 space-y-3">
-                <div className="flex items-center gap-2">
-                  <span className="px-2.5 py-0.5 rounded-md bg-blue-50 text-[#0066ff] text-xs font-bold">
-                    Básico
-                  </span>
-                  <span className="flex items-center gap-1 text-slate-500 text-xs font-medium">
-                    <Clock className="w-3.5 h-3.5" />
-                    1.5 hrs
-                  </span>
-                </div>
-
-                <h3 className="text-lg font-bold text-slate-900 tracking-tight">
-                  Señales Inteligentes
-                </h3>
-
-                <div className="pt-2 space-y-1.5">
-                  <div className="flex items-center justify-between text-xs">
-                    <span className="text-slate-500 font-medium">Progreso</span>
-                    <span className="text-slate-400 font-bold">0%</span>
-                  </div>
-                  <div className="w-full h-2 bg-slate-100 rounded-full overflow-hidden">
-                    <div className="h-full bg-slate-200 rounded-full w-[0%]"></div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Card 4: Prioridad y Flujo (Bottom Middle) */}
-          <div className="bg-white rounded-[24px] border border-slate-200/90 shadow-[0_4px_16px_rgba(0,0,0,0.03)] overflow-hidden flex flex-col justify-between hover:shadow-[0_8px_24px_rgba(0,0,0,0.06)] hover:border-slate-300 transition-all duration-300">
-            <div>
-              <div className="relative h-44 w-full overflow-hidden bg-slate-100">
-                <img
-                  src={roundaboutDiagram}
-                  alt="Prioridad y Flujo"
-                  className="w-full h-full object-cover"
-                />
-              </div>
-
-              <div className="p-6 space-y-3">
-                <div className="flex items-center gap-2">
-                  <span className="px-2.5 py-0.5 rounded-md bg-blue-50 text-[#0066ff] text-xs font-bold">
-                    Avanzado
-                  </span>
-                  <span className="flex items-center gap-1 text-slate-500 text-xs font-medium">
-                    <Clock className="w-3.5 h-3.5" />
-                    3 hrs
-                  </span>
-                </div>
-
-                <h3 className="text-lg font-bold text-slate-900 tracking-tight">
-                  Prioridad y Flujo
-                </h3>
-
-                <div className="pt-2 space-y-1.5">
-                  <div className="flex items-center justify-between text-xs">
-                    <span className="text-slate-500 font-medium">Progreso</span>
-                  </div>
-                  <div className="w-full h-2 bg-slate-100 rounded-full overflow-hidden">
-                    <div className="h-full bg-slate-200 rounded-full w-[0%]"></div>
+                    {/* Interactive Action Button */}
+                    {course.id === 'course_1' ? (
+                      <button
+                        onClick={handleStartCourse1}
+                        className="w-full py-3 px-4 rounded-xl bg-[#0a193b] hover:bg-[#07132c] text-white text-xs font-bold transition-all shadow-sm flex items-center justify-center gap-2 cursor-pointer hover:scale-[1.01]"
+                      >
+                        {progress === 0 ? (
+                          <span>Iniciar Curso</span>
+                        ) : progress < 100 ? (
+                          <span>Continuar Curso ({progress}%)</span>
+                        ) : (
+                          <span className="flex items-center gap-1.5 text-emerald-300">
+                            <Check className="w-4 h-4" /> Módulo Completado
+                          </span>
+                        )}
+                      </button>
+                    ) : (
+                      <button
+                        onClick={() => {
+                          if (progress === 0) {
+                            updateCourseProgress(course.id, 25);
+                          }
+                          setActiveCourseModal(course);
+                        }}
+                        className="w-full py-3 px-4 rounded-xl bg-[#0a193b] hover:bg-[#07132c] text-white text-xs font-bold transition-all shadow-sm flex items-center justify-center gap-2 cursor-pointer hover:scale-[1.01]"
+                      >
+                        {progress === 0 ? (
+                          <span>Iniciar Curso</span>
+                        ) : progress < 100 ? (
+                          <span>Continuar Lecciones ({progress}%)</span>
+                        ) : (
+                          <span className="flex items-center gap-1.5 text-emerald-300">
+                            <Check className="w-4 h-4" /> Lecciones Completadas
+                          </span>
+                        )}
+                      </button>
+                    )}
                   </div>
                 </div>
               </div>
-            </div>
-          </div>
-
-          {/* Card 5: Respuesta a Incidentes (Bottom Right) */}
-          <div className="bg-white rounded-[24px] border border-slate-200/90 shadow-[0_4px_16px_rgba(0,0,0,0.03)] overflow-hidden flex flex-col justify-between hover:shadow-[0_8px_24px_rgba(0,0,0,0.06)] hover:border-slate-300 transition-all duration-300">
-            <div>
-              <div className="relative h-44 w-full overflow-hidden bg-slate-100">
-                <img
-                  src={incidentResponseAgent}
-                  alt="Respuesta a Incidentes"
-                  className="w-full h-full object-cover"
-                />
-              </div>
-
-              <div className="p-6 space-y-3">
-                <div className="flex items-center gap-2">
-                  <span className="px-2.5 py-0.5 rounded-md bg-blue-50 text-[#0066ff] text-xs font-bold">
-                    Intermedio
-                  </span>
-                  <span className="flex items-center gap-1 text-slate-500 text-xs font-medium">
-                    <Clock className="w-3.5 h-3.5" />
-                    1.2 hrs
-                  </span>
-                </div>
-
-                <h3 className="text-lg font-bold text-slate-900 tracking-tight">
-                  Respuesta a Incidentes
-                </h3>
-
-                <div className="pt-2 space-y-1.5">
-                  <div className="flex items-center justify-between text-xs">
-                    <span className="text-slate-500 font-medium">Progreso</span>
-                    <span className="text-slate-400 font-bold">0%</span>
-                  </div>
-                  <div className="w-full h-2 bg-slate-100 rounded-full overflow-hidden">
-                    <div className="h-full bg-slate-200 rounded-full w-[0%]"></div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
+            );
+          })}
 
         </div>
       </section>
@@ -561,99 +717,120 @@ export const EducationScreen: React.FC = () => {
             </div>
           </div>
 
-          {/* Progress Bar */}
-          <div className="w-full h-2.5 bg-slate-100 rounded-full overflow-hidden">
-            <div 
-              className="h-full bg-[#0066ff] rounded-full transition-all duration-300"
-              style={{ width: `${((currentQuestionIndex + 1) / totalQuestions) * 100}%` }}
-            ></div>
+          {/* Module Progress Bar */}
+          <div className="space-y-2">
+            <div className="flex items-center justify-between text-xs text-slate-600 font-semibold">
+              <span>Pregunta {currentQuestionIndex + 1} de {totalQuestions}</span>
+              <span className="text-[#0066ff] font-bold">
+                Curso: {coursesProgress['course_1'] || 0}% | Global: {globalProgress}%
+              </span>
+            </div>
+            <div className="w-full h-2.5 bg-slate-100 rounded-full overflow-hidden">
+              <div 
+                className="h-full bg-[#0066ff] rounded-full transition-all duration-300"
+                style={{ width: `${((currentQuestionIndex + 1) / totalQuestions) * 100}%` }}
+              />
+            </div>
           </div>
         </div>
 
-        {/* Central Assessment Container matching Image 2 */}
-        <div className="bg-white rounded-[28px] border border-slate-200/90 shadow-[0_4px_24px_rgba(0,0,0,0.03)] p-6 sm:p-10 lg:p-12 relative space-y-8">
+        {/* Assessment Card (Matching Image 2 Layout) */}
+        <div className="bg-white rounded-3xl border border-slate-200/90 shadow-[0_4px_24px_rgba(0,0,0,0.03)] p-6 sm:p-10 space-y-8">
           
           {!quizCompleted ? (
-            <div className="space-y-8">
-              
-              {/* Center Pink/Red Circular Icon & Question Headline */}
-              <div className="text-center space-y-4 max-w-xl mx-auto">
-                <div className="w-12 h-12 rounded-full bg-rose-50 text-rose-500 border border-rose-100 flex items-center justify-center mx-auto shadow-sm">
-                  <RotateCcw className="w-5 h-5" />
-                </div>
-
-                <h3 className="text-xl sm:text-2xl font-extrabold text-slate-900 leading-snug">
+            <>
+              {/* Question Text */}
+              <div className="space-y-2">
+                <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">
+                  Pregunta {currentQuestionIndex + 1}
+                </span>
+                <h3 className="text-xl sm:text-2xl font-bold text-slate-900 leading-snug">
                   {currentQ.question}
                 </h3>
               </div>
 
-              {/* 4 Option Cards in 2x2 Grid matching Image 2 */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
-                {currentQ.options.map((option) => {
-                  const isSelected = selectedOption === option.id;
-                  const isCorrect = option.isCorrect;
+              {/* Options List */}
+              <div className="space-y-3">
+                {currentQ.options.map((opt) => {
+                  const isSelected = selectedOption === opt.id;
+                  const isSubmitted = isAnswerSubmitted;
+                  const isCorrect = opt.isCorrect;
 
-                  let borderStyle = "border-slate-200 hover:border-slate-300 bg-white text-slate-700";
-                  let badgeStyle = "bg-slate-100 text-slate-600";
+                  let borderClass = 'border-slate-200 hover:border-slate-300 bg-white';
+                  let badgeClass = 'bg-slate-100 text-slate-700';
 
-                  if (isSelected && !isAnswerSubmitted) {
-                    borderStyle = "border-[#0066ff] bg-blue-50/40 text-[#0066ff] shadow-sm";
-                    badgeStyle = "bg-[#0066ff] text-white";
-                  } else if (isAnswerSubmitted) {
+                  if (isSubmitted) {
                     if (isCorrect) {
-                      borderStyle = "border-emerald-500 bg-emerald-50 text-emerald-800";
-                      badgeStyle = "bg-emerald-600 text-white";
+                      borderClass = 'border-emerald-500 bg-emerald-50/60 ring-1 ring-emerald-500';
+                      badgeClass = 'bg-emerald-600 text-white';
                     } else if (isSelected && !isCorrect) {
-                      borderStyle = "border-rose-500 bg-rose-50 text-rose-800";
-                      badgeStyle = "bg-rose-600 text-white";
+                      borderClass = 'border-rose-500 bg-rose-50/60 ring-1 ring-rose-500';
+                      badgeClass = 'bg-rose-600 text-white';
+                    } else {
+                      borderClass = 'border-slate-200 bg-slate-50/50 opacity-60';
                     }
+                  } else if (isSelected) {
+                    borderClass = 'border-[#0066ff] bg-blue-50/40 ring-1 ring-[#0066ff]';
+                    badgeClass = 'bg-[#0066ff] text-white';
                   }
 
                   return (
                     <button
-                      key={option.id}
-                      onClick={() => handleSelectOption(option.id)}
-                      disabled={isAnswerSubmitted}
-                      className={`p-5 sm:p-6 rounded-2xl border text-left flex items-start gap-4 transition-all duration-200 min-h-[96px] cursor-pointer ${borderStyle}`}
+                      key={opt.id}
+                      type="button"
+                      disabled={isSubmitted}
+                      onClick={() => handleSelectOption(opt.id)}
+                      className={`w-full p-4 sm:p-5 rounded-2xl border text-left transition-all flex items-center justify-between gap-4 cursor-pointer disabled:cursor-default ${borderClass}`}
                     >
-                      <span className={`w-8 h-8 rounded-xl flex items-center justify-center font-bold text-xs shrink-0 transition-colors ${badgeStyle}`}>
-                        {option.id}
-                      </span>
-                      <span className="text-xs sm:text-sm font-medium leading-relaxed pt-0.5">
-                        {option.text}
-                      </span>
+                      <div className="flex items-center gap-4">
+                        <span className={`w-8 h-8 rounded-xl flex items-center justify-center text-xs font-bold shrink-0 transition-colors ${badgeClass}`}>
+                          {opt.id}
+                        </span>
+                        <span className="text-sm sm:text-base font-medium text-slate-900">
+                          {opt.text}
+                        </span>
+                      </div>
+
+                      {isSubmitted && isCorrect && (
+                        <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0" />
+                      )}
                     </button>
                   );
                 })}
               </div>
 
-              {/* Feedback explanation if submitted */}
+              {/* Feedback and Explanation */}
               {isAnswerSubmitted && (
-                <div className={`p-4 rounded-2xl border text-xs sm:text-sm leading-relaxed animate-fade-in ${
-                  selectedOption === currentQ.options.find(o => o.isCorrect)?.id
-                    ? 'bg-emerald-50 border-emerald-200 text-emerald-800'
-                    : 'bg-rose-50 border-rose-200 text-rose-800'
+                <div className={`p-4 rounded-2xl border text-sm animate-fade-in ${
+                  currentAnswer?.isCorrect 
+                    ? 'bg-emerald-50/80 border-emerald-200 text-emerald-900' 
+                    : 'bg-rose-50/80 border-rose-200 text-rose-900'
                 }`}>
-                  <p className="font-bold mb-1">
-                    {selectedOption === currentQ.options.find(o => o.isCorrect)?.id ? '✓ ¡Respuesta Correcta!' : '✕ Respuesta Incorrecta'}
-                  </p>
-                  <p className="text-xs text-slate-600">{currentQ.correctExplanation}</p>
+                  <div className="flex items-start gap-3">
+                    <Info className="w-5 h-5 shrink-0 mt-0.5" />
+                    <div>
+                      <h5 className="font-bold">
+                        {currentAnswer?.isCorrect ? '¡Respuesta Correcta!' : 'Respuesta Incorrecta'}
+                      </h5>
+                      <p className="text-xs text-slate-600 mt-1 leading-relaxed">
+                        {currentQ.correctExplanation}
+                      </p>
+                    </div>
+                  </div>
                 </div>
               )}
 
-              {/* Navigation Actions: Volver si se quiere devolver + Responder / Siguiente */}
-              <div className="pt-4 border-t border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                
-                {/* Botón Volver / Anterior si la persona se quiere devolver */}
+              {/* Footer Controls */}
+              <div className="flex items-center justify-between pt-4 border-t border-slate-100">
                 <button
-                  id="btn-quiz-prev-question"
                   type="button"
+                  id="btn-quiz-prev-question"
                   onClick={handlePrevQuestion}
                   disabled={currentQuestionIndex === 0}
-                  className={`py-3 px-5 rounded-xl font-bold text-xs sm:text-sm flex items-center justify-center gap-2 transition-all ${
+                  className={`inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs font-bold transition-all ${
                     currentQuestionIndex > 0
-                      ? 'bg-slate-100 hover:bg-slate-200 text-slate-700 cursor-pointer shadow-2xs border border-slate-200'
-                      : 'bg-slate-50 text-slate-300 border border-slate-100 cursor-not-allowed opacity-60'
+                      ? 'bg-slate-100 hover:bg-slate-200 text-slate-700 cursor-pointer shadow-xs'
+                      : 'bg-slate-50 text-slate-300 cursor-not-allowed border border-slate-100'
                   }`}
                   title={currentQuestionIndex > 0 ? "Devolverse a la pregunta anterior" : "Estás en la primera pregunta"}
                 >
@@ -661,79 +838,211 @@ export const EducationScreen: React.FC = () => {
                   <span>Pregunta Anterior</span>
                 </button>
 
-                <div className="flex items-center gap-3">
-                  {!isAnswerSubmitted ? (
-                    <button
-                      id="btn-quiz-submit-answer"
-                      type="button"
-                      onClick={handleAnswerSubmit}
-                      disabled={!selectedOption}
-                      className={`py-3 px-6 rounded-xl font-bold text-xs sm:text-sm transition-all flex items-center justify-center gap-2 ${
-                        selectedOption
-                          ? 'bg-[#0057d9] hover:bg-[#0047b3] text-white shadow-md cursor-pointer'
-                          : 'bg-[#718296] text-white cursor-not-allowed opacity-90'
-                      }`}
-                    >
-                      <span>Responder</span>
-                      <ArrowRight className="w-4 h-4" />
-                    </button>
-                  ) : (
-                    <button
-                      id="btn-quiz-next-question"
-                      type="button"
-                      onClick={handleNextQuestion}
-                      className="py-3 px-6 rounded-xl bg-[#0057d9] hover:bg-[#0047b3] text-white font-bold text-xs sm:text-sm shadow-md flex items-center justify-center gap-2 transition-all cursor-pointer"
-                    >
-                      <span>{currentQuestionIndex === totalQuestions - 1 ? 'Finalizar Evaluación' : 'Siguiente Pregunta'}</span>
-                      <ChevronRight className="w-4 h-4" />
-                    </button>
-                  )}
-                </div>
+                {!isAnswerSubmitted ? (
+                  <button
+                    type="button"
+                    id="btn-quiz-submit-answer"
+                    disabled={!selectedOption}
+                    onClick={handleAnswerSubmit}
+                    className="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl bg-[#0066ff] hover:bg-blue-700 disabled:bg-slate-200 disabled:text-slate-400 disabled:cursor-not-allowed text-white text-xs font-bold transition-all cursor-pointer shadow-xs"
+                  >
+                    <span>Comprobar Respuesta</span>
+                    <ArrowRight className="w-4 h-4" />
+                  </button>
+                ) : (
+                  <button
+                    type="button"
+                    id="btn-quiz-next-question"
+                    onClick={handleNextQuestion}
+                    className="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl bg-[#0a193b] hover:bg-[#07132c] text-white text-xs font-bold transition-all cursor-pointer shadow-xs"
+                  >
+                    <span>{currentQuestionIndex === totalQuestions - 1 ? 'Finalizar Evaluación' : 'Siguiente Pregunta'}</span>
+                    <ChevronRight className="w-4 h-4" />
+                  </button>
+                )}
               </div>
-
-              {/* Instructional note matching Image 2 */}
-              {!selectedOption && !isAnswerSubmitted && (
-                <div className="text-center pt-2">
-                  <p className="text-xs text-slate-500 font-medium flex items-center justify-center gap-1.5">
-                    <Info className="w-3.5 h-3.5 text-slate-400" />
-                    <span>Selecciona una opción para responder o usa las preguntas anteriores para revisar.</span>
-                  </p>
-                </div>
-              )}
-
-            </div>
+            </>
           ) : (
             /* Quiz Completed View */
-            <div className="py-8 text-center space-y-6">
-              <div className="w-16 h-16 rounded-3xl bg-blue-50 border border-blue-100 text-[#0066ff] flex items-center justify-center mx-auto shadow-sm">
-                <Trophy className="w-8 h-8 text-amber-500" />
+            <div className="text-center py-8 space-y-6 animate-fade-in">
+              <div className="w-20 h-20 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center mx-auto shadow-md border-2 border-emerald-300">
+                <Trophy className="w-10 h-10" />
               </div>
 
               <div className="space-y-2">
-                <h3 className="text-2xl font-extrabold text-[#0a193b]">¡Evaluación Completada!</h3>
-                <p className="text-slate-600 text-sm">
-                  Has obtenido {(Object.values(userAnswers) as Array<{ isCorrect: boolean }>).filter((a) => a.isCorrect).length} de {totalQuestions} respuestas correctas en Señalización Básica.
+                <span className="px-3 py-1 rounded-full bg-emerald-100 text-emerald-800 text-xs font-black uppercase">
+                  Módulo 1 Completado
+                </span>
+                <h3 className="text-2xl sm:text-3xl font-extrabold text-[#0a193b]">
+                  ¡Felicidades, Evaluación Completada!
+                </h3>
+                <p className="text-slate-600 text-sm max-w-md mx-auto">
+                  Has completado las 5 preguntas del módulo. Tu progreso global ahora refleja tu avance en la plataforma.
                 </p>
-                <div className="inline-block mt-2 px-4 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 text-xs font-bold">
-                  Insignia Desbloqueada: Conductor Preventivo Nivel 1
+              </div>
+
+              <div className="grid grid-cols-2 gap-4 max-w-md mx-auto pt-2">
+                <div className="p-4 rounded-2xl bg-blue-50 border border-blue-200 text-center">
+                  <span className="text-xs text-blue-700 font-bold block uppercase">Curso Navegación</span>
+                  <span className="text-3xl font-black text-blue-900">100%</span>
+                </div>
+                <div className="p-4 rounded-2xl bg-emerald-50 border border-emerald-200 text-center">
+                  <span className="text-xs text-emerald-700 font-bold block uppercase">Progreso Global</span>
+                  <span className="text-3xl font-black text-emerald-900">{globalProgress}%</span>
                 </div>
               </div>
 
-              <div className="flex justify-center gap-3 pt-2">
+              <div className="pt-4 flex flex-col sm:flex-row items-center justify-center gap-3">
                 <button
                   type="button"
                   onClick={handleRestartQuiz}
-                  className="px-6 py-2.5 rounded-xl border border-slate-200 text-slate-700 hover:bg-slate-50 font-bold text-xs cursor-pointer"
+                  className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-bold transition-all cursor-pointer"
                 >
-                  Repetir Evaluación
+                  <RotateCcw className="w-4 h-4" />
+                  <span>Repetir Evaluación</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    const el = document.getElementById('evaluacion-conocimientos');
+                    if (el) {
+                      window.scrollTo({ top: 0, behavior: 'smooth' });
+                    }
+                  }}
+                  className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-[#0066ff] hover:bg-blue-700 text-white text-xs font-bold transition-all cursor-pointer shadow-sm"
+                >
+                  <BookOpen className="w-4 h-4" />
+                  <span>Explorar Otros Cursos</span>
                 </button>
               </div>
             </div>
           )}
 
         </div>
-
       </section>
+
+      {/* ========================================================================= */}
+      {/* 3. MODAL DE ESTUDIO INTERACTIVO PARA CUALQUIER CURSO                      */}
+      {/* ========================================================================= */}
+      {activeCourseModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-xs animate-fade-in">
+          <div className="bg-white rounded-3xl max-w-xl w-full border border-slate-200 shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
+            
+            {/* Header */}
+            <div className="relative h-40 w-full overflow-hidden bg-slate-900">
+              <img
+                src={activeCourseModal.image}
+                alt={activeCourseModal.title}
+                className="w-full h-full object-cover opacity-80"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/50 to-transparent" />
+              
+              <button
+                type="button"
+                onClick={() => setActiveCourseModal(null)}
+                className="absolute top-4 right-4 w-9 h-9 rounded-full bg-slate-900/80 text-white hover:bg-slate-900 flex items-center justify-center transition-all cursor-pointer"
+              >
+                <X className="w-5 h-5" />
+              </button>
+
+              <div className="absolute bottom-4 left-6 right-6">
+                <span className="px-2.5 py-0.5 rounded-full bg-blue-500/90 text-white text-[11px] font-bold">
+                  {activeCourseModal.categoryLabel} • {activeCourseModal.level}
+                </span>
+                <h3 className="text-xl font-black text-white mt-1">
+                  {activeCourseModal.title}
+                </h3>
+              </div>
+            </div>
+
+            {/* Body */}
+            <div className="p-6 space-y-6 overflow-y-auto flex-1 text-slate-800">
+              <p className="text-sm text-slate-600 leading-relaxed">
+                {activeCourseModal.description}
+              </p>
+
+              {/* Progress Summary */}
+              <div className="p-4 rounded-2xl bg-blue-50/80 border border-blue-200 flex items-center justify-between">
+                <div>
+                  <span className="text-xs font-bold text-blue-900 uppercase">Progreso del Módulo</span>
+                  <p className="text-2xl font-black text-blue-950">
+                    {coursesProgress[activeCourseModal.id] || 0}%
+                  </p>
+                </div>
+                <div className="text-right">
+                  <span className="text-xs text-slate-500 font-medium">Progreso Global Actual</span>
+                  <p className="text-lg font-bold text-[#0066ff]">
+                    {globalProgress}%
+                  </p>
+                </div>
+              </div>
+
+              {/* Lessons Checklist */}
+              <div className="space-y-3">
+                <h4 className="text-xs font-bold uppercase tracking-wider text-slate-400">
+                  Lecciones del Curso (Marca cada una para avanzar)
+                </h4>
+
+                <div className="space-y-2">
+                  {activeCourseModal.lessons.map((lesson, idx) => {
+                    const isDone = (completedLessons[activeCourseModal.id] || []).includes(lesson);
+
+                    return (
+                      <button
+                        key={idx}
+                        type="button"
+                        onClick={() =>
+                          handleToggleLesson(activeCourseModal.id, lesson, activeCourseModal.lessons.length)
+                        }
+                        className={`w-full p-3.5 rounded-xl border text-left flex items-center justify-between gap-3 transition-all cursor-pointer ${
+                          isDone
+                            ? 'bg-emerald-50/80 border-emerald-300 text-emerald-950'
+                            : 'bg-slate-50 hover:bg-slate-100 border-slate-200 text-slate-800'
+                        }`}
+                      >
+                        <div className="flex items-center gap-3">
+                          <div className={`w-6 h-6 rounded-lg flex items-center justify-center shrink-0 ${
+                            isDone ? 'bg-emerald-600 text-white' : 'border border-slate-300 bg-white text-transparent'
+                          }`}>
+                            <Check className="w-4 h-4" />
+                          </div>
+                          <span className="text-xs sm:text-sm font-semibold">
+                            {idx + 1}. {lesson}
+                          </span>
+                        </div>
+                        <span className={`text-[11px] font-bold ${isDone ? 'text-emerald-700' : 'text-slate-400'}`}>
+                          {isDone ? 'Completada' : 'Pendiente'}
+                        </span>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            </div>
+
+            {/* Footer */}
+            <div className="p-5 border-t border-slate-200 bg-slate-50 flex items-center justify-between gap-3">
+              <button
+                type="button"
+                onClick={() => handleCompleteAllLessons(activeCourseModal)}
+                className="px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold transition-all cursor-pointer shadow-xs"
+              >
+                Completar Todas las Lecciones
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setActiveCourseModal(null)}
+                className="px-5 py-2.5 rounded-xl bg-[#0a193b] hover:bg-[#07132c] text-white text-xs font-bold transition-all cursor-pointer"
+              >
+                Cerrar y Ver Progreso
+              </button>
+            </div>
+
+          </div>
+        </div>
+      )}
 
     </div>
   );
