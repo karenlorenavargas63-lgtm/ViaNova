@@ -211,16 +211,16 @@ export const UserProfileDropdown: React.FC<UserProfileDropdownProps> = ({
           <img
             src={user.avatar}
             alt={displayName}
-            className="w-6 h-6 rounded-full object-cover border border-white/80 shrink-0"
+            className="w-7 h-7 rounded-full object-cover border border-white/80 shrink-0"
           />
         ) : (
-          <div className="w-6 h-6 rounded-full bg-[#0057d9] text-white flex items-center justify-center text-[10px] font-black shrink-0">
+          <div className="w-7 h-7 rounded-full bg-[#0057d9] text-white flex items-center justify-center text-xs font-black shrink-0">
             {displayName.charAt(0).toUpperCase()}
           </div>
         )}
-        <span className="truncate max-w-[130px] font-bold">{shortName}</span>
+        <span className="truncate max-w-[140px] font-bold text-sm sm:text-base">{shortName}</span>
         <ChevronDown
-          className={`w-3.5 h-3.5 transition-transform duration-200 shrink-0 ${
+          className={`w-4 h-4 transition-transform duration-200 shrink-0 ${
             isOpen ? 'rotate-180' : ''
           }`}
         />
@@ -230,30 +230,30 @@ export const UserProfileDropdown: React.FC<UserProfileDropdownProps> = ({
       {isOpen && (
         <div
           id="user-profile-dropdown-menu"
-          className="absolute right-0 mt-2.5 w-72 sm:w-80 bg-white rounded-2xl shadow-2xl border border-slate-200/90 z-50 animate-fade-in overflow-hidden py-1 divide-y divide-slate-100"
+          className="absolute right-0 mt-2.5 w-80 sm:w-88 bg-white rounded-2xl shadow-2xl border border-slate-200/90 z-50 animate-fade-in overflow-hidden py-1 divide-y divide-slate-100"
         >
           {/* Header preview of the user */}
-          <div className="px-4 py-3 bg-slate-50/70">
+          <div className="px-4 py-3.5 bg-slate-50/80">
             <div className="flex items-center gap-3">
               {user.avatar ? (
                 <img
                   src={user.avatar}
                   alt={displayName}
-                  className="w-10 h-10 rounded-full object-cover border border-white shadow-sm shrink-0"
+                  className="w-11 h-11 rounded-full object-cover border border-white shadow-sm shrink-0"
                 />
               ) : (
-                <div className="w-10 h-10 rounded-full bg-[#0057d9] text-white flex items-center justify-center text-sm font-black shadow-sm shrink-0">
+                <div className="w-11 h-11 rounded-full bg-[#0057d9] text-white flex items-center justify-center text-base font-black shadow-sm shrink-0">
                   {displayName.charAt(0).toUpperCase()}
                 </div>
               )}
               <div className="min-w-0 flex-1">
-                <p className="text-xs font-black text-[#0a193b] truncate leading-tight">
+                <p className="text-sm font-black text-[#0a193b] truncate leading-tight">
                   {displayName}
                 </p>
-                <p className="text-[11px] text-slate-500 truncate mt-0.5">
+                <p className="text-xs text-slate-500 truncate mt-0.5">
                   {userEmail}
                 </p>
-                <span className="inline-block mt-1 px-2 py-0.5 rounded-full bg-blue-50 text-[#0057d9] text-[10px] font-bold border border-blue-100 truncate">
+                <span className="inline-block mt-1 px-2.5 py-0.5 rounded-full bg-blue-50 text-[#0057d9] text-xs font-bold border border-blue-100 truncate">
                   {userRole}
                 </span>
               </div>
@@ -261,7 +261,7 @@ export const UserProfileDropdown: React.FC<UserProfileDropdownProps> = ({
           </div>
 
           {/* Action List of the 4 requested options */}
-          <div className="p-1.5 space-y-0.5">
+          <div className="p-2 space-y-1">
             {/* 1. Ver la cuenta */}
             <button
               id="dropdown-opt-view-account"
@@ -270,16 +270,16 @@ export const UserProfileDropdown: React.FC<UserProfileDropdownProps> = ({
                 setIsOpen(false);
                 setCurrentTab('perfil');
               }}
-              className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-left hover:bg-slate-100 transition-colors group"
+              className="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-left hover:bg-slate-100 transition-colors group"
             >
               <div className="w-8 h-8 rounded-lg bg-blue-50 text-[#0057d9] flex items-center justify-center shrink-0 group-hover:bg-[#0057d9] group-hover:text-white transition-colors">
                 <UserIcon className="w-4 h-4" />
               </div>
               <div className="min-w-0 flex-1">
-                <p className="text-xs font-bold text-slate-800 leading-tight">Ver la cuenta</p>
-                <p className="text-[10px] text-slate-500 leading-tight">Detalles del perfil, progreso y estadísticas</p>
+                <p className="text-sm font-bold text-slate-800 leading-tight">Ver la cuenta</p>
+                <p className="text-xs text-slate-500 leading-tight">Detalles del perfil, progreso y estadísticas</p>
               </div>
-              <ArrowRight className="w-3.5 h-3.5 text-slate-400 group-hover:text-[#0057d9] group-hover:translate-x-0.5 transition-all" />
+              <ArrowRight className="w-4 h-4 text-slate-400 group-hover:text-[#0057d9] group-hover:translate-x-0.5 transition-all" />
             </button>
 
             {/* 2. Editar perfil */}
@@ -290,16 +290,16 @@ export const UserProfileDropdown: React.FC<UserProfileDropdownProps> = ({
                 setIsOpen(false);
                 setIsEditModalOpen(true);
               }}
-              className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-left hover:bg-slate-100 transition-colors group"
+              className="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-left hover:bg-slate-100 transition-colors group"
             >
               <div className="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0 group-hover:bg-emerald-600 group-hover:text-white transition-colors">
                 <Edit3 className="w-4 h-4" />
               </div>
               <div className="min-w-0 flex-1">
-                <p className="text-xs font-bold text-slate-800 leading-tight">Editar perfil</p>
-                <p className="text-[10px] text-slate-500 leading-tight">Modificar nombre, rol, ciudad y foto</p>
+                <p className="text-sm font-bold text-slate-800 leading-tight">Editar perfil</p>
+                <p className="text-xs text-slate-500 leading-tight">Modificar nombre, rol, ciudad y foto</p>
               </div>
-              <ArrowRight className="w-3.5 h-3.5 text-slate-400 group-hover:text-emerald-600 group-hover:translate-x-0.5 transition-all" />
+              <ArrowRight className="w-4 h-4 text-slate-400 group-hover:text-emerald-600 group-hover:translate-x-0.5 transition-all" />
             </button>
 
             {/* 3. Cerrar sesión */}
@@ -310,16 +310,16 @@ export const UserProfileDropdown: React.FC<UserProfileDropdownProps> = ({
                 setIsOpen(false);
                 setIsLogoutModalOpen(true);
               }}
-              className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-left hover:bg-slate-100 transition-colors group"
+              className="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-left hover:bg-slate-100 transition-colors group"
             >
               <div className="w-8 h-8 rounded-lg bg-slate-100 text-slate-600 flex items-center justify-center shrink-0 group-hover:bg-slate-700 group-hover:text-white transition-colors">
                 <LogOut className="w-4 h-4" />
               </div>
               <div className="min-w-0 flex-1">
-                <p className="text-xs font-bold text-slate-800 leading-tight">Cerrar sesión</p>
-                <p className="text-[10px] text-slate-500 leading-tight">Finalizar tu sesión en este dispositivo</p>
+                <p className="text-sm font-bold text-slate-800 leading-tight">Cerrar sesión</p>
+                <p className="text-xs text-slate-500 leading-tight">Finalizar tu sesión en este dispositivo</p>
               </div>
-              <ArrowRight className="w-3.5 h-3.5 text-slate-400 group-hover:text-slate-700 group-hover:translate-x-0.5 transition-all" />
+              <ArrowRight className="w-4 h-4 text-slate-400 group-hover:text-slate-700 group-hover:translate-x-0.5 transition-all" />
             </button>
 
             {/* 4. Eliminar cuenta */}
@@ -330,16 +330,16 @@ export const UserProfileDropdown: React.FC<UserProfileDropdownProps> = ({
                 setIsOpen(false);
                 setIsDeleteModalOpen(true);
               }}
-              className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-left hover:bg-rose-50 transition-colors group"
+              className="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-left hover:bg-rose-50 transition-colors group"
             >
               <div className="w-8 h-8 rounded-lg bg-rose-50 text-rose-600 flex items-center justify-center shrink-0 group-hover:bg-rose-600 group-hover:text-white transition-colors">
                 <Trash2 className="w-4 h-4" />
               </div>
               <div className="min-w-0 flex-1">
-                <p className="text-xs font-bold text-rose-600 leading-tight">Eliminar cuenta</p>
-                <p className="text-[10px] text-rose-500/80 leading-tight">Borrar datos de usuario y progreso vial</p>
+                <p className="text-sm font-bold text-rose-600 leading-tight">Eliminar cuenta</p>
+                <p className="text-xs text-rose-500/80 leading-tight">Borrar datos de usuario y progreso vial</p>
               </div>
-              <ArrowRight className="w-3.5 h-3.5 text-rose-300 group-hover:text-rose-600 group-hover:translate-x-0.5 transition-all" />
+              <ArrowRight className="w-4 h-4 text-rose-300 group-hover:text-rose-600 group-hover:translate-x-0.5 transition-all" />
             </button>
           </div>
         </div>

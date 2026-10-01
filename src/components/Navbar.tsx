@@ -71,7 +71,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                   key={item.id}
                   id={`nav-tab-${item.id}`}
                   onClick={() => setCurrentTab(item.id)}
-                  className={`relative py-2 text-sm font-semibold transition-all duration-200 ${
+                  className={`relative py-2 text-[15px] sm:text-base font-semibold transition-all duration-200 ${
                     isActive
                       ? 'text-[#0057d9]'
                       : 'text-slate-700 hover:text-[#0057d9]'
@@ -101,7 +101,7 @@ export const Navbar: React.FC<NavbarProps> = ({
               <button
                 id="nav-login-btn"
                 onClick={onOpenAuthModal}
-                className="flex items-center gap-2 px-5 py-2.5 rounded-full bg-[#0057d9] text-white font-bold text-sm hover:bg-[#0047b3] transition-all duration-200 shadow-md shadow-blue-500/20 hover:scale-[1.02]"
+                className="flex items-center gap-2 px-6 py-2.5 rounded-full bg-[#0057d9] text-white font-bold text-base hover:bg-[#0047b3] transition-all duration-200 shadow-md shadow-blue-500/20 hover:scale-[1.02]"
               >
                 <LogIn className="w-4 h-4" />
                 <span>Iniciar Sesión</span>
@@ -135,7 +135,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                   setCurrentTab(item.id);
                   setIsMobileMenuOpen(false);
                 }}
-                className={`w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm font-semibold transition-all ${
+                className={`w-full flex items-center justify-between px-4 py-3 rounded-xl text-base font-semibold transition-all ${
                   isActive
                     ? 'bg-blue-100 text-[#0057d9] border border-sky-300'
                     : 'text-slate-700 hover:bg-[#a8d8fc]'
@@ -153,27 +153,27 @@ export const Navbar: React.FC<NavbarProps> = ({
                 <button
                   type="button"
                   onClick={() => setIsMobileProfileExpanded(!isMobileProfileExpanded)}
-                  className="w-full flex items-center justify-between p-3.5 rounded-2xl bg-[#e0eaff] hover:bg-[#d0e0fc] text-[#003d99] font-bold text-sm transition-all"
+                  className="w-full flex items-center justify-between p-3.5 rounded-2xl bg-[#e0eaff] hover:bg-[#d0e0fc] text-[#003d99] font-bold text-base transition-all"
                 >
                   <div className="flex items-center gap-2.5 min-w-0">
                     {user.avatar ? (
                       <img 
                         src={user.avatar} 
                         alt={user.name} 
-                        className="w-8 h-8 rounded-full object-cover border border-white shrink-0" 
+                        className="w-9 h-9 rounded-full object-cover border border-white shrink-0" 
                       />
                     ) : (
-                      <div className="w-8 h-8 rounded-full bg-[#0057d9] text-white flex items-center justify-center text-xs font-black shrink-0">
+                      <div className="w-9 h-9 rounded-full bg-[#0057d9] text-white flex items-center justify-center text-sm font-black shrink-0">
                         {user.name ? user.name.charAt(0).toUpperCase() : 'U'}
                       </div>
                     )}
                     <div className="text-left min-w-0">
-                      <p className="truncate text-xs font-black text-[#0a193b]">{user.name || 'Usuario VIANOVA'}</p>
-                      <p className="text-[10px] text-blue-700 font-medium truncate">{user.role || 'Ciudadano'}</p>
+                      <p className="truncate text-sm font-black text-[#0a193b]">{user.name || 'Usuario VIANOVA'}</p>
+                      <p className="text-xs text-blue-700 font-medium truncate">{user.role || 'Ciudadano'}</p>
                     </div>
                   </div>
                   <div className="flex items-center gap-1.5 shrink-0">
-                    <span className="text-[11px] font-semibold text-blue-700">
+                    <span className="text-xs font-semibold text-blue-700">
                       {isMobileProfileExpanded ? 'Ocultar' : 'Opciones'}
                     </span>
                     <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${isMobileProfileExpanded ? 'rotate-180' : ''}`} />
@@ -182,7 +182,7 @@ export const Navbar: React.FC<NavbarProps> = ({
 
                 {/* Mobile Expanded 4 Options */}
                 {isMobileProfileExpanded && (
-                  <div className="p-2 rounded-2xl bg-slate-50 border border-slate-200/80 space-y-1 animate-fade-in text-xs">
+                  <div className="p-2 rounded-2xl bg-slate-50 border border-slate-200/80 space-y-1 animate-fade-in text-sm">
                     {/* 1. Ver la cuenta */}
                     <button
                       type="button"
@@ -190,14 +190,14 @@ export const Navbar: React.FC<NavbarProps> = ({
                         setCurrentTab('perfil');
                         setIsMobileMenuOpen(false);
                       }}
-                      className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl bg-white hover:bg-slate-100 text-slate-800 font-bold transition-colors"
+                      className="w-full flex items-center gap-3 px-3.5 py-3 rounded-xl bg-white hover:bg-slate-100 text-slate-800 font-bold transition-colors"
                     >
-                      <div className="w-7 h-7 rounded-lg bg-blue-50 text-[#0057d9] flex items-center justify-center shrink-0">
+                      <div className="w-8 h-8 rounded-lg bg-blue-50 text-[#0057d9] flex items-center justify-center shrink-0">
                         <UserIcon className="w-4 h-4" />
                       </div>
                       <div className="text-left min-w-0 flex-1">
-                        <p className="text-xs font-bold text-slate-800 leading-tight">Ver la cuenta</p>
-                        <p className="text-[10px] text-slate-500 font-normal">Detalles, estadísticas e insignias</p>
+                        <p className="text-sm font-bold text-slate-800 leading-tight">Ver la cuenta</p>
+                        <p className="text-xs text-slate-500 font-normal">Detalles, estadísticas e insignias</p>
                       </div>
                     </button>
 
@@ -208,14 +208,14 @@ export const Navbar: React.FC<NavbarProps> = ({
                         setCurrentTab('perfil');
                         setIsMobileMenuOpen(false);
                       }}
-                      className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl bg-white hover:bg-slate-100 text-slate-800 font-bold transition-colors"
+                      className="w-full flex items-center gap-3 px-3.5 py-3 rounded-xl bg-white hover:bg-slate-100 text-slate-800 font-bold transition-colors"
                     >
-                      <div className="w-7 h-7 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0">
+                      <div className="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0">
                         <Edit3 className="w-4 h-4" />
                       </div>
                       <div className="text-left min-w-0 flex-1">
-                        <p className="text-xs font-bold text-slate-800 leading-tight">Editar perfil</p>
-                        <p className="text-[10px] text-slate-500 font-normal">Modificar nombre, rol, ciudad y foto</p>
+                        <p className="text-sm font-bold text-slate-800 leading-tight">Editar perfil</p>
+                        <p className="text-xs text-slate-500 font-normal">Modificar nombre, rol, ciudad y foto</p>
                       </div>
                     </button>
 

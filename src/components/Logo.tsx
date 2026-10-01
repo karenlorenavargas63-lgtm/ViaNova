@@ -19,10 +19,10 @@ export const Logo: React.FC<LogoProps> = ({
   useImage = true,
 }) => {
   const sizeMap = {
-    sm: { img: 'w-8 h-8', text: 'text-lg', sub: 'text-[9px]' },
-    md: { img: 'w-10 h-10', text: 'text-xl sm:text-2xl', sub: 'text-[10px]' },
-    lg: { img: 'w-14 h-14', text: 'text-2xl sm:text-3xl', sub: 'text-xs' },
-    xl: { img: 'w-24 h-24 sm:w-28 sm:h-28', text: 'text-3xl sm:text-4xl', sub: 'text-xs' },
+    sm: { img: 'w-8 h-8', text: 'text-lg sm:text-xl', sub: 'text-xs' },
+    md: { img: 'w-10 h-10', text: 'text-xl sm:text-2xl', sub: 'text-xs sm:text-sm' },
+    lg: { img: 'w-14 h-14', text: 'text-2xl sm:text-3xl', sub: 'text-sm' },
+    xl: { img: 'w-24 h-24 sm:w-28 sm:h-28', text: 'text-3xl sm:text-4xl', sub: 'text-sm sm:text-base' },
   };
 
   const currentSize = sizeMap[size];

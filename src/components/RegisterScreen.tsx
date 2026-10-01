@@ -14,7 +14,7 @@ export const RegisterScreen: React.FC<RegisterScreenProps> = ({
   onRegisterSuccess, 
   onLoginSuccess 
 }) => {
-  const [isRegisterMode, setIsRegisterMode] = useState(true);
+  const [isRegisterMode, setIsRegisterMode] = useState(false);
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [city, setCity] = useState('');
@@ -170,7 +170,7 @@ export const RegisterScreen: React.FC<RegisterScreenProps> = ({
             <span>Prevención Vial y Rutas Inteligentes VIANOVA</span>
           </div>
           <p className="text-xs text-slate-300 leading-relaxed">
-            El exceso de velocidad y la invasión de carril provocan miles de siniestros evitables. Regístrate para acceder al sistema inteligente de navegación segura, alertas en tiempo real y asistencia vial.
+            El exceso de velocidad y la invasión de carril provocan miles de siniestros evitables. Inicia sesión para acceder al sistema inteligente de navegación segura, alertas en tiempo real y asistencia vial.
           </p>
         </div>
       </div>
@@ -183,19 +183,19 @@ export const RegisterScreen: React.FC<RegisterScreenProps> = ({
           <div className="space-y-4">
             <div className="flex items-center justify-between">
               <Logo size="lg" showSubtitle={true} />
-              <span className="px-3 py-1 rounded-full bg-blue-50 text-blue-700 text-xs font-bold border border-blue-100 shrink-0">
-                {isRegisterMode ? 'Registro Requerido' : 'Iniciar Sesión'}
+              <span className="px-3 py-1 rounded-full bg-blue-100 text-blue-900 text-xs font-bold border border-sky-300 shrink-0">
+                {isRegisterMode ? 'Crear Cuenta' : 'Iniciar Sesión'}
               </span>
             </div>
 
             <div className="space-y-1.5 pt-1">
               <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
-                {isRegisterMode ? 'Regístrate para ingresar' : 'Bienvenido de nuevo'}
+                {isRegisterMode ? 'Regístrate para ingresar' : 'Iniciar Sesión'}
               </h1>
-              <p className="text-sm text-slate-500 font-normal leading-relaxed">
+              <p className="text-sm text-slate-700 font-medium leading-relaxed">
                 {isRegisterMode
                   ? 'Crea tu cuenta para acceder a la pantalla de inicio y a todas las herramientas de movilidad urbana.'
-                  : 'Ingresa tus credenciales registradas para ingresar a la plataforma.'}
+                  : 'Ingresa tus credenciales para acceder a la pantalla de inicio y a tus rutas de movilidad.'}
               </p>
             </div>
           </div>

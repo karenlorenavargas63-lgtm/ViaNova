@@ -258,10 +258,10 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
       {/* Header bar with title */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8 pb-4 border-b border-slate-200/80">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-extrabold text-[#0a193b] tracking-tight">
+          <h1 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-[#0a193b] tracking-tight">
             Perfil de Usuario
           </h1>
-          <p className="text-sm text-slate-500 mt-1">
+          <p className="text-sm sm:text-base text-slate-600 mt-1.5">
             Gestiona tu información personal, certificaciones viales y estado de movilidad
           </p>
         </div>
@@ -303,7 +303,7 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
                 />
                 <div className="absolute inset-0 bg-[#0a193b]/60 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center text-white p-2 text-center">
                   <Camera className="w-6 h-6 mb-1" />
-                  <span className="text-[10px] font-bold leading-tight">Cambiar foto</span>
+                  <span className="text-xs font-bold leading-tight">Cambiar foto</span>
                 </div>
                 {isUploadingPhoto && (
                   <div className="absolute inset-0 bg-slate-900/70 flex items-center justify-center text-white">
@@ -318,9 +318,9 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
                 type="button"
                 onClick={() => cardFileInputRef.current?.click()}
                 title="Elegir foto desde los archivos de tu computador"
-                className="absolute bottom-0 right-0 w-8 h-8 rounded-full bg-[#0a193b] hover:bg-[#0055d4] text-white flex items-center justify-center shadow-md transition-all active:scale-95 cursor-pointer"
+                className="absolute bottom-0 right-0 w-9 h-9 rounded-full bg-[#0a193b] hover:bg-[#0055d4] text-white flex items-center justify-center shadow-md transition-all active:scale-95 cursor-pointer"
               >
-                <Camera className="w-3.5 h-3.5" />
+                <Camera className="w-4 h-4" />
               </button>
             </div>
 
@@ -330,10 +330,10 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
                 id="btn-upload-computer-photo"
                 type="button"
                 onClick={() => cardFileInputRef.current?.click()}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-blue-50 hover:bg-blue-100 text-[#0055d4] border border-blue-200/80 text-xs font-bold transition-all shadow-2xs cursor-pointer active:scale-95"
+                className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-blue-50 hover:bg-blue-100 text-[#0055d4] border border-blue-200/80 text-xs sm:text-sm font-bold transition-all shadow-2xs cursor-pointer active:scale-95"
                 title="Abrir explorador de archivos del computador"
               >
-                <FolderUp className="w-3.5 h-3.5" />
+                <FolderUp className="w-4 h-4" />
                 <span>Elegir foto del computador</span>
               </button>
               <button
@@ -341,31 +341,31 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
                 type="button"
                 onClick={() => setIsEditing(true)}
                 title="Editar datos del perfil"
-                className="p-1.5 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-600 transition-colors cursor-pointer"
+                className="p-2 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-600 transition-colors cursor-pointer"
               >
-                <Pencil className="w-3.5 h-3.5" />
+                <Pencil className="w-4 h-4" />
               </button>
             </div>
 
             {/* Success and Error messages */}
             {uploadSuccessMsg && (
-              <div className="mb-4 w-full px-3 py-2 bg-emerald-50 border border-emerald-200 rounded-xl text-emerald-700 text-xs font-semibold flex items-center gap-2 animate-in fade-in">
+              <div className="mb-4 w-full px-3.5 py-2.5 bg-emerald-50 border border-emerald-200 rounded-xl text-emerald-800 text-sm font-semibold flex items-center gap-2 animate-in fade-in">
                 <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
                 <span className="text-left leading-tight">{uploadSuccessMsg}</span>
               </div>
             )}
             {uploadError && (
-              <div className="mb-4 w-full px-3 py-2 bg-rose-50 border border-rose-200 rounded-xl text-rose-700 text-xs font-semibold flex items-center gap-2 animate-in fade-in">
+              <div className="mb-4 w-full px-3.5 py-2.5 bg-rose-50 border border-rose-200 rounded-xl text-rose-800 text-sm font-semibold flex items-center gap-2 animate-in fade-in">
                 <AlertCircle className="w-4 h-4 text-rose-600 shrink-0" />
                 <span className="text-left leading-tight">{uploadError}</span>
               </div>
             )}
 
             {/* User Name & Role */}
-            <h2 className="text-2xl font-bold text-[#0a193b] tracking-tight">
+            <h2 className="text-2xl sm:text-3xl font-extrabold text-[#0a193b] tracking-tight">
               {user.name}
             </h2>
-            <p className="text-sm text-slate-500 mt-1 font-normal">
+            <p className="text-sm sm:text-base text-slate-600 mt-1 font-medium">
               {user.role}
             </p>
 
@@ -373,7 +373,7 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
             <div className="w-full border-t border-slate-100 my-5"></div>
 
             {/* Meta Info List */}
-            <div className="space-y-3.5 w-full text-left text-sm text-slate-600">
+            <div className="space-y-3.5 w-full text-left text-sm sm:text-base text-slate-600">
               <div className="flex items-center gap-3">
                 <MapPin className="w-4 h-4 text-slate-400 shrink-0" />
                 <span className="truncate">{user.city || 'No especificada'}</span>
@@ -394,7 +394,7 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
                 id="btn-open-edit-profile"
                 type="button"
                 onClick={handleOpenEditModal}
-                className="w-full py-3.5 px-4 rounded-xl bg-[#0a193b] hover:bg-[#0055d4] text-white font-semibold text-sm transition-all duration-200 shadow-sm flex items-center justify-center gap-2.5 cursor-pointer"
+                className="w-full py-3.5 px-4 rounded-xl bg-[#0a193b] hover:bg-[#0055d4] text-white font-semibold text-sm sm:text-base transition-all duration-200 shadow-sm flex items-center justify-center gap-2.5 cursor-pointer"
               >
                 <Settings className="w-4 h-4" />
                 <span>Editar perfil</span>
@@ -404,7 +404,7 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
                 id="btn-profile-card-logout"
                 type="button"
                 onClick={() => setIsLogoutModalOpen(true)}
-                className="w-full py-3 px-4 rounded-xl border border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-700 font-semibold text-sm transition-all duration-200 shadow-2xs flex items-center justify-center gap-2 cursor-pointer"
+                className="w-full py-3 px-4 rounded-xl border border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-700 font-semibold text-sm sm:text-base transition-all duration-200 shadow-2xs flex items-center justify-center gap-2 cursor-pointer"
               >
                 <LogOut className="w-4 h-4 text-slate-500" />
                 <span>Cerrar sesión</span>
@@ -414,7 +414,7 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
                 id="btn-profile-card-delete"
                 type="button"
                 onClick={() => setIsDeleteModalOpen(true)}
-                className="w-full py-2.5 px-4 rounded-xl border border-rose-200 bg-rose-50/60 hover:bg-rose-100/80 text-rose-600 font-semibold text-xs transition-all duration-200 flex items-center justify-center gap-2 cursor-pointer"
+                className="w-full py-2.5 px-4 rounded-xl border border-rose-200 bg-rose-50/60 hover:bg-rose-100/80 text-rose-600 font-semibold text-xs sm:text-sm transition-all duration-200 flex items-center justify-center gap-2 cursor-pointer"
               >
                 <Trash2 className="w-3.5 h-3.5 text-rose-500" />
                 <span>Eliminar cuenta</span>
@@ -425,10 +425,10 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
           {/* Card 2: Insignias Card (Under User Profile Card) */}
           <div className="bg-white rounded-3xl p-6 sm:p-7 shadow-xs border border-slate-200/70">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-bold text-[#0a193b]">
+              <h3 className="text-lg sm:text-xl font-bold text-[#0a193b]">
                 Insignias
               </h3>
-              <span className="text-xs font-bold text-slate-500 bg-slate-100 px-2.5 py-1 rounded-full">
+              <span className="text-xs sm:text-sm font-bold text-slate-600 bg-slate-100 px-3 py-1 rounded-full">
                 {user.badges?.length || 0} desbloqueadas
               </span>
             </div>
@@ -438,8 +438,8 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
                 <div className="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center text-slate-400">
                   <Award className="w-5 h-5" />
                 </div>
-                <p className="text-xs font-bold text-slate-700">Sin insignias aún</p>
-                <p className="text-[11px] text-slate-500 max-w-[210px] leading-relaxed">
+                <p className="text-sm font-bold text-slate-700">Sin insignias aún</p>
+                <p className="text-xs text-slate-500 max-w-[210px] leading-relaxed">
                   Completa recorridos y módulos educativos para desbloquear tus primeros reconocimientos viales.
                 </p>
               </div>
@@ -458,7 +458,7 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
                     <div className="w-7 h-7 mb-2 flex items-center justify-center text-[#0055d4] group-hover:scale-110 transition-transform">
                       <ShieldCheck className="w-5 h-5 text-[#0055d4]" />
                     </div>
-                    <span className="text-[11px] font-medium text-slate-700 leading-tight">
+                    <span className="text-xs font-semibold text-slate-700 leading-tight">
                       {badge.name}
                     </span>
                   </button>
@@ -599,18 +599,18 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
             
             <div className="flex items-center justify-between border-b border-slate-100 pb-4">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center text-[#0055d4]">
+                <div className="w-11 h-11 rounded-xl bg-blue-50 flex items-center justify-center text-[#0055d4]">
                   <Settings className="w-5 h-5" />
                 </div>
                 <div>
-                  <h3 className="text-xl font-bold text-[#0a193b]">Editar Perfil</h3>
-                  <p className="text-xs text-slate-500">Personaliza tus datos en la plataforma</p>
+                  <h3 className="text-xl sm:text-2xl font-bold text-[#0a193b]">Editar Perfil</h3>
+                  <p className="text-sm text-slate-500">Personaliza tus datos en la plataforma</p>
                 </div>
               </div>
               <button
                 type="button"
                 onClick={() => setIsEditing(false)}
-                className="p-2 rounded-xl hover:bg-slate-100 text-slate-400 hover:text-slate-700 transition-colors"
+                className="p-2.5 rounded-xl hover:bg-slate-100 text-slate-400 hover:text-slate-700 transition-colors"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -630,18 +630,18 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
               {/* Choose or Upload Avatar from Computer */}
               <div className="space-y-2.5">
                 <div className="flex items-center justify-between">
-                  <label className="text-xs font-bold text-slate-700 uppercase tracking-wider flex items-center gap-1.5">
-                    <ImageIcon className="w-3.5 h-3.5 text-blue-600" />
+                  <label className="text-sm font-bold text-slate-700 uppercase tracking-wider flex items-center gap-1.5">
+                    <ImageIcon className="w-4 h-4 text-blue-600" />
                     Foto de perfil
                   </label>
                   {editAvatar !== defaultAvatarImg && (
                     <button
                       type="button"
                       onClick={() => setEditAvatar(defaultAvatarImg)}
-                      className="text-[11px] text-slate-400 hover:text-rose-600 flex items-center gap-1 transition-colors cursor-pointer"
+                      className="text-xs text-slate-500 hover:text-rose-600 flex items-center gap-1 transition-colors cursor-pointer"
                       title="Restablecer foto original"
                     >
-                      <Trash2 className="w-3 h-3" />
+                      <Trash2 className="w-3.5 h-3.5" />
                       <span>Restaurar original</span>
                     </button>
                   )}
@@ -655,7 +655,7 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
                   }}
                   onDragLeave={() => setIsDraggingOverModal(false)}
                   onDrop={handleDropModalFile}
-                  className={`p-3.5 rounded-2xl border-2 border-dashed transition-all flex flex-col sm:flex-row items-center gap-3.5 ${
+                  className={`p-4 rounded-2xl border-2 border-dashed transition-all flex flex-col sm:flex-row items-center gap-4 ${
                     isDraggingOverModal
                       ? 'border-[#0055d4] bg-blue-50/70 scale-[1.01]'
                       : 'border-slate-200 hover:border-blue-400 bg-slate-50/70'
@@ -679,19 +679,19 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
 
                   {/* Actions inside drag box */}
                   <div className="flex-1 text-center sm:text-left space-y-1 min-w-0">
-                    <p className="text-xs font-bold text-slate-800">
+                    <p className="text-sm font-bold text-slate-800">
                       Sube cualquier foto desde tu computador
                     </p>
-                    <p className="text-[11px] text-slate-500 leading-tight">
+                    <p className="text-xs text-slate-500 leading-relaxed">
                       Arrastra tu imagen aquí o haz clic para explorar los archivos de tu equipo (JPG, PNG, WEBP).
                     </p>
-                    <div className="pt-1 flex flex-wrap items-center justify-center sm:justify-start gap-2">
+                    <div className="pt-1.5 flex flex-wrap items-center justify-center sm:justify-start gap-2">
                       <button
                         type="button"
                         onClick={() => modalFileInputRef.current?.click()}
-                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#0055d4] hover:bg-[#0046b8] text-white text-xs font-bold transition-all shadow-xs cursor-pointer active:scale-95"
+                        className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-[#0055d4] hover:bg-[#0046b8] text-white text-xs sm:text-sm font-bold transition-all shadow-xs cursor-pointer active:scale-95"
                       >
-                        <FolderUp className="w-3.5 h-3.5" />
+                        <FolderUp className="w-4 h-4" />
                         <span>Abrir archivos del computador</span>
                       </button>
                     </div>
@@ -700,7 +700,7 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
 
                 {/* Quick Preset Avatars */}
                 <div className="pt-1">
-                  <span className="text-[11px] font-semibold text-slate-500 block mb-1.5">
+                  <span className="text-xs font-semibold text-slate-600 block mb-1.5">
                     O selecciona un avatar predeterminado:
                   </span>
                   <div className="flex items-center gap-2.5">
@@ -709,7 +709,7 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
                         type="button"
                         key={index}
                         onClick={() => setEditAvatar(preset)}
-                        className={`w-9 h-9 rounded-full overflow-hidden border-2 transition-all cursor-pointer ${
+                        className={`w-10 h-10 rounded-full overflow-hidden border-2 transition-all cursor-pointer ${
                           editAvatar === preset ? 'border-[#0055d4] ring-2 ring-blue-400/40 scale-105' : 'border-slate-200 hover:opacity-80'
                         }`}
                         title={`Avatar alternativo ${index + 1}`}
@@ -723,24 +723,24 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
 
               {/* Full Name */}
               <div>
-                <label className="text-xs font-semibold text-slate-700 block mb-1">Nombre Completo</label>
+                <label className="text-sm font-semibold text-slate-700 block mb-1.5">Nombre Completo</label>
                 <input
                   type="text"
                   required
                   value={editName}
                   onChange={(e) => setEditName(e.target.value)}
-                  className="w-full px-4 py-2.5 rounded-xl border border-slate-200 bg-[#f8f9fa] text-slate-800 text-sm focus:bg-white focus:outline-none focus:border-[#0055d4]"
+                  className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-[#f8f9fa] text-slate-800 text-sm sm:text-base focus:bg-white focus:outline-none focus:border-[#0055d4]"
                   placeholder="Tu nombre completo"
                 />
               </div>
 
               {/* Mobility Role */}
               <div>
-                <label className="text-xs font-semibold text-slate-700 block mb-1">Tipo de Movilidad / Rol</label>
+                <label className="text-sm font-semibold text-slate-700 block mb-1.5">Tipo de Movilidad / Rol</label>
                 <select
                   value={editRole}
                   onChange={(e) => setEditRole(e.target.value)}
-                  className="w-full px-4 py-2.5 rounded-xl border border-slate-200 bg-[#f8f9fa] text-slate-800 text-sm focus:bg-white focus:outline-none focus:border-[#0055d4]"
+                  className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-[#f8f9fa] text-slate-800 text-sm sm:text-base focus:bg-white focus:outline-none focus:border-[#0055d4]"
                 >
                   <option value="Ciclista Urbano">🚲 Ciclista Urbano</option>
                   <option value="Peatón / Caminante">🚶 Peatón / Caminante</option>
@@ -759,14 +759,14 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
 
               {/* City */}
               <div>
-                <label className="text-xs font-semibold text-slate-700 block mb-1">
+                <label className="text-sm font-semibold text-slate-700 block mb-1.5">
                   Ciudad / Municipio
                 </label>
                 <input
                   type="text"
                   value={editCity}
                   onChange={(e) => setEditCity(e.target.value)}
-                  className="w-full px-4 py-2.5 rounded-xl border border-slate-200 bg-[#f8f9fa] text-slate-800 text-sm focus:bg-white focus:outline-none focus:border-[#0055d4]"
+                  className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-[#f8f9fa] text-slate-800 text-sm sm:text-base focus:bg-white focus:outline-none focus:border-[#0055d4]"
                   placeholder="Ej. Medellín, Bogotá, Cali..."
                 />
               </div>
@@ -775,13 +775,13 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
                 <button
                   type="button"
                   onClick={() => setIsEditing(false)}
-                  className="flex-1 py-3 rounded-xl border border-slate-200 text-slate-600 hover:bg-slate-50 text-xs font-semibold transition-colors"
+                  className="flex-1 py-3 rounded-xl border border-slate-200 text-slate-600 hover:bg-slate-50 text-sm sm:text-base font-semibold transition-colors"
                 >
                   Cancelar
                 </button>
                 <button
                   type="submit"
-                  className="flex-1 py-3 rounded-xl bg-[#0055d4] hover:bg-[#0046b8] text-white text-xs font-semibold transition-colors shadow-sm"
+                  className="flex-1 py-3 rounded-xl bg-[#0055d4] hover:bg-[#0046b8] text-white text-sm sm:text-base font-semibold transition-colors shadow-sm cursor-pointer"
                 >
                   Guardar Cambios
                 </button>
@@ -800,13 +800,13 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
               <Award className="w-7 h-7" />
             </div>
             <div>
-              <h4 className="text-lg font-bold text-[#0a193b]">{selectedBadge.name}</h4>
-              <p className="text-xs text-slate-600 mt-2 leading-relaxed">{selectedBadge.desc}</p>
+              <h4 className="text-xl font-bold text-[#0a193b]">{selectedBadge.name}</h4>
+              <p className="text-sm text-slate-600 mt-2 leading-relaxed">{selectedBadge.desc}</p>
             </div>
             <button
               type="button"
               onClick={() => setSelectedBadge(null)}
-              className="w-full py-2.5 rounded-xl bg-[#0a193b] text-white text-xs font-semibold hover:bg-[#0055d4] transition-colors"
+              className="w-full py-3 rounded-xl bg-[#0a193b] text-white text-sm sm:text-base font-semibold hover:bg-[#0055d4] transition-colors cursor-pointer"
             >
               Cerrar
             </button>
@@ -822,21 +822,21 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
               <LogOut className="w-6 h-6" />
             </div>
             <div>
-              <h4 className="text-lg font-bold text-[#0a193b]">¿Cerrar Sesión?</h4>
-              <p className="text-xs text-slate-500 mt-1">Podrás volver a ingresar en cualquier momento con tus credenciales.</p>
+              <h4 className="text-xl font-bold text-[#0a193b]">¿Cerrar Sesión?</h4>
+              <p className="text-sm text-slate-600 mt-1.5">Podrás volver a ingresar en cualquier momento con tus credenciales.</p>
             </div>
             <div className="flex items-center gap-3 pt-2">
               <button
                 type="button"
                 onClick={() => setIsLogoutModalOpen(false)}
-                className="flex-1 py-2.5 rounded-xl border border-slate-200 text-slate-600 hover:bg-slate-50 text-xs font-semibold"
+                className="flex-1 py-3 rounded-xl border border-slate-200 text-slate-600 hover:bg-slate-50 text-sm sm:text-base font-semibold"
               >
                 Cancelar
               </button>
               <button
                 type="button"
                 onClick={handleConfirmLogout}
-                className="flex-1 py-2.5 rounded-xl bg-[#0057d9] hover:bg-[#0047b3] text-white text-xs font-semibold shadow-sm"
+                className="flex-1 py-3 rounded-xl bg-[#0057d9] hover:bg-[#0047b3] text-white text-sm sm:text-base font-semibold shadow-sm cursor-pointer"
               >
                 Cerrar Sesión
               </button>
@@ -853,17 +853,17 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
               <Trash2 className="w-7 h-7" />
             </div>
             <div>
-              <h4 className="text-lg font-bold text-[#0a193b]">¿Eliminar cuenta definitivamente?</h4>
-              <p className="text-xs text-slate-600 mt-2 leading-relaxed">
+              <h4 className="text-xl font-bold text-[#0a193b]">¿Eliminar cuenta definitivamente?</h4>
+              <p className="text-sm text-slate-600 mt-2 leading-relaxed">
                 Esta acción es irreversible y eliminará todos tus datos registrados, progreso de rutas, educación y certificaciones viales.
               </p>
             </div>
-            <div className="p-3 rounded-2xl bg-rose-50 border border-rose-100 text-left text-xs text-rose-800 space-y-1">
+            <div className="p-3.5 rounded-2xl bg-rose-50 border border-rose-100 text-left text-sm text-rose-900 space-y-1.5">
               <p className="font-bold flex items-center gap-1.5">
-                <Trash2 className="w-3.5 h-3.5 text-rose-600 shrink-0" />
+                <Trash2 className="w-4 h-4 text-rose-600 shrink-0" />
                 Se borrarán los siguientes datos:
               </p>
-              <ul className="list-disc pl-5 text-[11px] text-rose-700/90 space-y-0.5">
+              <ul className="list-disc pl-5 text-xs sm:text-sm text-rose-800 space-y-1">
                 <li>Perfil y credenciales asociadas a {user.email || 'tu cuenta'}</li>
                 <li>Progreso vial y certificaciones acumuladas</li>
                 <li>Insignias y preferencias de movilidad</li>
@@ -873,17 +873,17 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
               <button
                 type="button"
                 onClick={() => setIsDeleteModalOpen(false)}
-                className="flex-1 py-2.5 rounded-xl border border-slate-200 text-slate-600 hover:bg-slate-50 text-xs font-semibold"
+                className="flex-1 py-3 rounded-xl border border-slate-200 text-slate-600 hover:bg-slate-50 text-sm sm:text-base font-semibold"
               >
                 Cancelar
               </button>
               <button
                 type="button"
                 onClick={handleConfirmDeleteAccount}
-                className="flex-1 py-2.5 rounded-xl bg-rose-600 hover:bg-rose-700 text-white text-xs font-semibold shadow-sm inline-flex items-center justify-center gap-1.5"
+                className="flex-1 py-3 rounded-xl bg-rose-600 hover:bg-rose-700 text-white text-sm sm:text-base font-semibold shadow-sm inline-flex items-center justify-center gap-2 cursor-pointer"
               >
                 <Trash2 className="w-4 h-4" />
-                Sí, Eliminar Cuenta
+                <span>Sí, Eliminar Cuenta</span>
               </button>
             </div>
           </div>

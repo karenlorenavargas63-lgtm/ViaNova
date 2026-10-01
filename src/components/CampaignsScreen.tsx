@@ -102,12 +102,12 @@ export const CampaignsScreen: React.FC = () => {
                     <h2 className="text-xl sm:text-2xl font-black text-slate-950 group-hover:text-cyan-700 transition-colors tracking-tight leading-snug">
                       {camp.title}
                     </h2>
-                    <p className="text-sm sm:text-base text-slate-800 font-bold mt-1">
+                    <p className="text-base text-slate-800 font-bold mt-1">
                       {camp.subtitle}
                     </p>
                   </div>
 
-                  <p className="text-sm sm:text-[15px] text-slate-900 leading-relaxed font-normal">
+                  <p className="text-base text-slate-800 leading-relaxed font-normal">
                     {camp.description}
                   </p>
                 </div>
@@ -117,22 +117,22 @@ export const CampaignsScreen: React.FC = () => {
               <div className="p-6 pt-0 flex items-center gap-2.5">
                 <button
                   onClick={() => setSelectedCampaign(camp)}
-                  className="flex-1 py-3.5 px-4 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-sm font-black transition-all shadow-md flex items-center justify-center gap-2 hover:shadow-lg"
+                  className="flex-1 py-3.5 px-4 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-base font-bold transition-all shadow-md flex items-center justify-center gap-2 hover:shadow-lg cursor-pointer"
                 >
-                  <Eye className="w-4 h-4" />
+                  <Eye className="w-5 h-5" />
                   <span>Ver campaña</span>
                 </button>
 
                 <button
                   onClick={() => handleShare(camp)}
                   title="Compartir campaña"
-                  className={`p-3.5 rounded-xl border transition-colors shadow-xs ${
+                  className={`p-3.5 rounded-xl border transition-colors shadow-xs cursor-pointer ${
                     isCopied
                       ? 'bg-emerald-100 border-emerald-400 text-emerald-800 font-bold'
                       : 'bg-slate-100 hover:bg-slate-200 border-slate-300 text-slate-800 hover:text-slate-950'
                   }`}
                 >
-                  {isCopied ? <Check className="w-4 h-4" /> : <Share2 className="w-4 h-4" />}
+                  {isCopied ? <Check className="w-5 h-5" /> : <Share2 className="w-5 h-5" />}
                 </button>
               </div>
             </div>

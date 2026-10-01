@@ -118,21 +118,21 @@ export const AuthModal: React.FC<AuthModalProps> = ({
 
           <div className="relative z-10 space-y-3">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-indigo-600 rounded-xl flex items-center justify-center font-black text-xl shadow-lg">
+              <div className="w-11 h-11 bg-indigo-600 rounded-xl flex items-center justify-center font-black text-xl shadow-lg">
                 V
               </div>
-              <span className="text-xl font-bold tracking-tight">VIANOVA</span>
+              <span className="text-2xl font-bold tracking-tight">VIANOVA</span>
             </div>
-            <p className="text-xs text-indigo-200">Plataforma de Movilidad Urbana Inteligente</p>
+            <p className="text-sm text-indigo-200">Plataforma de Movilidad Urbana Inteligente</p>
           </div>
 
           {/* Transmitir seguridad y confianza (PDF Page 3) */}
           <div className="relative z-10 p-5 rounded-2xl bg-white/10 backdrop-blur-xl border border-white/10 space-y-3 shadow-xl">
             <div className="flex items-center gap-2.5 text-emerald-400">
               <ShieldCheck className="w-5 h-5" />
-              <span className="text-xs font-bold uppercase tracking-wider">Seguridad y Confianza</span>
+              <span className="text-xs sm:text-sm font-bold uppercase tracking-wider">Seguridad y Confianza</span>
             </div>
-            <p className="text-[11px] text-slate-300 leading-relaxed">
+            <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
               Tus credenciales y datos de ubicación están protegidos mediante cifrado de punto a punto y protocolos de navegación segura.
             </p>
           </div>
@@ -160,34 +160,34 @@ export const AuthModal: React.FC<AuthModalProps> = ({
             /* Forgot Password Flow (PDF Page 2) */
             <div className="space-y-5">
               <div>
-                <h3 className="text-2xl font-bold">Recuperar Contraseña</h3>
-                <p className="text-xs text-slate-400 mt-1">
+                <h3 className="text-2xl sm:text-3xl font-bold">Recuperar Contraseña</h3>
+                <p className="text-sm text-slate-400 mt-1.5">
                   Ingresa tu correo institucional registrado y te enviaremos un enlace de restablecimiento seguro.
                 </p>
               </div>
 
               {resetSent ? (
-                <div className="p-4 rounded-2xl bg-emerald-500/20 border border-emerald-500/30 text-emerald-300 text-xs flex items-center gap-3">
+                <div className="p-4 rounded-2xl bg-emerald-500/20 border border-emerald-500/30 text-emerald-300 text-sm flex items-center gap-3">
                   <CheckCircle2 className="w-5 h-5 shrink-0" />
                   <span>Enlace de recuperación enviado a tu bandeja de entrada.</span>
                 </div>
               ) : (
                 <form onSubmit={handleSubmit} className="space-y-4">
-                  <div className="space-y-1">
-                    <label className="text-xs font-semibold text-slate-300">Correo Electrónico</label>
+                  <div className="space-y-1.5">
+                    <label className="text-sm font-bold text-slate-200">Correo Electrónico</label>
                     <input
                       type="email"
                       required
                       placeholder="nombre@institucion.com"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
-                      className="w-full bg-white/5 border border-white/10 rounded-2xl px-4 py-3 text-sm text-white focus:outline-none focus:border-indigo-500"
+                      className="w-full bg-white/5 border border-white/10 rounded-2xl px-4 py-3 text-sm sm:text-base text-white focus:outline-none focus:border-indigo-500"
                     />
                   </div>
 
                   <button
                     type="submit"
-                    className="w-full py-3.5 rounded-2xl bg-indigo-600 hover:bg-indigo-500 font-bold text-xs sm:text-sm text-white shadow-lg"
+                    className="w-full py-3.5 rounded-2xl bg-indigo-600 hover:bg-indigo-500 font-bold text-sm sm:text-base text-white shadow-lg cursor-pointer"
                   >
                     Enviar Enlace de Recuperación
                   </button>
@@ -195,7 +195,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                   <button
                     type="button"
                     onClick={() => setIsForgotPassword(false)}
-                    className="w-full text-center text-xs text-slate-400 hover:text-white"
+                    className="w-full text-center text-sm text-slate-400 hover:text-white cursor-pointer"
                   >
                     ← Volver a Iniciar Sesión
                   </button>
@@ -209,7 +209,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                 <h3 className="text-2xl sm:text-3xl font-extrabold text-white">
                   {isRegisterMode ? 'Crear Cuenta en VIANOVA' : 'Bienvenido de nuevo'}
                 </h3>
-                <p className="text-xs text-slate-400 mt-1">
+                <p className="text-sm text-slate-400 mt-1.5">
                   {isRegisterMode
                     ? 'Regístrate para acceder a todas las funciones de movilidad inteligente.'
                     : 'Ingresa tus credenciales para acceder a la plataforma de movilidad segura.'}
@@ -218,24 +218,24 @@ export const AuthModal: React.FC<AuthModalProps> = ({
 
               {isRegisterMode && (
                 <>
-                  <div className="space-y-1">
-                    <label className="text-xs font-semibold text-slate-300">Nombre Completo</label>
+                  <div className="space-y-1.5">
+                    <label className="text-sm font-bold text-slate-200">Nombre Completo</label>
                     <input
                       type="text"
                       required
                       placeholder="Ej. Carlos Mendoza"
                       value={name}
                       onChange={(e) => setName(e.target.value)}
-                      className="w-full bg-white/5 border border-white/10 rounded-2xl px-4 py-3 text-sm text-white focus:outline-none focus:border-indigo-500"
+                      className="w-full bg-white/5 border border-white/10 rounded-2xl px-4 py-3 text-sm sm:text-base text-white focus:outline-none focus:border-indigo-500"
                     />
                   </div>
 
-                  <div className="space-y-1">
-                    <label className="text-xs font-semibold text-slate-300">Tipo de Movilidad Principal</label>
+                  <div className="space-y-1.5">
+                    <label className="text-sm font-bold text-slate-200">Tipo de Movilidad Principal</label>
                     <select
                       value={role}
                       onChange={(e) => setRole(e.target.value)}
-                      className="w-full bg-white/5 border border-white/10 rounded-2xl px-4 py-3 text-sm text-white focus:outline-none focus:border-indigo-500"
+                      className="w-full bg-white/5 border border-white/10 rounded-2xl px-4 py-3 text-sm sm:text-base text-white focus:outline-none focus:border-indigo-500"
                     >
                       <option value="Ciclista Urbano" className="bg-slate-900">🚲 Ciclista Urbano</option>
                       <option value="Peatón / Caminante" className="bg-slate-900">🚶 Peatón / Caminante</option>
@@ -255,8 +255,8 @@ export const AuthModal: React.FC<AuthModalProps> = ({
               )}
 
               {/* Ingresar correo electrónico (PDF Page 2) */}
-              <div className="space-y-1">
-                <label className="text-xs font-semibold text-slate-300">Correo Electrónico</label>
+              <div className="space-y-1.5">
+                <label className="text-sm font-bold text-slate-200">Correo Electrónico</label>
                 <div className="relative">
                   <input
                     type="email"
@@ -264,21 +264,21 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                     placeholder="Pon tu correo electrónico"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="w-full bg-white/5 border border-white/10 rounded-2xl pl-10 pr-4 py-3 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500"
+                    className="w-full bg-white/5 border border-white/10 rounded-2xl pl-11 pr-4 py-3 text-sm sm:text-base text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500"
                   />
-                  <Mail className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+                  <Mail className="w-5 h-5 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
                 </div>
               </div>
 
               {/* Ingresar contraseña con botón ver (PDF Page 2) */}
-              <div className="space-y-1">
+              <div className="space-y-1.5">
                 <div className="flex items-center justify-between">
-                  <label className="text-xs font-semibold text-slate-300">Contraseña</label>
+                  <label className="text-sm font-bold text-slate-200">Contraseña</label>
                   {!isRegisterMode && (
                     <button
                       type="button"
                       onClick={() => setIsForgotPassword(true)}
-                      className="text-[11px] text-indigo-400 hover:underline"
+                      className="text-xs sm:text-sm text-indigo-400 hover:underline cursor-pointer"
                     >
                       ¿Olvidé mi contraseña?
                     </button>
@@ -291,15 +291,15 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                     placeholder="Escribe tu contraseña"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    className="w-full bg-white/5 border border-white/10 rounded-2xl pl-10 pr-10 py-3 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500"
+                    className="w-full bg-white/5 border border-white/10 rounded-2xl pl-11 pr-11 py-3 text-sm sm:text-base text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500"
                   />
-                  <Lock className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+                  <Lock className="w-5 h-5 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white"
+                    className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white cursor-pointer"
                   >
-                    {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                    {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                   </button>
                 </div>
               </div>
@@ -308,10 +308,10 @@ export const AuthModal: React.FC<AuthModalProps> = ({
               <button
                 type="submit"
                 id="auth-submit-btn"
-                className="w-full py-4 px-6 rounded-2xl bg-gradient-to-r from-indigo-600 via-blue-600 to-indigo-600 hover:from-indigo-500 text-white font-bold text-sm shadow-xl shadow-indigo-900/40 border border-white/20 transition-all flex items-center justify-center gap-2"
+                className="w-full py-4 px-6 rounded-2xl bg-gradient-to-r from-indigo-600 via-blue-600 to-indigo-600 hover:from-indigo-500 text-white font-bold text-base shadow-xl shadow-indigo-900/40 border border-white/20 transition-all flex items-center justify-center gap-2 cursor-pointer"
               >
                 <span>{isRegisterMode ? 'Crear Mi Cuenta' : 'Iniciar Sesión'}</span>
-                <ArrowRight className="w-4 h-4" />
+                <ArrowRight className="w-5 h-5" />
               </button>
 
               {/* Crear una cuenta switch (PDF Page 2) */}
@@ -319,7 +319,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                 <button
                   type="button"
                   onClick={() => setIsRegisterMode(!isRegisterMode)}
-                  className="text-xs text-slate-400 hover:text-white"
+                  className="text-sm text-slate-300 hover:text-white cursor-pointer"
                 >
                   {isRegisterMode ? (
                     <span>¿Ya tienes una cuenta? <strong className="text-indigo-400 underline">Iniciar sesión</strong></span>
@@ -332,7 +332,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
           )}
 
           {/* Platform Reference */}
-          <div className="pt-4 border-t border-white/5 text-[10px] text-slate-400 text-center">
+          <div className="pt-4 border-t border-white/5 text-xs text-slate-400 text-center">
             VIANOVA • Movilidad Segura y Sostenible 2026
           </div>
         </div>
