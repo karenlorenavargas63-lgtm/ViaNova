@@ -10,10 +10,6 @@ import {
   CheckCircle2, 
   AlertCircle, 
   KeyRound, 
-  Sparkles,
-  MapPin,
-  Bike,
-  Info,
   X
 } from 'lucide-react';
 import { CrashHeroAnimation } from './CrashHeroAnimation';
@@ -22,9 +18,7 @@ import { Logo } from './Logo';
 import { 
   validateCredentials, 
   registerNewUser, 
-  loginOrRegisterWithGoogle, 
-  DEMO_CREDENTIALS,
-  getRegisteredUsers
+  loginOrRegisterWithGoogle
 } from '../utils/session';
 
 interface LoginScreenProps {
@@ -73,15 +67,6 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({
       avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400&auto=format&fit=crop&q=80'
     }
   ];
-
-  // Helper to autofill demo credentials
-  const handleFillDemo = () => {
-    setEmail(DEMO_CREDENTIALS.email);
-    setPassword(DEMO_CREDENTIALS.password);
-    setErrorMessage('');
-    setSuccessMessage('Credenciales de prueba cargadas correctamente. Haz clic en "Iniciar Sesión e Ingresar".');
-    setTimeout(() => setSuccessMessage(''), 4000);
-  };
 
   // Login submit handler with STRICT VALIDATION
   const handleLoginSubmit = (e: React.FormEvent) => {
@@ -424,36 +409,6 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({
                 <span>{isSubmitting ? 'Validando credenciales...' : 'Iniciar Sesión e Ingresar'}</span>
                 <ArrowRight className="w-4 h-4" />
               </button>
-
-              {/* Verified Demo Credentials Box for Evaluation */}
-              <div 
-                style={{ backgroundColor: '#ffffff' }}
-                className="mt-4 p-3.5 rounded-xl border border-sky-300 shadow-xs space-y-2"
-              >
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-1.5 text-xs font-bold text-slate-800">
-                    <Info className="w-4 h-4 text-blue-600" />
-                    <span>Credenciales registradas de prueba (Demo)</span>
-                  </div>
-                  <span className="px-2 py-0.5 rounded-md bg-emerald-100 text-emerald-800 text-[10px] font-extrabold uppercase">
-                    Verificado
-                  </span>
-                </div>
-                
-                <div className="text-xs text-slate-600 space-y-0.5 font-mono">
-                  <p><strong className="text-slate-800 font-sans">Correo:</strong> {DEMO_CREDENTIALS.email}</p>
-                  <p><strong className="text-slate-800 font-sans">Contraseña:</strong> {DEMO_CREDENTIALS.password}</p>
-                </div>
-
-                <button
-                  type="button"
-                  onClick={handleFillDemo}
-                  className="w-full py-2 px-3 rounded-lg bg-sky-100 hover:bg-sky-200 text-blue-900 text-xs font-bold transition-colors flex items-center justify-center gap-1.5 cursor-pointer"
-                >
-                  <Sparkles className="w-3.5 h-3.5 text-blue-600" />
-                  <span>Autocompletar credenciales de prueba</span>
-                </button>
-              </div>
 
             </form>
           )}

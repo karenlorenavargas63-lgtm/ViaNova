@@ -4,8 +4,7 @@ import {
   validateCredentials, 
   registerNewUser, 
   loginOrRegisterWithGoogle, 
-  saveActiveSession, 
-  DEMO_CREDENTIALS 
+  saveActiveSession
 } from '../utils/session';
 import { 
   Lock, 
@@ -18,9 +17,7 @@ import {
   CheckCircle2, 
   AlertCircle,
   User, 
-  KeyRound,
-  Sparkles,
-  Info
+  KeyRound
 } from 'lucide-react';
 
 interface AuthModalProps {
@@ -48,12 +45,6 @@ export const AuthModal: React.FC<AuthModalProps> = ({
   const [isLoading, setIsLoading] = useState(false);
 
   if (!isOpen) return null;
-
-  const handleFillDemo = () => {
-    setEmail(DEMO_CREDENTIALS.email);
-    setPassword(DEMO_CREDENTIALS.password);
-    setErrorMessage('');
-  };
 
   const handleGoogleLogin = () => {
     setIsLoading(true);
@@ -362,18 +353,6 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                 <span>{isLoading ? 'Verificando...' : isRegisterMode ? 'Crear Mi Cuenta' : 'Iniciar Sesión'}</span>
                 <ArrowRight className="w-4 h-4" />
               </button>
-
-              {/* Demo button */}
-              {!isRegisterMode && (
-                <button
-                  type="button"
-                  onClick={handleFillDemo}
-                  className="w-full py-2 px-3 rounded-lg bg-white/10 hover:bg-white/15 text-indigo-300 text-xs font-semibold flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
-                >
-                  <Sparkles className="w-3.5 h-3.5 text-indigo-400" />
-                  <span>Autocompletar credenciales demo</span>
-                </button>
-              )}
 
               {/* Switch link */}
               <div className="text-center pt-1">
