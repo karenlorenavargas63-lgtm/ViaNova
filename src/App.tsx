@@ -10,7 +10,7 @@ import { CampaignsScreen } from './components/CampaignsScreen';
 import { AboutScreen } from './components/AboutScreen';
 import { ProfileScreen } from './components/ProfileScreen';
 import { ContactScreen } from './components/ContactScreen';
-import { RegisterScreen } from './components/RegisterScreen';
+import { LoginScreen } from './components/LoginScreen';
 import { AuthModal } from './components/AuthModal';
 import { Footer } from './components/Footer';
 import {
@@ -68,12 +68,12 @@ export default function App() {
     saveActiveSession(updated);
   };
 
-  // Require registration / authentication before entering the app
+  // Require login / authentication before entering the app (Default mode: Iniciar Sesión)
   if (!isAuthenticated) {
     return (
-      <RegisterScreen
-        onRegisterSuccess={handleRegisterSuccess}
+      <LoginScreen
         onLoginSuccess={handleLoginSuccess}
+        onRegisterSuccess={handleRegisterSuccess}
       />
     );
   }

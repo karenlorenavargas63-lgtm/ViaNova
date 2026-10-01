@@ -23,6 +23,7 @@ export interface UserProfile {
   documentNumber?: string;
   vehiclePlate?: string;
   memberSince: string;
+  authProvider?: 'email' | 'google';
   kmTraveled: number;
   safetyScore: number;
   monthlyStats: {
