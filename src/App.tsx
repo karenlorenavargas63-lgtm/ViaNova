@@ -110,7 +110,9 @@ export default function App() {
         )}
 
         {currentTab === 'seguridad' && (
-          <SafetyScreen />
+          <SafetyScreen 
+            onNavigateToEducation={() => setCurrentTab('educacion')}
+          />
         )}
 
         {currentTab === 'educacion' && (

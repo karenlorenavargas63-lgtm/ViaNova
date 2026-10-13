@@ -20,14 +20,15 @@ import {
   Compass,
   AlertTriangle,
   Lightbulb,
-  ExternalLink,
   ShieldCheck,
   Maximize2,
   Bike,
   Footprints,
   Scale,
   Zap,
-  RotateCw
+  RotateCw,
+  Gamepad2,
+  Filter
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 
@@ -41,14 +42,16 @@ import pedestrianSafeCrosswalk from '../assets/images/pedestrian_safe_crosswalk_
 import { 
   DIDACTIC_VIDEOS, 
   DidacticVideo, 
+  VideoTopicType,
   DIDACTIC_INFOGRAPHICS, 
   DidacticInfographic, 
   ROAD_SCENARIOS, 
   RoadScenario 
 } from '../data/didacticSafetyData';
+import { EducaplayGamesSuite } from './EducaplayGamesSuite';
 
 // Educational Navigation Modes
-export type DidacticSectionType = 'cursos' | 'videos' | 'infografias' | 'simulador' | 'evaluacion';
+export type DidacticSectionType = 'juegos' | 'videos' | 'cursos' | 'infografias' | 'simulador' | 'evaluacion';
 
 // Categories Configuration for Courses
 export type CourseCategoryType = 'micromovilidad' | 'peatonal' | 'normativa';
@@ -311,8 +314,9 @@ function buildRandomizedQuestions(): QuizQuestionItem[] {
 
 export const EducationScreen: React.FC = () => {
   // Navigation tabs for didactic formats
-  const [activeTab, setActiveTab] = useState<DidacticSectionType>('cursos');
+  const [activeTab, setActiveTab] = useState<DidacticSectionType>('juegos');
   const [selectedCategory, setSelectedCategory] = useState<CourseCategoryType>('micromovilidad');
+  const [videoTopicFilter, setVideoTopicFilter] = useState<'Todos' | VideoTopicType>('Todos');
 
   // Track progress of courses
   const [coursesProgress, setCoursesProgress] = useState<Record<string, number>>(() => {
@@ -581,11 +585,12 @@ export const EducationScreen: React.FC = () => {
         {/* NAVEGACIÓN DIDÁCTICA POR FORMATO (Zero aburrimiento, alta interacción) */}
         <div className="flex items-center gap-2 overflow-x-auto pb-2 border-b border-slate-200/80 pt-2">
           {[
-            { id: 'cursos', label: 'Cursos & Módulos', icon: BookOpen, count: COURSES_DATA.length },
-            { id: 'videos', label: 'Videoteca Didáctica', icon: Video, count: DIDACTIC_VIDEOS.length },
-            { id: 'infografias', label: 'Infografías & Guías', icon: FileText, count: DIDACTIC_INFOGRAPHICS.length },
-            { id: 'simulador', label: 'Simulador "¿Qué harías?"', icon: Compass, count: ROAD_SCENARIOS.length },
-            { id: 'evaluacion', label: 'Evaluación Rápida', icon: Award, count: 5 }
+            { id: 'juegos', label: '🎮 Juegos Educaplay', icon: Gamepad2, count: '6 Juegos', isSpecial: true },
+            { id: 'videos', label: 'Videoteca Vial', icon: Video, count: `${DIDACTIC_VIDEOS.length} Videos` },
+            { id: 'cursos', label: 'Cursos & Módulos', icon: BookOpen, count: `${COURSES_DATA.length} Cursos` },
+            { id: 'infografias', label: 'Infografías & Guías', icon: FileText, count: `${DIDACTIC_INFOGRAPHICS.length} Guías` },
+            { id: 'simulador', label: 'Simulador "¿Qué harías?"', icon: Compass, count: `${ROAD_SCENARIOS.length} Casos` },
+            { id: 'evaluacion', label: 'Evaluación Rápida', icon: Award, count: 'Test 5 Qs' }
           ].map((item) => {
             const Icon = item.icon;
             const isCurrent = activeTab === item.id;
@@ -597,13 +602,19 @@ export const EducationScreen: React.FC = () => {
                 className={`px-4 sm:px-5 py-2.5 rounded-2xl text-xs sm:text-sm font-bold flex items-center gap-2 transition-all whitespace-nowrap cursor-pointer ${
                   isCurrent
                     ? 'bg-[#0a193b] text-white shadow-md scale-[1.02]'
+                    : item.isSpecial
+                    ? 'bg-amber-50 text-amber-900 border-2 border-amber-300 hover:bg-amber-100 hover:border-amber-400 font-black'
                     : 'bg-white text-slate-700 border border-slate-200 hover:border-slate-300 hover:bg-slate-50'
                 }`}
               >
-                <Icon className={`w-4 h-4 ${isCurrent ? 'text-blue-300' : 'text-blue-600'}`} />
+                <Icon className={`w-4 h-4 ${isCurrent ? 'text-amber-300' : item.isSpecial ? 'text-amber-600' : 'text-blue-600'}`} />
                 <span>{item.label}</span>
                 <span className={`px-2 py-0.5 rounded-full text-[10px] font-extrabold ${
-                  isCurrent ? 'bg-white/20 text-white' : 'bg-slate-100 text-slate-500'
+                  isCurrent 
+                    ? 'bg-white/20 text-white' 
+                    : item.isSpecial 
+                    ? 'bg-amber-200 text-amber-900' 
+                    : 'bg-slate-100 text-slate-500'
                 }`}>
                   {item.count}
                 </span>
@@ -612,6 +623,15 @@ export const EducationScreen: React.FC = () => {
           })}
         </div>
       </section>
+
+      {/* ========================================================================= */}
+      {/* VISTA 0: JUEGOS DIDÁCTICOS ESTILO EDUCAPLAY (Tráfico, Tránsito, Prevención) */}
+      {/* ========================================================================= */}
+      {activeTab === 'juegos' && (
+        <section className="max-w-6xl mx-auto space-y-7 animate-fade-in">
+          <EducaplayGamesSuite />
+        </section>
+      )}
 
       {/* ========================================================================= */}
       {/* VISTA 1: CURSOS & MÓDULOS DE APRENDIZAJE                                   */}
@@ -774,121 +794,174 @@ export const EducationScreen: React.FC = () => {
       )}
 
       {/* ========================================================================= */}
+      {/* ========================================================================= */}
       {/* VISTA 2: VIDEOTECA DIDÁCTICA REAL (YOUTUBE EMBEDS Y CÁPSULAS VIALES)      */}
       {/* ========================================================================= */}
-      {activeTab === 'videos' && (
-        <section className="max-w-6xl mx-auto space-y-8 animate-fade-in">
-          <div className="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200 shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-            <div className="space-y-1">
-              <span className="text-xs font-bold text-blue-600 uppercase tracking-wider">Material Audiovisual Didáctico</span>
-              <h2 className="text-2xl font-black text-slate-900">Cápsulas en Video de Seguridad Vial</h2>
-              <p className="text-xs sm:text-sm text-slate-600">
-                Videos oficiales y didácticos de la Agencia Nacional de Seguridad Vial y organismos de tránsito. Visualiza los peligros reales en menos de 4 minutos.
-              </p>
-            </div>
-            <div className="px-4 py-2 rounded-2xl bg-rose-50 border border-rose-200 text-rose-700 text-xs font-bold flex items-center gap-2 shrink-0">
-              <Video className="w-4 h-4" />
-              <span>{DIDACTIC_VIDEOS.length} Cápsulas Seleccionadas</span>
-            </div>
-          </div>
+      {activeTab === 'videos' && (() => {
+        const filteredVideos = DIDACTIC_VIDEOS.filter((video) => {
+          if (videoTopicFilter === 'Todos') return true;
+          return video.topic === videoTopicFilter;
+        });
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-7">
-            {DIDACTIC_VIDEOS.map((video) => (
-              <div
-                key={video.id}
-                className="bg-white rounded-3xl border border-slate-200/90 shadow-sm overflow-hidden flex flex-col justify-between hover:shadow-lg hover:border-slate-300 transition-all group"
-              >
-                <div>
-                  {/* Thumbnail with Video Play Overlay */}
-                  <div
-                    onClick={() => {
-                      setSelectedVideoModal(video);
-                      setVideoQuizSelectedOpt(null);
-                      setVideoQuizAnswered(false);
-                    }}
-                    className="relative h-52 sm:h-56 w-full overflow-hidden bg-slate-900 cursor-pointer"
+        const topicBadges: { id: 'Todos' | VideoTopicType; label: string; icon: string; count: number }[] = [
+          { id: 'Todos', label: 'Todos los Videos', icon: '🎬', count: DIDACTIC_VIDEOS.length },
+          { id: 'Tráfico', label: 'Tráfico & Congestión', icon: '🚦', count: DIDACTIC_VIDEOS.filter(v => v.topic === 'Tráfico').length },
+          { id: 'Tránsito', label: 'Tránsito & Normativa', icon: '🚸', count: DIDACTIC_VIDEOS.filter(v => v.topic === 'Tránsito').length },
+          { id: 'Prevención', label: 'Prevención & Reflejos', icon: '🛡️', count: DIDACTIC_VIDEOS.filter(v => v.topic === 'Prevención').length },
+          { id: 'Movilidad', label: 'Movilidad Sostenible', icon: '🚲', count: DIDACTIC_VIDEOS.filter(v => v.topic === 'Movilidad').length },
+        ];
+
+        return (
+          <section className="max-w-6xl mx-auto space-y-7 animate-fade-in">
+            {/* Header */}
+            <div className="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200 shadow-sm flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+              <div className="space-y-1.5 max-w-2xl">
+                <span className="text-xs font-black text-rose-600 uppercase tracking-wider flex items-center gap-1.5">
+                  <PlayCircle className="w-4 h-4" />
+                  <span>Videoteca Oficial de Tráfico, Tránsito y Prevención</span>
+                </span>
+                <h2 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
+                  Cápsulas en Video de Movilidad y Prevención
+                </h2>
+                <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
+                  Material didáctico verificado de la Agencia Nacional de Seguridad Vial, DGT y organismos internacionales. Cada video incluye puntos clave y un mini-quiz interactivo para sumar puntos.
+                </p>
+              </div>
+
+              <div className="px-4 py-2.5 rounded-2xl bg-rose-50 border border-rose-200 text-rose-700 text-xs font-black flex items-center gap-2 shrink-0">
+                <Video className="w-4 h-4 text-rose-600" />
+                <span>{DIDACTIC_VIDEOS.length} Videos Disponibles</span>
+              </div>
+            </div>
+
+            {/* Topic Filter Pills */}
+            <div className="flex flex-wrap gap-2 pt-1">
+              {topicBadges.map((badge) => {
+                const isSelected = videoTopicFilter === badge.id;
+                return (
+                  <button
+                    key={badge.id}
+                    type="button"
+                    onClick={() => setVideoTopicFilter(badge.id)}
+                    className={`px-4 py-2 rounded-2xl text-xs sm:text-sm font-bold flex items-center gap-2 transition-all cursor-pointer border ${
+                      isSelected
+                        ? 'bg-[#0a193b] text-white border-[#0a193b] shadow-md scale-[1.02]'
+                        : 'bg-white text-slate-700 border-slate-200 hover:border-slate-300 hover:bg-slate-50'
+                    }`}
                   >
-                    <img
-                      src={video.thumbnail}
-                      alt={video.title}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 opacity-90"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-black/20 to-transparent" />
-                    
-                    {/* Floating Play Button */}
-                    <div className="absolute inset-0 flex items-center justify-center">
-                      <div className="w-16 h-16 rounded-full bg-rose-600 text-white flex items-center justify-center shadow-xl group-hover:scale-110 group-hover:bg-rose-700 transition-all">
-                        <PlayCircle className="w-9 h-9 fill-white/20" />
+                    <span>{badge.icon}</span>
+                    <span>{badge.label}</span>
+                    <span className={`px-2 py-0.5 rounded-full text-[10px] font-extrabold ${
+                      isSelected ? 'bg-white/20 text-white' : 'bg-slate-100 text-slate-500'
+                    }`}>
+                      {badge.count}
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
+
+            {/* Video Cards Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-7">
+              {filteredVideos.map((video) => (
+                <div
+                  key={video.id}
+                  className="bg-white rounded-3xl border border-slate-200/90 shadow-sm overflow-hidden flex flex-col justify-between hover:shadow-xl hover:border-slate-300 transition-all duration-300 group"
+                >
+                  <div>
+                    {/* Thumbnail with Video Play Overlay */}
+                    <div
+                      onClick={() => {
+                        setSelectedVideoModal(video);
+                        setVideoQuizSelectedOpt(null);
+                        setVideoQuizAnswered(false);
+                      }}
+                      className="relative h-52 sm:h-60 w-full overflow-hidden bg-slate-900 cursor-pointer"
+                    >
+                      <img
+                        src={video.thumbnail}
+                        alt={video.title}
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 opacity-90"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-slate-950/85 via-black/30 to-transparent" />
+                      
+                      {/* Floating Play Button */}
+                      <div className="absolute inset-0 flex items-center justify-center">
+                        <div className="w-16 h-16 rounded-full bg-rose-600 text-white flex items-center justify-center shadow-2xl group-hover:scale-110 group-hover:bg-rose-700 transition-all">
+                          <PlayCircle className="w-10 h-10 fill-white/20" />
+                        </div>
+                      </div>
+
+                      {/* Topic Pill */}
+                      <div className="absolute top-3 left-3 flex items-center gap-1.5">
+                        <span className={`px-3 py-1 rounded-full text-white text-[11px] font-black shadow-md ${
+                          video.topic === 'Tráfico' ? 'bg-amber-600' :
+                          video.topic === 'Tránsito' ? 'bg-blue-600' :
+                          video.topic === 'Prevención' ? 'bg-rose-600' : 'bg-emerald-600'
+                        }`}>
+                          {video.topic}
+                        </span>
+                        <span className="px-2.5 py-1 rounded-full bg-black/60 backdrop-blur-md text-white text-[10px] font-semibold hidden sm:inline">
+                          {video.category}
+                        </span>
+                      </div>
+
+                      <div className="absolute top-3 right-3 px-2.5 py-1 rounded-lg bg-black/75 backdrop-blur-md text-white text-xs font-semibold flex items-center gap-1">
+                        <Clock className="w-3.5 h-3.5 text-slate-300" />
+                        <span>{video.duration}</span>
+                      </div>
+
+                      <div className="absolute bottom-3 left-4 right-4 text-xs font-bold text-white/90 truncate flex items-center gap-2">
+                        <span className="w-2 h-2 rounded-full bg-rose-500 animate-pulse" />
+                        <span>{video.sourceBadge} • {video.sourceName}</span>
                       </div>
                     </div>
 
-                    <div className="absolute top-3 left-3 px-3 py-1 rounded-full bg-black/60 backdrop-blur-md text-white text-[11px] font-bold">
-                      {video.category}
-                    </div>
+                    {/* Body */}
+                    <div className="p-6 space-y-4">
+                      <h3 className="text-lg sm:text-xl font-bold text-slate-900 group-hover:text-blue-600 transition-colors leading-snug">
+                        {video.title}
+                      </h3>
+                      <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
+                        {video.summary}
+                      </p>
 
-                    <div className="absolute top-3 right-3 px-2.5 py-1 rounded-lg bg-black/70 backdrop-blur-md text-white text-xs font-semibold flex items-center gap-1">
-                      <Clock className="w-3.5 h-3.5 text-slate-300" />
-                      <span>{video.duration}</span>
-                    </div>
-
-                    <div className="absolute bottom-3 left-4 right-4 text-xs font-medium text-white/90 truncate">
-                      {video.sourceBadge} • {video.sourceName}
-                    </div>
-                  </div>
-
-                  {/* Body */}
-                  <div className="p-6 space-y-3.5">
-                    <h3 className="text-lg font-bold text-slate-900 group-hover:text-blue-600 transition-colors leading-snug">
-                      {video.title}
-                    </h3>
-                    <p className="text-xs text-slate-600 leading-relaxed">
-                      {video.summary}
-                    </p>
-
-                    {/* Key takeaways pills */}
-                    <div className="pt-2 border-t border-slate-100 space-y-1.5">
-                      <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider block">
-                        Puntos clave del video:
-                      </span>
-                      {video.keyTakeaways.slice(0, 2).map((takeaway, idx) => (
-                        <div key={idx} className="flex items-start gap-2 text-xs text-slate-700">
-                          <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0 mt-0.5" />
-                          <span className="line-clamp-2">{takeaway}</span>
-                        </div>
-                      ))}
+                      {/* Key takeaways pills */}
+                      <div className="pt-2 border-t border-slate-100 space-y-1.5">
+                        <span className="text-[11px] font-black text-slate-400 uppercase tracking-wider block">
+                          Puntos Clave del Video:
+                        </span>
+                        {video.keyTakeaways.slice(0, 2).map((takeaway, idx) => (
+                          <div key={idx} className="flex items-start gap-2 text-xs text-slate-700">
+                            <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0 mt-0.5" />
+                            <span className="line-clamp-2 leading-relaxed">{takeaway}</span>
+                          </div>
+                        ))}
+                      </div>
                     </div>
                   </div>
-                </div>
 
-                {/* Footer Action */}
-                <div className="p-6 pt-0 flex gap-2">
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setSelectedVideoModal(video);
-                      setVideoQuizSelectedOpt(null);
-                      setVideoQuizAnswered(false);
-                    }}
-                    className="flex-1 py-3 px-4 rounded-xl bg-slate-900 hover:bg-[#0057d9] text-white text-xs font-bold transition-all flex items-center justify-center gap-2 cursor-pointer shadow-xs"
-                  >
-                    <PlayCircle className="w-4 h-4" />
-                    <span>Ver Video Didáctico & Evaluación</span>
-                  </button>
-                  <a
-                    href={video.externalUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="p-3 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-600 hover:text-slate-900 transition-colors"
-                    title="Abrir en YouTube externo"
-                  >
-                    <ExternalLink className="w-4 h-4" />
-                  </a>
+                  {/* Footer Action: 100% In-App */}
+                  <div className="p-6 pt-0">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setSelectedVideoModal(video);
+                        setVideoQuizSelectedOpt(null);
+                        setVideoQuizAnswered(false);
+                      }}
+                      className="w-full py-3.5 px-4 rounded-xl bg-[#0a193b] hover:bg-[#0057d9] text-white text-xs sm:text-sm font-bold transition-all flex items-center justify-center gap-2 cursor-pointer shadow-sm group-hover:shadow-md"
+                    >
+                      <PlayCircle className="w-4 h-4 text-rose-400" />
+                      <span>Ver Video en Pantalla & Responder Mini-Quiz</span>
+                    </button>
+                  </div>
                 </div>
-              </div>
-            ))}
-          </div>
-        </section>
-      )}
+              ))}
+            </div>
+          </section>
+        );
+      })()}
 
       {/* ========================================================================= */}
       {/* VISTA 3: INFOGRAFÍAS DIDÁCTICAS & AFICHES VIALES VISUALES                  */}
@@ -1383,7 +1456,7 @@ export const EducationScreen: React.FC = () => {
                     {selectedVideoModal.title}
                   </h3>
                   <p className="text-[11px] text-slate-400">
-                    {selectedVideoModal.sourceName} • {selectedVideoModal.duration}
+                    <span className="text-rose-400 font-bold">{selectedVideoModal.topic}</span> • {selectedVideoModal.category} • {selectedVideoModal.sourceName} • {selectedVideoModal.duration}
                   </p>
                 </div>
               </div>

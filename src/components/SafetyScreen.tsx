@@ -18,7 +18,10 @@ import {
   AlertOctagon,
   ShieldCheck,
   ArrowRight,
-  Maximize2
+  Maximize2,
+  Gamepad2,
+  PlayCircle,
+  Sparkles
 } from 'lucide-react';
 import obrasMonitorImg from '../assets/images/obras_asfalto_monitor_1788438254687.jpg';
 import redAlertImg from '../assets/images/red_alert_gradient_1788438272797.jpg';
@@ -36,9 +39,13 @@ import { ImageLightboxModal } from './ImageLightboxModal';
 
 interface SafetyScreenProps {
   onNavigateToMapWithAlert?: (alert: any) => void;
+  onNavigateToEducation?: () => void;
 }
 
-export const SafetyScreen: React.FC<SafetyScreenProps> = ({ onNavigateToMapWithAlert }) => {
+export const SafetyScreen: React.FC<SafetyScreenProps> = ({ 
+  onNavigateToMapWithAlert,
+  onNavigateToEducation 
+}) => {
   const [selectedFilter, setSelectedFilter] = useState<string>('todos');
   const [isFilterDropdownOpen, setIsFilterDropdownOpen] = useState(false);
   const [isRefreshing, setIsRefreshing] = useState(false);
@@ -355,6 +362,44 @@ export const SafetyScreen: React.FC<SafetyScreenProps> = ({ onNavigateToMapWithA
               </div>
             );
           })}
+        </div>
+      </section>
+ 
+      {/* ========================================================================= */}
+      {/* BANNER INTERACTIVO EDUCAPLAY: JUEGOS Y VIDEOS DE TRÁFICO Y PREVENCIÓN    */}
+      {/* ========================================================================= */}
+      <section className="max-w-6xl mx-auto">
+        <div className="bg-gradient-to-r from-[#0a193b] via-[#0b2b63] to-[#0057d9] rounded-3xl p-6 sm:p-8 text-white shadow-xl relative overflow-hidden flex flex-col md:flex-row md:items-center justify-between gap-6 border border-white/10">
+          <div className="space-y-2.5 max-w-xl relative z-10">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 backdrop-blur-md text-amber-300 text-xs font-black tracking-wide border border-white/10">
+              <Sparkles className="w-3.5 h-3.5" />
+              <span>NUEVO • ZONA DE JUEGOS ESTILO EDUCAPLAY</span>
+            </div>
+            <h2 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
+              Aprende Jugando: Tráfico, Tránsito y Prevención Vial
+            </h2>
+            <p className="text-blue-100 text-xs sm:text-sm leading-relaxed">
+              Pon a prueba tus reflejos en la <strong>Ruleta Vial A-Z</strong>, <strong>Cruce Seguro (Froggy Jumps)</strong>, <strong>Sopa de Letras</strong>, <strong>Memorama de Señales</strong> y nuestra Videoteca Oficial con mini-evaluaciones dinámicas.
+            </p>
+            <div className="flex flex-wrap gap-2 pt-1.5">
+              <span className="px-3 py-1 rounded-xl bg-white/10 text-white text-[11px] font-bold">🎡 Ruleta Pasapalabra</span>
+              <span className="px-3 py-1 rounded-xl bg-white/10 text-white text-[11px] font-bold">🐸 Cruce Seguro</span>
+              <span className="px-3 py-1 rounded-xl bg-white/10 text-white text-[11px] font-bold">🔍 Sopa de Letras</span>
+              <span className="px-3 py-1 rounded-xl bg-white/10 text-white text-[11px] font-bold">🎬 8 Videos Oficiales</span>
+            </div>
+          </div>
+
+          <div className="shrink-0 relative z-10">
+            <button
+              type="button"
+              onClick={onNavigateToEducation}
+              className="w-full sm:w-auto px-6 py-4 rounded-2xl bg-amber-400 hover:bg-amber-300 text-slate-950 font-black text-sm sm:text-base transition-all duration-200 cursor-pointer flex items-center justify-center gap-2.5 shadow-lg hover:scale-105"
+            >
+              <Gamepad2 className="w-5 h-5" />
+              <span>Jugar Ahora en Educaplay Vial</span>
+              <ArrowRight className="w-4 h-4" />
+            </button>
+          </div>
         </div>
       </section>
 

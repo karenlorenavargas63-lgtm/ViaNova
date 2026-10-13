@@ -1,15 +1,17 @@
 import { LucideIcon } from 'lucide-react';
 
+export type VideoTopicType = 'Tráfico' | 'Tránsito' | 'Prevención' | 'Movilidad';
+
 export interface DidacticVideo {
   id: string;
   title: string;
-  category: 'Micromovilidad' | 'Normativa Urbana' | 'Seguridad Peatonal' | 'Primeros Auxilios';
+  topic: VideoTopicType;
+  category: string;
   duration: string;
   sourceName: string;
   sourceBadge: string;
   youtubeId: string;
   embedUrl: string;
-  externalUrl: string;
   thumbnail: string;
   summary: string;
   keyTakeaways: string[];
@@ -52,16 +54,17 @@ export interface RoadScenario {
 
 // 1. VIDEOS DIDÁCTICOS REALES DE SEGURIDAD VIAL (YouTube embeds educativos verificados)
 export const DIDACTIC_VIDEOS: DidacticVideo[] = [
+  // --- PREVENCIÓN ---
   {
     id: 'vid_blind_spots',
     title: 'Los Puntos Ciegos en Vehículos Pesados: Cómo Evitarlos',
-    category: 'Micromovilidad',
+    topic: 'Prevención',
+    category: 'Puntos Ciegos y Camiones',
     duration: '3:45 min',
     sourceName: 'Agencia Nacional de Seguridad Vial (ANSV)',
     sourceBadge: 'Campaña Oficial de Prevención',
     youtubeId: '7yV1E9t-rGE',
     embedUrl: 'https://www.youtube-nocookie.com/embed/7yV1E9t-rGE?rel=0',
-    externalUrl: 'https://www.youtube.com/watch?v=7yV1E9t-rGE',
     thumbnail: 'https://images.unsplash.com/photo-1519003722824-194d4455a60c?w=800&auto=format&fit=crop&q=80',
     summary: 'Demostración didáctica que muestra los cuatro ángulos ciegos donde un conductor de autobús o camión no puede verte si vas en moto, bicicleta o a pie.',
     keyTakeaways: [
@@ -83,45 +86,45 @@ export const DIDACTIC_VIDEOS: DidacticVideo[] = [
     }
   },
   {
-    id: 'vid_roundabouts',
-    title: 'Cómo Circular Correctamente en Glorietas y Rotondas',
-    category: 'Normativa Urbana',
-    duration: '4:10 min',
-    sourceName: 'Seguridad Vial y Tráfico DGT',
-    sourceBadge: 'Guía Didáctica de Flujo Vial',
-    youtubeId: 'k4q79JkU904',
-    embedUrl: 'https://www.youtube-nocookie.com/embed/k4q79JkU904?rel=0',
-    externalUrl: 'https://www.youtube.com/watch?v=k4q79JkU904',
-    thumbnail: 'https://images.unsplash.com/photo-1545459720-aac8509eb02c?w=800&auto=format&fit=crop&q=80',
-    summary: 'Explicación animada paso a paso sobre prelación, uso de carriles interiores/exteriores y señalización de salida en glorietas urbanas.',
+    id: 'vid_distraction',
+    title: 'Distracciones al Volante y Celular: La Trampa de los 5 Segundos',
+    topic: 'Prevención',
+    category: 'Manejo Defensivo',
+    duration: '3:15 min',
+    sourceName: 'Fundación MAPFRE Movilidad Segura',
+    sourceBadge: 'Prevención de Siniestros',
+    youtubeId: 'W3_42T1tWk0',
+    embedUrl: 'https://www.youtube-nocookie.com/embed/W3_42T1tWk0?rel=0',
+    thumbnail: 'https://images.unsplash.com/photo-1517524008697-84bbe3c3fd98?w=800&auto=format&fit=crop&q=80',
+    summary: 'A 50 km/h, mirar un mensaje de texto durante solo 5 segundos equivale a recorrer 70 metros completamente a ciegas.',
     keyTakeaways: [
-      'La prioridad siempre la tienen los vehículos que ya circulan dentro del anillo.',
-      'Para salir de la glorieta debes incorporarte con anticipación al carril exterior derecho.',
-      'Nunca cortes trayectoria cruzando carriles directamente desde el interior para salir.',
-      'Si pierdes tu salida, da otra vuelta completa con calma y seguridad.'
+      'Mirar el celular multiplica por 4 el riesgo de colisión o atropello peatonal.',
+      'El "efecto túnel" impide ver señales laterales, ciclistas y pasos de cebra.',
+      'Configura tu ruta antes de arrancar y coloca el dispositivo en modo no molestar.',
+      'Si necesitas atender una llamada urgente, estaciónate en un lugar seguro autorizado.'
     ],
     quizQuestion: {
-      question: '¿Desde qué carril se debe abandonar obligatoriamente una glorieta?',
+      question: 'A 50 km/h, ¿cuántos metros avanza un vehículo a ciegas si el conductor mira el celular por 5 segundos?',
       options: [
-        'Desde el carril interior izquierdo más rápido',
-        'Desde cualquier carril siempre que toques la bocina',
-        'Únicamente desde el carril exterior derecho',
-        'Cruzando transversalmente por el centro'
+        'Aproximadamente 70 metros (casi una cuadra entera)',
+        'Menos de 2 metros',
+        'El auto se frena automáticamente',
+        '10 metros solamente'
       ],
-      correctIndex: 2,
-      explanation: 'Para salir de una glorieta con seguridad debes situarte previamente en el carril exterior y señalizar con la direccional derecha.'
+      correctIndex: 0,
+      explanation: 'A 50 km/h se recorren 14 metros por cada segundo; en 5 segundos son 70 metros sin mirar el entorno vial.'
     }
   },
   {
     id: 'vid_pas_protocol',
     title: 'Protocolo P.A.S.: Proteger, Avisar y Socorrer en un Accidente',
-    category: 'Primeros Auxilios',
+    topic: 'Prevención',
+    category: 'Primeros Auxilios Viales',
     duration: '3:20 min',
     sourceName: 'Cruz Roja & Emergencias 123',
-    sourceBadge: 'Primeros Auxilios Viales',
+    sourceBadge: 'Atención Oportuna',
     youtubeId: 'yqX7BvK86Z8',
     embedUrl: 'https://www.youtube-nocookie.com/embed/yqX7BvK86Z8?rel=0',
-    externalUrl: 'https://www.youtube.com/watch?v=yqX7BvK86Z8',
     thumbnail: 'https://images.unsplash.com/photo-1584515979956-d9f6e5d09982?w=800&auto=format&fit=crop&q=80',
     summary: 'Protocolo de actuación de tres pasos vitales que salva vidas en los primeros 10 minutos posteriores a una colisión en vía pública.',
     keyTakeaways: [
@@ -142,16 +145,112 @@ export const DIDACTIC_VIDEOS: DidacticVideo[] = [
       explanation: 'Retirar el casco sin técnica médica inmovilizadora puede causar parálisis irreversible o asfixia en caso de fractura cervical.'
     }
   },
+
+  // --- TRÁFICO ---
+  {
+    id: 'vid_traffic_wave',
+    title: 'La Ciencia del Tráfico: ¿Cómo se forman los Trancones Fantasma?',
+    topic: 'Tráfico',
+    category: 'Dinámica de Congestión',
+    duration: '4:30 min',
+    sourceName: 'Laboratorio de Movilidad Urbana & Tráfico',
+    sourceBadge: 'Física del Tráfico',
+    youtubeId: '7wm-pZgu_XI',
+    embedUrl: 'https://www.youtube-nocookie.com/embed/7wm-pZgu_XI?rel=0',
+    thumbnail: 'https://images.unsplash.com/photo-1506521781263-d8422e82f27a?w=800&auto=format&fit=crop&q=80',
+    summary: 'Explicación interactiva sobre el "Efecto Acordeón": cómo el frenazo leve de un solo auto genera un embotellamiento de 5 kilómetros 20 minutos después.',
+    keyTakeaways: [
+      'Mantener una distancia constante con el auto de adelante disuelve las ondas de tráfico.',
+      'Frenar bruscamente y acelerar a fondo amplifica la congestión en cadena.',
+      'Evita cambiar continuamente de carril; eso causa frenazos innecesarios en ambos carriles.',
+      'La velocidad fluida y uniforme mueve a más vehículos por hora que los picos rápidos y frenadas.'
+    ],
+    quizQuestion: {
+      question: '¿Cuál es la forma más eficaz para un conductor individual de evitar que se formen trancones fantasma?',
+      options: [
+        'Acelerar y pegarse al vehículo de adelante para no dejar espacio',
+        'Mantener una distancia prudente constante y frenar de forma muy suave y progresiva',
+        'Cambiar de carril cada vez que el de al lado avance un metro',
+        'Tocar la bocina en cada semáforo'
+      ],
+      correctIndex: 1,
+      explanation: 'Mantener un colchón de espacio absorbe las desaceleraciones como un resorte elástico, evitando la onda de frenado hacia atrás.'
+    }
+  },
+  {
+    id: 'vid_smart_traffic_lights',
+    title: 'Semaforización Inteligente y Olas Verdes en Corredores Urbanos',
+    topic: 'Tráfico',
+    category: 'Tecnología y Flujo',
+    duration: '3:50 min',
+    sourceName: 'Secretaría de Movilidad Urbana',
+    sourceBadge: 'Gestión Inteligente de Vías',
+    youtubeId: 'bA4yN9qYv4g',
+    embedUrl: 'https://www.youtube-nocookie.com/embed/bA4yN9qYv4g?rel=0',
+    thumbnail: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=800&auto=format&fit=crop&q=80',
+    summary: 'Descubre cómo los sensores subterráneos y algoritmos adaptativos sincronizan semáforos para crear olas verdes y priorizar al transporte público.',
+    keyTakeaways: [
+      'Las olas verdes están calibradas para velocidades constantes de 40 a 50 km/h.',
+      'Correr a exceso de velocidad te hará frenar en el siguiente semáforo en rojo.',
+      'Los detectores dan prioridad a ambulancias y líneas troncales de autobuses.',
+      'La luz amarilla fija dura entre 3 y 5 segundos y exige detenerse si es seguro hacerlo.'
+    ],
+    quizQuestion: {
+      question: 'Si una vía está calibrada con "ola verde" a 45 km/h, ¿qué ocurre si conduces a 70 km/h?',
+      options: [
+        'Llegas más rápido sin interrupciones',
+        'Llegas al siguiente semáforo antes de tiempo y te detienes forzosamente en luz roja',
+        'El semáforo cambia a verde más rápido al detectarte',
+        'Se activa una alarma sonora urbana'
+      ],
+      correctIndex: 1,
+      explanation: 'La ola verde está sincronizada por tiempo y distancia. Exceder la velocidad destruye la sincronización y genera frenadas innecesarias.'
+    }
+  },
+
+  // --- TRÁNSITO ---
+  {
+    id: 'vid_roundabouts',
+    title: 'Cómo Circular Correctamente en Glorietas y Rotondas',
+    topic: 'Tránsito',
+    category: 'Normativa Vial',
+    duration: '4:10 min',
+    sourceName: 'Seguridad Vial y Tráfico DGT',
+    sourceBadge: 'Guía Didáctica de Flujo Vial',
+    youtubeId: 'k4q79JkU904',
+    embedUrl: 'https://www.youtube-nocookie.com/embed/k4q79JkU904?rel=0',
+    thumbnail: 'https://images.unsplash.com/photo-1545459720-aac8509eb02c?w=800&auto=format&fit=crop&q=80',
+    summary: 'Explicación animada paso a paso sobre prelación, uso de carriles interiores/exteriores y señalización de salida en glorietas urbanas.',
+    keyTakeaways: [
+      'La prioridad siempre la tienen los vehículos que ya circulan dentro del anillo.',
+      'Para salir de la glorieta debes incorporarte con anticipación al carril exterior derecho.',
+      'Nunca cortes trayectoria cruzando carriles directamente desde el interior para salir.',
+      'Si pierdes tu salida, da otra vuelta completa con calma y seguridad.'
+    ],
+    quizQuestion: {
+      question: '¿Desde qué carril se debe abandonar obligatoriamente una glorieta?',
+      options: [
+        'Desde el carril interior izquierdo más rápido',
+        'Desde cualquier carril siempre que toques la bocina',
+        'Únicamente desde el carril exterior derecho',
+        'Cruzando transversalmente por el centro'
+      ],
+      correctIndex: 2,
+      explanation: 'Para salir de una glorieta con seguridad debes situarte previamente en el carril exterior y señalizar con la direccional derecha.'
+    }
+  },
+
+  // --- MOVILIDAD ---
   {
     id: 'vid_pedestrian_safety',
     title: 'Cruces Peatonales Seguros: Contacto Visual y Distancia de Parada',
+    topic: 'Movilidad',
     category: 'Seguridad Peatonal',
     duration: '2:50 min',
     sourceName: 'Fundación MAPFRE Movilidad Segura',
     sourceBadge: 'Cultura del Peatón',
     youtubeId: '3GZqN7cKjYQ',
     embedUrl: 'https://www.youtube-nocookie.com/embed/3GZqN7cKjYQ?rel=0',
-    externalUrl: 'https://www.youtube.com/watch?v=3GZqN7cKjYQ',
     thumbnail: 'https://images.unsplash.com/photo-1508873696983-2df5293cb32f?w=800&auto=format&fit=crop&q=80',
     summary: 'Aprende los factores biomecánicos del cruce peatonal: por qué el contacto visual con los conductores reduce el 85% de los atropellos.',
     keyTakeaways: [
@@ -170,6 +269,36 @@ export const DIDACTIC_VIDEOS: DidacticVideo[] = [
       ],
       correctIndex: 1,
       explanation: 'El contacto visual confirma que el conductor te ha visto conscientemente y ha iniciado la desaceleración del vehículo.'
+    }
+  },
+  {
+    id: 'vid_micromobility_coexistence',
+    title: 'Convivencia Vial: Ciclorrutas, Patinetas y Distancia de 1.5 Metros',
+    topic: 'Movilidad',
+    category: 'Movilidad Activa',
+    duration: '3:35 min',
+    sourceName: 'Red de Ciudades por la Bicicleta',
+    sourceBadge: 'Movilidad Sostenible',
+    youtubeId: 'vQ2XG5s9l10',
+    embedUrl: 'https://www.youtube-nocookie.com/embed/vQ2XG5s9l10?rel=0',
+    thumbnail: 'https://images.unsplash.com/photo-1485965120184-e220f721d03e?w=800&auto=format&fit=crop&q=80',
+    summary: 'Cómo compartir el espacio público de forma respetuosa entre ciclistas, patinetas eléctricas, peatones y vehículos motorizados.',
+    keyTakeaways: [
+      'Los vehículos motorizados deben dejar al menos 1.5 metros al sobrepasar a un ciclista.',
+      'Las bicicletas y patinetas nunca deben circular sobre aceras peatonales estrechas.',
+      'Utiliza señales manuales con los brazos para indicar giros a la izquierda y derecha.',
+      'En horario nocturno es obligatorio el uso de luz delantera blanca y luz trasera roja.'
+    ],
+    quizQuestion: {
+      question: '¿Cuál es la distancia lateral mínima que debe dejar un auto al adelantar a un ciclista?',
+      options: [
+        '50 centímetros',
+        '1.5 metros (metro y medio)',
+        '3 metros obligatorios',
+        'No hay distancia regulada'
+      ],
+      correctIndex: 1,
+      explanation: 'La distancia de 1.5 metros previene que la masa de aire desestabilice al ciclista o que un bache provoque un roce.'
     }
   }
 ];
