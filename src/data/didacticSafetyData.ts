@@ -65,454 +65,209 @@ export interface RoadScenario {
   }[];
 }
 
-// 1. VIDEOS DIDÁCTICOS OFICIALES DE SEGURIDAD VIAL: LLAMATIVOS Y EXPLICADOS EN DETALLE
+// 1. VIDEOS DIDÁCTICOS OFICIALES DE SEGURIDAD VIAL VIANOVA: EXACTAMENTE 4 VIDEOS DIFERENTES
 export const DIDACTIC_VIDEOS: DidacticVideo[] = [
-  // --- TRÁFICO (AMARILLO / NARANJA VIBRANTE: FÍSICA Y FLUJO VEHICULAR) ---
+  // VIDEO 1: VIANOVA GESTIÓN Y FÍSICA DEL TRÁFICO URBANO (TRANCONES FANTASMA Y FLUJO INTELIGENTE)
   {
-    id: 'vid_traffic_wave',
-    title: 'La Ciencia del Tráfico: ¿Por qué Ocurren los Trancones Fantasma?',
+    id: 'vid_vianova_traffic_flow',
+    title: 'VIANOVA Tráfico: Física del Flujo y Cómo Neutralizar los Trancones en Cadena',
     topic: 'Tráfico',
-    category: 'Física y Dinámica de Flujo',
+    category: 'Ingeniería de Flujo y Tráfico VIANOVA',
     duration: '4:30 min',
-    sourceName: 'Laboratorio de Movilidad Urbana & Dinámica Vial',
-    sourceBadge: 'Ciencia del Tráfico',
+    sourceName: 'VIANOVA Centro de Control de Tráfico Urbano',
+    sourceBadge: 'VIANOVA Tráfico Inteligente',
     youtubeId: '7wm-pZgu_XI',
     embedUrl: 'https://www.youtube-nocookie.com/embed/7wm-pZgu_XI?rel=0',
     thumbnail: 'https://images.unsplash.com/photo-1506521781263-d8422e82f27a?w=800&auto=format&fit=crop&q=80',
-    summary: 'El frenazo leve de un solo conductor desencadena una onda de choque hacia atrás de 5 km. Conoce la explicación matemática del "Efecto Oruga" o "Acordeón".',
-    highlightTag: '⚡ FÍSICA DEL TRÁFICO',
-    impactMetric: '⏳ Ahorra hasta 35 min de trancón',
-    goldenRule: 'MANTÉN UN COLCHÓN CONSTANTE: Deja 3 segundos de distancia; amortiguarás las frenadas en cadena como un resorte elástico.',
-    whyItHappens: 'Cuando un auto frena bruscamente, el de atrás frena un poco más fuerte por demora en el tiempo de reacción (1 segundo humano). Hacia el décimo vehículo, la velocidad cae a cero absoluto.',
+    summary: 'Aprende cómo opera la física del tráfico en VIANOVA: por qué una frenada brusca genera un efecto acordeón de 5 km y cómo conservar un flujo continuo sin detenciones.',
+    highlightTag: '⚡ DINÁMICA DE TRÁFICO',
+    impactMetric: '⏳ Reduce 35% de Retrasos en Vía',
+    goldenRule: 'COLCHÓN AMORTIGUADOR CONSTANTE: Mantén 3 segundos con el auto que te precede para absorber las desaceleraciones y disolver trancones en cadena.',
+    whyItHappens: 'Cuando un auto frena inesperadamente, el conductor detrás reacciona con retraso y frena aún más fuerte. Hacia el décimo vehículo, la velocidad cae a cero absoluto.',
     solutionSteps: [
-      { stepNumber: '1', title: 'Velocidad Constante', desc: 'No aceleres hacia la cola de autos; reduce suavemente la marcha con anticipación.' },
-      { stepNumber: '2', title: 'Distancia de Amortiguación', desc: 'Deja espacio equivalente a dos o tres vehículos para no tocar el pedal de freno.' },
-      { stepNumber: '3', title: 'Cero Cambios Inútiles', desc: 'Cambiar de carril zigzagueando crea 2 ondas de frenado adicionales en la vía.' }
+      { stepNumber: '1', title: 'Velocidad Uniforme', desc: 'No aceleres hacia la cola del trancón; modera la marcha con antelación para mantener el movimiento.' },
+      { stepNumber: '2', title: 'Espacio de Seguridad', desc: 'Deja una distancia equivalente a dos o tres vehículos para evitar tocar el pedal de freno en seco.' },
+      { stepNumber: '3', title: 'Cero Zigzagueo', desc: 'Cambiar de carril compulsivamente crea nuevas ondas de choque y ralentiza ambos carriles.' }
     ],
     doAndDont: {
       dos: [
-        'Conducir a velocidad moderada uniforme (mueve 25% más autos por carril/hora).',
-        'Mirar 4 vehículos hacia adelante para anticipar frenadas lejanas.'
+        'Conducir a velocidad moderada uniforme (permite que pasen 25% más vehículos por carril/hora).',
+        'Mirar 4 vehículos adelante en la vía para anticipar frenadas lejanas sin sobresaltos.'
       ],
       donts: [
-        'Pegarse a la defensa delantera del vehículo que te precede ("cola de auto").',
-        'Acelerar a fondo para frenar en seco 50 metros más adelante.'
+        'Pegarse a la defensa trasera del vehículo de adelante ("cola de auto").',
+        'Acelerar a fondo en tramos cortos para frenar bruscamente en el siguiente semáforo.'
       ]
     },
     keyTakeaways: [
       'Mantener distancia constante neutraliza las ondas de choque hacia atrás.',
-      'El zigzagueo entre carriles empeora el atasco para todos los usuarios.',
+      'El zigzagueo entre carriles empeora el atasco para todos los usuarios de la vía.',
       'La fluidez continua transporta más personas por hora que la velocidad intermitente.',
-      'Frenar suavemente con motor evita que los que vienen detrás generen un choque múltiple.'
+      'Frenar suavemente con motor evita colisiones múltiples por alcance.'
     ],
     quizQuestion: {
-      question: '¿Cuál es la causa principal de que se forme un "trancón fantasma" sin que haya ningún accidente?',
+      question: 'Según la física del tráfico en VIANOVA, ¿cuál es la causa principal de los trancones fantasma?',
       options: [
-        'Que la carretera se hace más angosta de repente',
-        'La reacción en cadena por frenadas bruscas debido a no guardar distancia de seguridad',
-        'Que los autos modernos pesan más que los antiguos',
-        'Que los semáforos fallan de forma aleatoria'
+        'Que la calle se reduce sin avisar',
+        'Reacciones en cadena por frenadas bruscas al no guardar distancia de seguridad',
+        'Que los autos pesados van más despacio',
+        'Fallas aleatorias de los semáforos'
       ],
       correctIndex: 1,
-      explanation: 'El efecto acordeón se genera cuando la falta de distancia obliga a frenadas sucesivas cada vez más intensas hasta detener por completo el tráfico.'
-    }
-  },
-  {
-    id: 'vid_smart_traffic_lights',
-    title: 'Semaforización Inteligente: Olas Verdes y Algoritmos Adaptativos',
-    topic: 'Tráfico',
-    category: 'Ingeniería de Tráfico',
-    duration: '3:50 min',
-    sourceName: 'Secretaría de Movilidad & Sistemas Inteligentes de Transporte',
-    sourceBadge: 'Ingeniería y Tecnología',
-    youtubeId: 'bA4yN9qYv4g',
-    embedUrl: 'https://www.youtube-nocookie.com/embed/bA4yN9qYv4g?rel=0',
-    thumbnail: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=800&auto=format&fit=crop&q=80',
-    summary: 'Cómo los sensores subterráneos y algoritmos sincronizan cruces para crear "olas verdes" a 40-50 km/h y dar prelación al transporte masivo.',
-    highlightTag: '🚦 SINCRONIZACIÓN URBANA',
-    impactMetric: '📉 -40% Detenciones en Corredores',
-    goldenRule: 'CALIBRA TU VELOCIDAD: Correr a 70 km/h rompe la ola verde y te obligará a esperar detenido en el semáforo rojo siguiente.',
-    whyItHappens: 'Los semáforos modernos calculan la velocidad media de diseño (45 km/h). Quien acelera antes de tiempo llega cuando el semáforo aún está en fase roja, gastando combustible inútilmente.',
-    solutionSteps: [
-      { stepNumber: '1', title: 'Mantener Ritmo de Vía', desc: 'Circula a la velocidad recomendada (40-50 km/h) para empalmar verdes consecutivos.' },
-      { stepNumber: '2', title: 'Luz Amarilla Preventiva', desc: 'Indica despejar la intersección o detenerse si la distancia de frenado es segura.' },
-      { stepNumber: '3', title: 'Prioridad Transporte Masivo', desc: 'No bloquees la caja de intersección cuando los buses articulados tengan fase verde.' }
-    ],
-    doAndDont: {
-      dos: [
-        'Respetar la demarcación amarilla antibloqueo en la mitad de la intersección.',
-        'Anticipar el arranque suave cuando la fase peatonal termine su ciclo.'
-      ],
-      donts: [
-        'Acelerar a fondo al ver la luz amarilla para "alcanzar a pasar".',
-        'Quedar detenido cruzado en medio del cruce impidiendo el flujo transversal.'
-      ]
-    },
-    keyTakeaways: [
-      'Las olas verdes funcionan a velocidades constantes de 40 a 50 km/h.',
-      'La caja amarilla antibloqueo debe quedar siempre 100% libre.',
-      'Los detectores dan paso prioritario a ambulancias y transporte masivo.',
-      'Acelerar a exceso de velocidad solo aumenta el desgaste de frenos en cada cruce.'
-    ],
-    quizQuestion: {
-      question: 'Si una avenida tiene calibrada una "ola verde" a 45 km/h, ¿qué ocurre si un auto corre a 80 km/h?',
-      options: [
-        'Llega 20 minutos antes sin contratiempos',
-        'Llegará antes de que abra el ciclo y se detendrá forzosamente en el siguiente semáforo rojo',
-        'El sistema inteligente le abrirá el semáforo para no interrumpirlo',
-        'Recibirá un bono de eficiencia vial'
-      ],
-      correctIndex: 1,
-      explanation: 'La sincronización depende del tiempo y la distancia calculados. Exceder la velocidad descalibra el avance y genera detenciones constantes.'
+      explanation: 'El efecto acordeón se genera cuando la falta de distancia obliga a frenadas sucesivas cada vez más intensas hasta detener por completo el tráfico vehicular.'
     }
   },
 
-  // --- TRÁNSITO (AZUL ELÉCTRICO / ÍNDIGO: REGLAS, GLORIETAS Y PRELACIÓN) ---
+  // VIDEO 2: VIANOVA MOVILIDAD SOSTENIBLE Y CONVIVENCIA EN CALZADA (BICIS, PATINETAS Y PEATONES)
   {
-    id: 'vid_roundabouts',
-    title: 'Glorietas y Rotondas: Prioridades, Carril de Salida e Intermitentes',
-    topic: 'Tránsito',
-    category: 'Normativa Vial Internacional',
-    duration: '4:10 min',
-    sourceName: 'Seguridad Vial y Tráfico DGT Oficial',
-    sourceBadge: 'Normativa Estricta',
-    youtubeId: 'k4q79JkU904',
-    embedUrl: 'https://www.youtube-nocookie.com/embed/k4q79JkU904?rel=0',
-    thumbnail: 'https://images.unsplash.com/photo-1545459720-aac8509eb02c?w=800&auto=format&fit=crop&q=80',
-    summary: 'Guía visual definitiva: quién tiene la prioridad al ingresar, qué carril tomar para girar y por qué NUNCA debes salir cruzando desde el carril interior.',
-    highlightTag: '🚸 PRELACIÓN Y GIROS',
-    impactMetric: '🛡️ Elimina el 80% de Choques Laterales',
-    goldenRule: 'SALIDA EXCLUSIVA POR CARRIL EXTERIOR: Para abandonar la glorieta debes estar posicionado con antelación en el carril derecho exterior.',
-    whyItHappens: 'El 70% de los siniestros en glorietas ocurren cuando un conductor en el carril interior corta transversalmente el paso de quien circula correctamente por el exterior.',
-    solutionSteps: [
-      { stepNumber: '1', title: 'Ceda el Paso al Ingresar', desc: 'La prioridad SIEMPRE la tiene el vehículo que ya circula dentro del anillo.' },
-      { stepNumber: '2', title: 'Elección de Carril', desc: 'Usa el interior si vas a dar vuelta o salir en las últimas salidas; exterior si vas a salir pronto.' },
-      { stepNumber: '3', title: 'Salida Señalizada', desc: 'Pásate al carril exterior antes de tu salida y enciende la direccional derecha.' }
-    ],
-    doAndDont: {
-      dos: [
-        'Dar otra vuelta al anillo con calma si no pudiste pasar al carril exterior a tiempo.',
-        'Señalizar el cambio de carril interno con la direccional correspondiente.'
-      ],
-      donts: [
-        'Cortar la trayectoria en diagonal desde el carril central o interior para salir.',
-        'Ingresar a la rotonda asumiendo que los que están adentro deben frenar por ti.'
-      ]
-    },
-    keyTakeaways: [
-      'Prioridad absoluta al vehículo que ya está circulando dentro del anillo.',
-      'La salida se realiza única y exclusivamente desde el carril exterior derecho.',
-      'Si pierdes tu salida, dar otra vuelta completa es 100% legal y seguro.',
-      'Usa las direccionales para avisar cambios de carril y salida definitiva.'
-    ],
-    quizQuestion: {
-      question: '¿Qué debes hacer si estás en el carril interior de una glorieta y se aproxima tu salida pero el carril exterior está ocupado?',
-      options: [
-        'Frenar en seco en medio de la rotonda y esperar a que te den paso',
-        'Tocar la bocina y cruzar atravesando el vehículo del carril derecho',
-        'Dar otra vuelta completa al anillo y ubicarse con tiempo en el carril exterior',
-        'Retroceder en reversa con cuidado'
-      ],
-      correctIndex: 2,
-      explanation: 'Nunca se debe cortar el paso de otro vehículo. Dar otra vuelta a la glorieta permite posicionarse correctamente en el carril exterior sin peligro.'
-    }
-  },
-  {
-    id: 'vid_intersections_rules',
-    title: 'Intersecciones Urbanas: Señal de PARE, Ceda el Paso y Regla de la Derecha',
-    topic: 'Tránsito',
-    category: 'Jerarquía de Vías',
-    duration: '3:40 min',
-    sourceName: 'Agencia Nacional de Tránsito y Movilidad',
-    sourceBadge: 'Reglas de Oro',
-    youtubeId: 'Fh5Q56C1e4E',
-    embedUrl: 'https://www.youtube-nocookie.com/embed/Fh5Q56C1e4E?rel=0',
-    thumbnail: 'https://images.unsplash.com/photo-1498084393753-b411b2d26b34?w=800&auto=format&fit=crop&q=80',
-    summary: 'Aprende a diferenciar la detención absoluta de la señal octogonal de PARE frente al Ceda el Paso, y quién pasa primero en cruces no semaforizados.',
-    highlightTag: '🛑 DETENCIÓN TOTAL',
-    impactMetric: '🚨 Evita el 95% de Colisiones en T',
-    goldenRule: 'EL PARE NO ES SUGERENCIA: La señal de PARE exige DETENCIÓN TOTAL a 0 km/h detrás de la línea de parada, aunque no veas vehículos.',
-    whyItHappens: 'Muchos conductores hacen un "pare rodante" a 10 km/h sin detenerse, tiempo insuficiente para detectar peatones cruzando o ciclistas en velocidad de descenso.',
-    solutionSteps: [
-      { stepNumber: '1', title: 'Detención a Cero (0 km/h)', desc: 'Ruedas totalmente quietas detrás de la demarcación antes de avanzar.' },
-      { stepNumber: '2', title: 'Mirada Doble', desc: 'Mira izquierda, luego derecha, y nuevamente a la izquierda antes de iniciar.' },
-      { stepNumber: '3', title: 'Prioridad de la Derecha', desc: 'En intersecciones sin señalizar ni semáforos, el vehículo que viene por tu derecha tiene prelación.' }
-    ],
-    doAndDont: {
-      dos: [
-        'Detenerte por completo en la señal de PARE y contar mentalmente 2 segundos.',
-        'Ceder el paso a peatones que ya hayan iniciado el cruce de la calzada.'
-      ],
-      donts: [
-        'Hacer "pare rodante" pasando sin frenar por completo.',
-        'Avanzar asumiendo que tu vía es principal si no hay señal que lo certifique.'
-      ]
-    },
-    keyTakeaways: [
-      'La señal octogonal de PARE exige velocímetro en 0 km/h obligatoriamente.',
-      'El "Ceda el Paso" permite continuar si la vía está despejada sin frenar a cero.',
-      'En cruces sin señales, la prelación pertenece al vehículo proveniente de la derecha.',
-      'Los peatones siempre tienen prelación en intersecciones sobre giros vehiculares.'
-    ],
-    quizQuestion: {
-      question: '¿Cuál es la diferencia legal fundamental entre la señal de PARE y la señal de CEDA EL PASO?',
-      options: [
-        'No hay ninguna diferencia, significan lo mismo',
-        'El PARE exige detención absoluta obligatoria a 0 km/h; el Ceda el Paso solo si vienen vehículos',
-        'El Ceda el Paso solo aplica para camiones pesados',
-        'El PARE solo es obligatorio en horario nocturno'
-      ],
-      correctIndex: 1,
-      explanation: 'La señal octogonal de PARE obliga a frenar totalmente las ruedas a 0 km/h, mientras que el Ceda el Paso permite pasar con precaución si la vía está despejada.'
-    }
-  },
-
-  // --- PREVENCIÓN (ROJO INTENSO / CARMESÍ: PUNTOS CIEGOS, DISTRACCIONES Y PROTOCOLO P.A.S.) ---
-  {
-    id: 'vid_blind_spots',
-    title: 'Puntos Ciegos en Vehículos Pesados: Dónde NUNCA Debes Ubicarte',
-    topic: 'Prevención',
-    category: 'Manejo Defensivo y Camiones',
-    duration: '3:45 min',
-    sourceName: 'Agencia Nacional de Seguridad Vial (ANSV)',
-    sourceBadge: 'Campaña Oficial de Prevención',
-    youtubeId: '7yV1E9t-rGE',
-    embedUrl: 'https://www.youtube-nocookie.com/embed/7yV1E9t-rGE?rel=0',
-    thumbnail: 'https://images.unsplash.com/photo-1519003722824-194d4455a60c?w=800&auto=format&fit=crop&q=80',
-    summary: 'Demostración de los 4 ángulos ciegos críticos donde un conductor de tractomula o autobús tiene invisibilidad total de ciclistas, motos y peatones.',
-    highlightTag: '⚠️ ALERTA DE PUNTO CIEGO',
-    impactMetric: '🚨 -88% de Atropellos por Giro',
-    goldenRule: 'SI NO VES SUS ESPEJOS, ÉL NO TE VE: Si no alcanzas a ver los espejos laterales del camión, eres 100% invisible para el conductor.',
-    whyItHappens: 'La cabina elevada de un vehículo pesado crea zonas de sombra óptica que abarcan hasta 12 metros detrás y 3 metros en el lateral derecho durante maniobras.',
-    solutionSteps: [
-      { stepNumber: '1', title: 'Ubicación Visible', desc: 'Posiciónate donde puedas ver la cara del conductor en su retrovisor exterior.' },
-      { stepNumber: '2', title: 'Cero Adelantos por Derecha', desc: 'Nunca te metas por el costado derecho de un camión cerca de esquinas.' },
-      { stepNumber: '3', title: 'Distancia Posterior', desc: 'Conserva al menos 4 metros de separación detrás de buses y camiones de carga.' }
-    ],
-    doAndDont: {
-      dos: [
-        'Esperar detrás del camión en intersecciones con paciencia sin adelantarte.',
-        'Hacer ráfagas de luz o aviso sonoro breve si necesitas sobrepasarlo por la izquierda.'
-      ],
-      donts: [
-        'Filtrar por la derecha cuando un autobús o camión se prepara para girar.',
-        'Pararte justo debajo de la trompa delantera de un camión en el semáforo.'
-      ]
-    },
-    keyTakeaways: [
-      'El lateral derecho es el punto ciego más letal en giros urbanos.',
-      'Un camión articulado necesita abrirse a la izquierda para poder girar a la derecha.',
-      'Si no ves los ojos del conductor en su espejo, asume que no sabe que estás ahí.',
-      'Mantén siempre espacio de escape si vas en motocicleta o bicicleta.'
-    ],
-    quizQuestion: {
-      question: '¿Cuál es el ángulo ciego más amplio y peligroso en un camión pesado de carga urbana?',
-      options: [
-        'El techo del camión',
-        'El lateral derecho, que se amplifica cuando el camión va a realizar un giro',
-        'La llanta de repuesto',
-        'El guardabarros izquierdo'
-      ],
-      correctIndex: 1,
-      explanation: 'El costado derecho del camión tiene un área ciega masiva debido a la distancia con respecto a la cabina del piloto en vehículos con volante a la izquierda.'
-    }
-  },
-  {
-    id: 'vid_distraction',
-    title: 'Distracciones al Volante y Celular: La Trampa Mortal de los 5 Segundos',
-    topic: 'Prevención',
-    category: 'Comportamiento y Reflejos',
-    duration: '3:15 min',
-    sourceName: 'Fundación MAPFRE Movilidad Segura',
-    sourceBadge: 'Prevención Crítica',
-    youtubeId: 'W3_42T1tWk0',
-    embedUrl: 'https://www.youtube-nocookie.com/embed/W3_42T1tWk0?rel=0',
-    thumbnail: 'https://images.unsplash.com/photo-1517524008697-84bbe3c3fd98?w=800&auto=format&fit=crop&q=80',
-    summary: 'A 50 km/h, mirar una notificación durante 5 segundos equivale a conducir una cuadra entera (70 metros) con los ojos completamente vendados.',
-    highlightTag: '📱 CERO DISTRACCIONES',
-    impactMetric: '📉 Multiplica por 4 el Riesgo de Choque',
-    goldenRule: 'MODO CONDUCCIÓN O SILENCIO: Ningún mensaje de WhatsApp o llamada telefónica vale más que tu vida o la de un peatón en la vía.',
-    whyItHappens: 'El cerebro humano sufre "ceguera por falta de atención": aun mirando de reojo, la mente tarda hasta 3 segundos en procesar un peatón en la trayectoria.',
-    solutionSteps: [
-      { stepNumber: '1', title: 'Configura la Ruta Antes', desc: 'Programa el GPS en tu destino antes de poner la llave o encender el motor.' },
-      { stepNumber: '2', title: 'Modo Auto Silencioso', desc: 'Activa el modo conducción en tu teléfono para no recibir alertas sonoras.' },
-      { stepNumber: '3', title: 'Estacionar para Atender', desc: 'Si es una llamada urgente, oríllate en una bahía autorizada y segura.' }
-    ],
-    doAndDont: {
-      dos: [
-        'Colocar el teléfono fuera del alcance visual (guantera o soporte fijo con pantalla apagada).',
-        'Pedir al copiloto que responda mensajes o revise mapas si viajas acompañado.'
-      ],
-      donts: [
-        'Escribir mensajes de texto o enviar audios mientras esperas el semáforo en rojo.',
-        'Manejar manipulando auriculares con cancelación de ruido.'
-      ]
-    },
-    keyTakeaways: [
-      'A 50 km/h se avanzan 14 metros por segundo completamente desatendidos.',
-      'El uso de manos libres también reduce el 20% de la capacidad de reacción cerebral.',
-      'La distracción por celular es hoy la principal causa de siniestros viales en ciudad.',
-      'Los peatones atropellados por conductores distraídos no tienen aviso previo de frenada.'
-    ],
-    quizQuestion: {
-      question: 'A una velocidad moderada de 50 km/h, ¿qué distancia recorre un auto a ciegas si el conductor revisa el celular 5 segundos?',
-      options: [
-        'Menos de 5 metros',
-        'Aproximadamente 70 metros (casi una cuadra entera)',
-        '30 centímetros',
-        'El auto se frena solo automáticamente'
-      ],
-      correctIndex: 1,
-      explanation: 'A 50 km/h se recorren 14 metros por segundo. Multiplicado por 5 segundos da 70 metros recorridos con cero atención al entorno.'
-    }
-  },
-  {
-    id: 'vid_pas_protocol',
-    title: 'Protocolo P.A.S.: Proteger, Avisar y Socorrer en un Accidente Vial',
-    topic: 'Prevención',
-    category: 'Primeros Auxilios Viales',
-    duration: '3:20 min',
-    sourceName: 'Cruz Roja Internacional & Emergencias 123',
-    sourceBadge: 'Rescate y Emergencia',
-    youtubeId: 'yqX7BvK86Z8',
-    embedUrl: 'https://www.youtube-nocookie.com/embed/yqX7BvK86Z8?rel=0',
-    thumbnail: 'https://images.unsplash.com/photo-1584515979956-d9f6e5d09982?w=800&auto=format&fit=crop&q=80',
-    summary: 'La regla de oro internacional que salva vidas en los primeros 10 minutos post-accidente: cómo asegurar la escena sin provocar una tragedia mayor.',
-    highlightTag: '🆘 PROTOCOLO DE VIDA',
-    impactMetric: '❤️ Salva Vidas en los 10 Minutos Clave',
-    goldenRule: 'NUNCA RETIRES EL CASCO A UN MOTORIZADO: Podrías causar una lesión medular o parálisis irreversible. Espera al personal médico.',
-    whyItHappens: 'El caos de un siniestro empuja a actuar sin pensar; el 30% de los socorristas inexpertos terminan siendo atropellados por no proteger el área primero.',
-    solutionSteps: [
-      { stepNumber: '1', title: 'P - PROTEGER', desc: 'Pon balizas o triángulos a 50 metros, enciende luces de emergencia y apaga motores.' },
-      { stepNumber: '2', title: 'A - AVISAR', desc: 'Llama al 123 dando ubicación precisa, número de heridos y posibles derrames de gasolina.' },
-      { stepNumber: '3', title: 'S - SOCORRER', desc: 'Habla con las víctimas para mantenerlas conscientes, sin mover el cuello ni darles agua.' }
-    ],
-    doAndDont: {
-      dos: [
-        'Asegurar tu propia integridad física antes de aproximarte a los vehículos siniestrados.',
-        'Brindar apoyo emocional a los heridos diciendo que la ayuda profesional ya viene en camino.'
-      ],
-      donts: [
-        'Mover a los heridos del interior de los autos a menos que haya riesgo inminente de fuego.',
-        'Ofrecer agua, comida o medicamentos a las víctimas en estado de shock.'
-      ]
-    },
-    keyTakeaways: [
-      'Proteger la zona evita que autos a alta velocidad embistan el accidente.',
-      'Llamar al 123 con precisión acelera la llegada de ambulancias medicalizadas.',
-      'No retirar cascos a motociclistas bajo ninguna circunstancia.',
-      'Mantener la calma es el primer acto de salvamento en una vía pública.'
-    ],
-    quizQuestion: {
-      question: '¿Por qué está estrictamente contraindicado quitarle el casco a un motociclista accidentado en la calle?',
-      options: [
-        'Porque el casco es costoso y puede rayarse',
-        'Porque cualquier movimiento no inmovilizado puede seccionar la médula espinal o causar tetraplejia',
-        'Porque la policía debe tomarle fotos primero con el casco puesto',
-        'Porque el casco mantiene la temperatura corporal'
-      ],
-      correctIndex: 1,
-      explanation: 'La manipulación del cuello sin collarín ni técnica de inmovilización en bloque puede agravar fracturas de vértebras cervicales con consecuencias fatales.'
-    }
-  },
-
-  // --- MOVILIDAD (VERDE ESMERALDA VIBRANTE / TEAL: PEATONES, CICLISTAS Y CONVIVENCIA) ---
-  {
-    id: 'vid_pedestrian_safety',
-    title: 'Cruces Peatonales Seguros: Contacto Visual y Distancia de Frenado',
+    id: 'vid_vianova_micromobility',
+    title: 'VIANOVA Movilidad: Convivencia Activa, Ciclorrutas y el 1.5m de Respeto',
     topic: 'Movilidad',
-    category: 'Seguridad Peatonal Activa',
-    duration: '2:50 min',
-    sourceName: 'Fundación MAPFRE & Seguridad Peatonal',
-    sourceBadge: 'Cultura del Peatón',
-    youtubeId: '3GZqN7cKjYQ',
-    embedUrl: 'https://www.youtube-nocookie.com/embed/3GZqN7cKjYQ?rel=0',
-    thumbnail: 'https://images.unsplash.com/photo-1508873696983-2df5293cb32f?w=800&auto=format&fit=crop&q=80',
-    summary: 'La pintura de la cebra no frena autos físicamente: descubre cómo el contacto visual cara a cara y la visibilidad nocturna previenen el 85% de los siniestros.',
-    highlightTag: '🚶 CONTACTO VISUAL VITAL',
-    impactMetric: '👁️ -85% de Riesgo de Atropello',
-    goldenRule: 'MIRA A LOS OJOS DEL CONDUCTOR: No cruces hasta que veas que el conductor te miró y sus neumáticos han disminuido su marcha visiblemente.',
-    whyItHappens: 'El peatón asume que porque tiene luz verde o está sobre la cebra el auto frenará de inmediato, olvidando la física: a 50 km/h un auto necesita 25 metros para frenar.',
-    solutionSteps: [
-      { stepNumber: '1', title: 'Pausa en la Acera', desc: 'Detén el paso al borde de la acera y asoma la vista en ambos sentidos de la calzada.' },
-      { stepNumber: '2', title: 'Contacto Visual Directo', desc: 'Busca los ojos del conductor para asegurarte de que te registró conscientemente.' },
-      { stepNumber: '3', title: 'Cruce Recto y Seguro', desc: 'Cruza en línea recta sin detenerte ni distraerte con auriculares o el celular.' }
-    ],
-    doAndDont: {
-      dos: [
-        'Llevar prendas claras o elementos reflectivos si caminas de noche en la ciudad.',
-        'Esperar a que el semáforo peatonal esté en verde fijo antes de bajar a la calle.'
-      ],
-      donts: [
-        'Cruzar mirando la pantalla del celular con auriculares de música puestos.',
-        'Salir intempestivamente entre dos autos estacionados que te ocultan de la vista.'
-      ]
-    },
-    keyTakeaways: [
-      'El contacto visual confirma que el conductor ha comenzado a frenar.',
-      'La distancia total de frenado incluye 1 segundo de reacción + 15m de arrastre.',
-      'De noche, un peatón con ropa oscura solo es visible a 18 metros; con reflectivo a 150m.',
-      'Los niños deben ir siempre tomados firmemente de la mano al cruzar.'
-    ],
-    quizQuestion: {
-      question: '¿Cuál es la acción más efectiva para cerciorarse de que un automóvil se detendrá en un paso de cebra?',
-      options: [
-        'Bajar la mirada y cruzar a paso rápido',
-        'Hacer contacto visual con el conductor y verificar que redujo la marcha',
-        'Gritar fuerte para avisar a los autos',
-        'Confiar en que las líneas pintadas en el suelo tienen barrera física'
-      ],
-      correctIndex: 1,
-      explanation: 'El contacto visual directo garantiza que el conductor te ha detectado en su campo visual y ha iniciado la desaceleración del vehículo.'
-    }
-  },
-  {
-    id: 'vid_micromobility_coexistence',
-    title: 'Convivencia Vial: Ciclorrutas, Patinetas Eléctricas y Distancia de 1.5m',
-    topic: 'Movilidad',
-    category: 'Movilidad Sostenible y Micromovilidad',
+    category: 'Movilidad Sostenible y Multimodal',
     duration: '3:35 min',
-    sourceName: 'Red de Ciudades por la Bicicleta & Movilidad Activa',
-    sourceBadge: 'Convivencia Ciudadana',
+    sourceName: 'VIANOVA Plataforma de Movilidad Sostenible',
+    sourceBadge: 'VIANOVA Movilidad Activa',
     youtubeId: 'vQ2XG5s9l10',
     embedUrl: 'https://www.youtube-nocookie.com/embed/vQ2XG5s9l10?rel=0',
     thumbnail: 'https://images.unsplash.com/photo-1485965120184-e220f721d03e?w=800&auto=format&fit=crop&q=80',
-    summary: 'Aprende las claves para compartir pacíficamente la calzada: el metro y medio obligatorio al adelantar, uso de luces y señales de brazo en bicicleta.',
-    highlightTag: '🚲 METRO Y MEDIO DE RESPETO',
-    impactMetric: '🚴‍♀️ +90% Seguridad en Adelantamientos',
-    goldenRule: 'DEJA AL MENOS 1.5 METROS AL SOBREPASAR: La turbulencia del aire de un auto puede desestabilizar a ciclistas y patinetas.',
-    whyItHappens: 'El roce o proximidad excesiva (menos de 1 metro) genera el "efecto succión", desequilibrando la rueda delantera de bicis y patinetas hacia la calzada.',
+    summary: 'La guía VIANOVA para compartir armónicamente la calzada: distancia legal obligatoria de 1.5 metros al sobrepasar ciclistas, prioridad peatonal y técnica holandesa.',
+    highlightTag: '🚲 CONVIVENCIA MULTIMODAL',
+    impactMetric: '🚴‍♀️ +90% Seguridad Ciclista',
+    goldenRule: 'DEJA AL MENOS 1.5 METROS AL SOBREPASAR: La masa de aire desplazada por un auto puede succionar y hacer caer a bicicletas y patinetas.',
+    whyItHappens: 'El paso de un vehículo veloz a menos de 1 metro genera un vórtice de baja presión aerodinámica que desestabiliza el manubrio de usuarios vulnerables.',
     solutionSteps: [
-      { stepNumber: '1', title: 'Distancia Lateral Amplia', desc: 'Cambia de carril si es necesario para adelantar a ciclistas dejando 1.5m de margen.' },
-      { stepNumber: '2', title: 'Luces Reglamentarias', desc: 'Bicicletas y patinetas deben usar luz blanca fija delantera y roja intermitente trasera.' },
-      { stepNumber: '3', title: 'Señales con los Brazos', desc: 'Extiende el brazo horizontalmente para avisar giros con 30 metros de anticipación.' }
+      { stepNumber: '1', title: 'Sobrepaso Amplio', desc: 'Cambia de carril si es necesario para adelantar a ciclistas garantizando el margen de 1.5 metros.' },
+      { stepNumber: '2', title: 'Luces Activas', desc: 'Bicicletas y patinetas deben llevar luz blanca fija adelante y roja intermitente atrás siempre.' },
+      { stepNumber: '3', title: 'Técnica Holandesa', desc: 'Abre la puerta del auto con la mano contraria para girar el torso y mirar hacia atrás.' }
     ],
     doAndDont: {
       dos: [
-        'Respetar las ciclorrutas exclusivas sin invadirlas con motos ni automóviles.',
-        'Llevar casco reglamentario abrochado en cualquier vehículo de micromovilidad.'
+        'Respetar las ciclorrutas y carriles exclusivos sin invadirlos con autos ni motocicletas.',
+        'Usar casco reglamentario abrochado y prendas de alta visibilidad reflectiva.'
       ],
       donts: [
-        'Circular en patineta o bicicleta sobre andenes y aceras peatonales estrechas.',
-        'Abrir la puerta del auto sin aplicar la técnica holandesa (mirar con la mano opuesta).'
+        'Circular en patineta o bicicleta a alta velocidad sobre andenes peatonales estrechos.',
+        'Abrir la puerta del vehículo sin verificar previamente el retrovisor exterior.'
       ]
     },
     keyTakeaways: [
-      '1.5 metros es la distancia legal obligatoria para adelantar a un ciclista.',
-      'Las aceras pertenecen exclusivamente al peatón, no a las patinetas de alta velocidad.',
-      'La técnica de la puerta holandesa salva a miles de ciclistas de ser golpeados.',
-      'Los ciclistas deben usar señales con los brazos para comunicar su rumbo.'
+      '1.5 metros es la distancia legal obligatoria para rebasar a cualquier ciclista.',
+      'Las aceras pertenecen exclusivamente al peatón, garantizando accesibilidad total.',
+      'La técnica de la puerta holandesa previene miles de colisiones con ciclistas.',
+      'Los vehículos de micromovilidad deben señalizar sus maniobras con los brazos.'
     ],
     quizQuestion: {
-      question: '¿Cuál es la distancia lateral mínima que debe dejar un vehículo motorizado al sobrepasar a un ciclista en la calzada?',
+      question: '¿Cuál es la distancia lateral mínima que debe dejar un vehículo motorizado al sobrepasar a un ciclista según VIANOVA?',
       options: [
         '30 centímetros',
         '1.5 metros (metro y medio)',
         '3 metros de distancia',
-        'No existe distancia regulada'
+        'No existe distancia reglamentada'
       ],
       correctIndex: 1,
-      explanation: 'El margen de 1.5 metros evita el efecto de succión por masa de aire y protege al ciclista de caídas ante desniveles o baches en el asfalto.'
+      explanation: 'El margen de 1.5 metros evita el efecto de succión por la masa de aire y protege al ciclista de caídas ante desniveles o baches en el asfalto.'
+    }
+  },
+
+  // VIDEO 3: VIANOVA TRÁNSITO, NORMAS Y GLORIETAS (INTERSECCIONES Y PRELACIÓN)
+  {
+    id: 'vid_vianova_roundabout_rules',
+    title: 'VIANOVA Tránsito: Dominio de Glorietas, Cruces y Prelación en la Vía',
+    topic: 'Tránsito',
+    category: 'Normativa Vial y Cruces Complejos',
+    duration: '4:10 min',
+    sourceName: 'VIANOVA Escuela Vial & Normativa Urbana',
+    sourceBadge: 'VIANOVA Normativa & Tránsito',
+    youtubeId: 'k4q79JkU904',
+    embedUrl: 'https://www.youtube-nocookie.com/embed/k4q79JkU904?rel=0',
+    thumbnail: 'https://images.unsplash.com/photo-1545459720-aac8509eb02c?w=800&auto=format&fit=crop&q=80',
+    summary: 'Cómo transitar y salir de una glorieta sin incidentes según las normas de VIANOVA: prioridad de ingreso, carril correcto y prohibición de cruzar desde el interior.',
+    highlightTag: '🚸 ROTONDAS & PRELACIÓN',
+    impactMetric: '🛡️ Elimina 80% de Choques en Cruce',
+    goldenRule: 'SALIDA OBLIGATORIA POR EL CARRIL EXTERIOR: Para salir de la rotonda debes posicionarte con tiempo en el carril derecho exterior; nunca cortes transversalmente.',
+    whyItHappens: 'La mayoría de siniestros en glorietas ocurren cuando un vehículo en el carril interno corta transversalmente el paso del conductor que circula por el exterior.',
+    solutionSteps: [
+      { stepNumber: '1', title: 'Ceda el Paso al Ingreso', desc: 'La prioridad de paso la tiene siempre el vehículo que ya está circulando dentro del anillo.' },
+      { stepNumber: '2', title: 'Ubicación Estratégica', desc: 'Usa el interior para dar vuelta o tomar salidas lejanas; usa el exterior si saldrás de inmediato.' },
+      { stepNumber: '3', title: 'Salida Anticipada', desc: 'Pásate al carril exterior antes de tu salida con direccional encendida de forma segura.' }
+    ],
+    doAndDont: {
+      dos: [
+        'Dar otra vuelta al anillo con calma si no pudiste pasar al carril exterior con seguridad.',
+        'Señalizar los cambios de carril interno y la salida definitiva con la luz de giro.'
+      ],
+      donts: [
+        'Cortar en diagonal desde el carril interior para abandonar la rotonda a la fuerza.',
+        'Ingresar a la glorieta asumiendo que los que circulan adentro deben frenar por ti.'
+      ]
+    },
+    keyTakeaways: [
+      'La prioridad absoluta es del vehículo que ya circula dentro del anillo vial.',
+      'La salida se realiza única y exclusivamente desde el carril exterior derecho.',
+      'Si pierdes la salida, dar otra vuelta completa es una maniobra 100% segura y legal.',
+      'En cruces sin semáforos, el vehículo proveniente de la derecha tiene prelación.'
+    ],
+    quizQuestion: {
+      question: 'Si vas por el carril interior de una glorieta y se aproxima tu salida pero el carril exterior está ocupado, ¿qué debes hacer según VIANOVA?',
+      options: [
+        'Frenar en seco en el carril interior y esperar',
+        'Tocar la bocina y cruzar atravesando el vehículo exterior',
+        'Dar otra vuelta completa al anillo y posicionarse con tiempo en el carril exterior',
+        'Poner reversa en la rotonda'
+      ],
+      correctIndex: 2,
+      explanation: 'Nunca se debe cortar el paso de otro conductor. Dar otra vuelta al anillo permite ubicarse en el carril exterior derecho de forma segura y sin riesgos.'
+    }
+  },
+
+  // VIDEO 4: VIANOVA PREVENCIÓN, MANEJO DEFENSIVO Y PUNTOS CIEGOS
+  {
+    id: 'vid_vianova_blindspots_prevention',
+    title: 'VIANOVA Prevención: Puntos Ciegos de Camiones y Protocolos de Supervivencia',
+    topic: 'Prevención',
+    category: 'Seguridad Preventiva y Conducción Defensiva',
+    duration: '3:45 min',
+    sourceName: 'VIANOVA Centro de Prevención de Siniestros',
+    sourceBadge: 'VIANOVA Prevención Crítica',
+    youtubeId: '7yV1E9t-rGE',
+    embedUrl: 'https://www.youtube-nocookie.com/embed/7yV1E9t-rGE?rel=0',
+    thumbnail: 'https://images.unsplash.com/photo-1519003722824-194d4455a60c?w=800&auto=format&fit=crop&q=80',
+    summary: 'Demostración de los 4 ángulos ciegos críticos en vehículos pesados de carga urbana: zonas de sombra donde eres 100% invisible para el conductor de camión o bus.',
+    highlightTag: '⚠️ ÁNGULOS CIEGOS & REFLEJOS',
+    impactMetric: '🚨 -88% de Atropellos por Giro',
+    goldenRule: 'SI NO VES SUS ESPEJOS, ÉL NO TE VE: Si no alcanzas a ver los retrovisores laterales del camión, el conductor no tiene forma de saber que estás allí.',
+    whyItHappens: 'La cabina de camiones y autobuses crea sombras ópticas de hasta 12 metros detrás y 3 metros en el lateral derecho durante maniobras urbanas.',
+    solutionSteps: [
+      { stepNumber: '1', title: 'Ubicación Visible', desc: 'Ubícate donde puedas ver el rostro del conductor a través de sus espejos laterales.' },
+      { stepNumber: '2', title: 'Cero Adelantos por Derecha', desc: 'Nunca te ubiques en el costado derecho de camiones o buses al acercarse a esquinas.' },
+      { stepNumber: '3', title: 'Distancia de Resguardo', desc: 'Mantén mínimo 4 metros de separación posterior con transporte de carga pesada.' }
+    ],
+    doAndDont: {
+      dos: [
+        'Esperar con paciencia detrás del vehículo pesado en intersecciones sin forzar el paso.',
+        'Hacer cambio de luces o aviso sonoro breve si vas a adelantarlo por la izquierda.'
+      ],
+      donts: [
+        'Filtrar por la derecha cuando un autobús o camión se prepara para girar.',
+        'Detenerte pegado justo debajo del capó delantero de un camión en el semáforo.'
+      ]
+    },
+    keyTakeaways: [
+      'El lateral derecho es el ángulo ciego más crítico y peligroso en giros urbanos.',
+      'Un camión articulado necesita abrirse a la izquierda para poder girar a la derecha.',
+      'Si no ves los ojos del conductor en su retrovisor, asume que eres invisible.',
+      'Conserva siempre una ruta de escape si te desplazas en moto o bicicleta.'
+    ],
+    quizQuestion: {
+      question: '¿Cuál es el ángulo ciego más amplio y peligroso en un camión pesado según el módulo de Prevención VIANOVA?',
+      options: [
+        'El techo de la cabina',
+        'El lateral derecho, que se amplifica cuando el camión va a realizar un giro',
+        'La rueda de repuesto',
+        'El parachoques trasero superior'
+      ],
+      correctIndex: 1,
+      explanation: 'El costado derecho del camión posee un área ciega masiva debido a la distancia respecto a la posición del conductor en cabinas estándar.'
     }
   }
 ];

@@ -316,7 +316,6 @@ export const EducationScreen: React.FC = () => {
   // Navigation tabs for didactic formats
   const [activeTab, setActiveTab] = useState<DidacticSectionType>('juegos');
   const [selectedCategory, setSelectedCategory] = useState<CourseCategoryType>('micromovilidad');
-  const [videoTopicFilter, setVideoTopicFilter] = useState<'Todos' | VideoTopicType>('Todos');
 
   // Track progress of courses
   const [coursesProgress, setCoursesProgress] = useState<Record<string, number>>(() => {
@@ -798,54 +797,7 @@ export const EducationScreen: React.FC = () => {
       {/* VISTA 2: VIDEOTECA VIAL DIDÁCTICA (LLAMATIVA Y EXPLICADA CON COLORES FUERTES) */}
       {/* ========================================================================= */}
       {activeTab === 'videos' && (() => {
-        const filteredVideos = DIDACTIC_VIDEOS.filter((video) => {
-          if (videoTopicFilter === 'Todos') return true;
-          return video.topic === videoTopicFilter;
-        });
-
-        const topicBadges: { 
-          id: 'Todos' | VideoTopicType; 
-          label: string; 
-          icon: string; 
-          count: number;
-          activeClass: string;
-        }[] = [
-          { 
-            id: 'Todos', 
-            label: 'Todos los Videos', 
-            icon: '🎬', 
-            count: DIDACTIC_VIDEOS.length,
-            activeClass: 'bg-gradient-to-r from-slate-900 via-[#0a193b] to-blue-900 text-white border-blue-600 shadow-lg shadow-blue-950/30'
-          },
-          { 
-            id: 'Tráfico', 
-            label: 'Tráfico & Congestión', 
-            icon: '🚦', 
-            count: DIDACTIC_VIDEOS.filter(v => v.topic === 'Tráfico').length,
-            activeClass: 'bg-gradient-to-r from-amber-500 to-orange-500 text-slate-950 font-black border-amber-300 shadow-lg shadow-amber-500/30'
-          },
-          { 
-            id: 'Tránsito', 
-            label: 'Tránsito & Normativa', 
-            icon: '🚸', 
-            count: DIDACTIC_VIDEOS.filter(v => v.topic === 'Tránsito').length,
-            activeClass: 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-black border-blue-400 shadow-lg shadow-blue-500/30'
-          },
-          { 
-            id: 'Prevención', 
-            label: 'Prevención & Reflejos', 
-            icon: '🛡️', 
-            count: DIDACTIC_VIDEOS.filter(v => v.topic === 'Prevención').length,
-            activeClass: 'bg-gradient-to-r from-rose-600 to-red-600 text-white font-black border-rose-400 shadow-lg shadow-rose-500/30'
-          },
-          { 
-            id: 'Movilidad', 
-            label: 'Movilidad Sostenible', 
-            icon: '🚲', 
-            count: DIDACTIC_VIDEOS.filter(v => v.topic === 'Movilidad').length,
-            activeClass: 'bg-gradient-to-r from-emerald-600 to-teal-600 text-white font-black border-emerald-400 shadow-lg shadow-emerald-500/30'
-          },
-        ];
+        const videosList = DIDACTIC_VIDEOS;
 
         // Color palettes for topics ("Colores Fuertes")
         const getTopicColors = (topic: VideoTopicType) => {
@@ -902,7 +854,7 @@ export const EducationScreen: React.FC = () => {
           }
         };
 
-        const heroVideo = filteredVideos[0] || DIDACTIC_VIDEOS[0];
+        const heroVideo = videosList[0] || DIDACTIC_VIDEOS[0];
         const heroColors = getTopicColors(heroVideo.topic);
 
         return (
@@ -945,37 +897,7 @@ export const EducationScreen: React.FC = () => {
               </div>
             </div>
 
-            {/* BARRA DE FILTROS POR PILARES EN COLORES FUERTES */}
-            <div className="space-y-2">
-              <span className="text-[11px] font-black uppercase text-slate-500 tracking-wider block px-1">
-                Filtrar Cápsulas por Eje Temático:
-              </span>
-              <div className="flex flex-wrap gap-2.5">
-                {topicBadges.map((badge) => {
-                  const isSelected = videoTopicFilter === badge.id;
-                  return (
-                    <button
-                      key={badge.id}
-                      type="button"
-                      onClick={() => setVideoTopicFilter(badge.id)}
-                      className={`px-4 sm:px-5 py-2.5 rounded-2xl text-xs sm:text-sm font-bold flex items-center gap-2.5 transition-all duration-200 cursor-pointer border ${
-                        isSelected
-                          ? `${badge.activeClass} scale-[1.03]`
-                          : 'bg-white text-slate-700 border-slate-200 hover:border-slate-300 hover:bg-slate-50 shadow-xs'
-                      }`}
-                    >
-                      <span className="text-base">{badge.icon}</span>
-                      <span>{badge.label}</span>
-                      <span className={`px-2 py-0.5 rounded-full text-[10px] font-black ${
-                        isSelected ? 'bg-black/20 text-white' : 'bg-slate-100 text-slate-600'
-                      }`}>
-                        {badge.count}
-                      </span>
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
+
 
             {/* CÁPSULA ESTRELLA DESTACADA (HERO CARD CON COLORES FUERTES) */}
             {heroVideo && (
@@ -1115,13 +1037,13 @@ export const EducationScreen: React.FC = () => {
                 <h3 className="text-lg sm:text-xl font-black text-slate-900 flex items-center gap-2">
                   <span>Todas las Cápsulas Didácticas</span>
                   <span className="text-xs px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-600 font-bold">
-                    {filteredVideos.length} disponibles
+                    {videosList.length} disponibles
                   </span>
                 </h3>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-7">
-                {filteredVideos.map((video) => {
+                {videosList.map((video) => {
                   const colors = getTopicColors(video.topic);
 
                   return (
