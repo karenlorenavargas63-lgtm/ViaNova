@@ -49,7 +49,7 @@ export const Navbar: React.FC<NavbarProps> = ({
   ];
 
   return (
-    <header className="sticky top-0 z-40 w-full bg-[#b9e3fc]/95 backdrop-blur-md border-b border-sky-300 transition-all duration-300 shadow-sm">
+    <header className="sticky top-2 sm:top-3 z-40 w-[96%] max-w-7xl mx-auto rounded-2xl sm:rounded-3xl bg-[#caeafc]/95 backdrop-blur-xl border border-sky-300 shadow-[0_12px_36px_-6px_rgba(0,87,217,0.2)] transition-all duration-300 hover:shadow-[0_16px_44px_-4px_rgba(0,87,217,0.28)] mb-3">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-20">
           
