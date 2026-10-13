@@ -50,9 +50,15 @@ export const SafetyScreen: React.FC<SafetyScreenProps> = ({
   const [isFilterDropdownOpen, setIsFilterDropdownOpen] = useState(false);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [selectedGuide, setSelectedGuide] = useState<any | null>(null);
+  const [selectedSymbolIndex, setSelectedSymbolIndex] = useState<number>(0);
   const [selectedAlertForMap, setSelectedAlertForMap] = useState<any | null>(null);
   const [isReportModalOpen, setIsReportModalOpen] = useState(false);
   const [lightboxImage, setLightboxImage] = useState<{ src: string; title: string; category?: string } | null>(null);
+
+  const handleOpenGuide = (card: any, symbolIdx: number = 0) => {
+    setSelectedGuide(card);
+    setSelectedSymbolIndex(symbolIdx);
+  };
 
   // New report form state
   const [reportTitle, setReportTitle] = useState('');
@@ -133,6 +139,12 @@ export const SafetyScreen: React.FC<SafetyScreenProps> = ({
       icon: AlertOctagon,
       image: signsImg,
       badge: 'Señalización Urbana',
+      themeGradient: 'from-red-500 via-rose-600 to-red-700',
+      themeGlow: 'shadow-red-500/35 ring-red-400/40',
+      themeBorder: 'hover:border-red-400',
+      themeBadge: 'bg-red-600 text-white',
+      themeAccent: 'text-red-600',
+      tagline: 'PARE • Preventivas • Informativas • Demarcación',
       description: 'Conoce el significado y la importancia de la señalización vertical y horizontal en el entorno urbano para una navegación predictiva.',
       recommendations: TOPIC_RECOMMENDATIONS.senales,
       details: [
@@ -148,6 +160,12 @@ export const SafetyScreen: React.FC<SafetyScreenProps> = ({
       icon: BookOpen,
       image: rulesImg,
       badge: 'Código y Reglamentos',
+      themeGradient: 'from-blue-600 via-indigo-600 to-blue-800',
+      themeGlow: 'shadow-blue-500/35 ring-blue-400/40',
+      themeBorder: 'hover:border-blue-400',
+      themeBadge: 'bg-blue-600 text-white',
+      themeAccent: 'text-blue-600',
+      tagline: 'Límites 50/30 • Glorietas • Casco • 0.0% Alcohol',
       description: 'Accede al reglamento de tránsito actualizado. Reglas claras estructuran un flujo vehicular ordenado y previenen incidentes.',
       recommendations: TOPIC_RECOMMENDATIONS.normas,
       details: [
@@ -163,6 +181,12 @@ export const SafetyScreen: React.FC<SafetyScreenProps> = ({
       icon: ShieldCheck,
       image: preventionImg,
       badge: 'Anticipación del Riesgo',
+      themeGradient: 'from-amber-400 via-amber-500 to-orange-600',
+      themeGlow: 'shadow-amber-500/35 ring-amber-400/40',
+      themeBorder: 'hover:border-amber-400',
+      themeBadge: 'bg-amber-500 text-slate-950 font-black',
+      themeAccent: 'text-amber-600',
+      tagline: 'Revisión • Lluvia SOS • 3 Segundos • Kit SOS',
       description: 'Estrategias proactivas para identificar riesgos potenciales en tu ruta y actuar antes de que ocurran contratiempos.',
       recommendations: TOPIC_RECOMMENDATIONS.prevencion,
       details: [
@@ -178,6 +202,12 @@ export const SafetyScreen: React.FC<SafetyScreenProps> = ({
       icon: Car,
       image: responsibleDrivingImg,
       badge: 'Manejo Defensivo',
+      themeGradient: 'from-emerald-500 via-teal-600 to-emerald-700',
+      themeGlow: 'shadow-emerald-500/35 ring-emerald-400/40',
+      themeBorder: 'hover:border-emerald-400',
+      themeBadge: 'bg-emerald-600 text-white',
+      themeAccent: 'text-emerald-600',
+      tagline: 'Cero Celular • Direccionales 30m • 1.5m Bicis • Espejos',
       description: 'Técnicas de manejo defensivo, mantenimiento de la atención y respeto por los límites de velocidad del sistema.',
       recommendations: TOPIC_RECOMMENDATIONS.conduccion,
       details: [
@@ -193,6 +223,12 @@ export const SafetyScreen: React.FC<SafetyScreenProps> = ({
       icon: Bike,
       image: motorcyclistImg,
       badge: 'Protección Bimodal',
+      themeGradient: 'from-purple-600 via-violet-600 to-fuchsia-700',
+      themeGlow: 'shadow-purple-500/35 ring-purple-400/40',
+      themeBorder: 'hover:border-purple-400',
+      themeBadge: 'bg-purple-600 text-white',
+      themeAccent: 'text-purple-600',
+      tagline: 'Casco DOT • Reflectivos • Carril Propio • Puntos Ciegos',
       description: 'Protocolos de seguridad específicos, equipamiento obligatorio y posicionamiento estratégico en la calzada.',
       recommendations: TOPIC_RECOMMENDATIONS.motociclistas,
       details: [
@@ -208,6 +244,12 @@ export const SafetyScreen: React.FC<SafetyScreenProps> = ({
       icon: Footprints,
       image: pedestrianImg,
       badge: 'Usuario Prioritario',
+      themeGradient: 'from-cyan-500 via-sky-600 to-blue-600',
+      themeGlow: 'shadow-cyan-500/35 ring-cyan-400/40',
+      themeBorder: 'hover:border-cyan-400',
+      themeBadge: 'bg-cyan-600 text-white',
+      themeAccent: 'text-cyan-600',
+      tagline: 'Paso Cebra • Contacto Visual • Carril Bus • EV Silente',
       description: 'Zonas seguras, cruces inteligentes y cómo interactuar de manera segura con el flujo vehicular motorizado.',
       recommendations: TOPIC_RECOMMENDATIONS.peatones,
       details: [
@@ -280,19 +322,23 @@ export const SafetyScreen: React.FC<SafetyScreenProps> = ({
           </p>
         </div>
 
-        {/* 6 Thematic Cards Grid with topic images */}
+        {/* 6 Thematic Cards Grid with topic images & vibrant contained symbols */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-7">
           {cultureCards.map((card) => {
             const IconComponent = card.icon;
+            const recs = card.recommendations || [];
+
             return (
               <div
                 key={card.id}
-                className="group bg-white rounded-[26px] overflow-hidden border border-slate-200/90 shadow-[0_4px_20px_rgba(0,0,0,0.03)] flex flex-col justify-between hover:shadow-[0_12px_32px_rgba(0,0,0,0.08)] hover:border-slate-300 transition-all duration-300"
+                onClick={() => handleOpenGuide(card, 0)}
+                className="group bg-white rounded-[28px] overflow-hidden border border-slate-200/90 shadow-[0_4px_20px_rgba(0,0,0,0.04)] flex flex-col justify-between hover:shadow-[0_16px_36px_rgba(0,0,0,0.12)] hover:-translate-y-1.5 hover:border-slate-300 transition-all duration-300 cursor-pointer"
               >
                 <div>
                   {/* Thematic Topic Image */}
                   <div 
-                    onClick={() => {
+                    onClick={(e) => {
+                      e.stopPropagation();
                       if (card.image) {
                         setLightboxImage({ src: card.image, title: card.title, category: card.badge });
                       }
@@ -306,7 +352,7 @@ export const SafetyScreen: React.FC<SafetyScreenProps> = ({
                       referrerPolicy="no-referrer"
                       className="w-full h-full object-contain bg-white p-2 sm:p-3 group-hover:scale-105 transition-transform duration-500 ease-out"
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-black/10 pointer-events-none" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/55 via-transparent to-black/15 pointer-events-none" />
                     
                     {/* Botón flotante para ampliar imagen */}
                     <button
@@ -314,17 +360,22 @@ export const SafetyScreen: React.FC<SafetyScreenProps> = ({
                         e.stopPropagation();
                         setLightboxImage({ src: card.image, title: card.title, category: card.badge });
                       }}
-                      className="absolute top-3.5 left-3.5 px-3 py-1.5 rounded-xl bg-slate-900/85 hover:bg-blue-600 text-white text-xs sm:text-sm font-bold flex items-center gap-1.5 shadow-md backdrop-blur-md border border-white/20 transition cursor-pointer z-10"
+                      className="absolute top-3.5 left-3.5 px-3 py-1.5 rounded-xl bg-slate-950/85 hover:bg-blue-600 text-white text-xs sm:text-sm font-bold flex items-center gap-1.5 shadow-md backdrop-blur-md border border-white/20 transition cursor-pointer z-10"
                       title="Ampliar lámina de señales a pantalla completa"
                     >
                       <Maximize2 className="w-4 h-4" />
                       <span>Ampliar</span>
                     </button>
 
-                    {/* Floating Icon */}
+                    {/* Floating Icon: Símbolo Principal Ultrallamativo con Gradiente Fuerte */}
                     {IconComponent && (
-                      <div className="absolute top-3.5 right-3.5 w-11 h-11 rounded-xl bg-white/95 backdrop-blur-md shadow-md flex items-center justify-center text-[#0066ff]">
-                        <IconComponent className="w-5 h-5 stroke-[2.2]" />
+                      <div className="absolute top-3.5 right-3.5 flex flex-col items-center">
+                        <div className={`w-13 h-13 sm:w-15 sm:h-15 rounded-2xl bg-gradient-to-br ${card.themeGradient} text-white shadow-xl ${card.themeGlow} ring-3 ring-white flex items-center justify-center transform group-hover:scale-110 group-hover:rotate-3 transition-all duration-300`}>
+                          <IconComponent className="w-6.5 h-6.5 sm:w-7.5 sm:h-7.5 stroke-[2.4] drop-shadow-md" />
+                        </div>
+                        <span className="mt-1 px-1.5 py-0.5 rounded-full bg-black/75 backdrop-blur-md text-[8.5px] font-black uppercase tracking-wider text-white border border-white/20 shadow-xs pointer-events-none">
+                          Símbolo Oficial
+                        </span>
                       </div>
                     )}
 
@@ -336,27 +387,77 @@ export const SafetyScreen: React.FC<SafetyScreenProps> = ({
                   </div>
 
                   {/* Body Content */}
-                  <div className="p-6 sm:p-7 pb-4">
-                    {/* Title */}
-                    <h2 className="text-xl sm:text-2xl font-bold text-slate-900 mb-2.5 tracking-tight group-hover:text-blue-700 transition-colors">
-                      {card.title}
-                    </h2>
+                  <div className="p-6 sm:p-7 pb-4 space-y-3">
+                    {/* Header: Title and Category Pill */}
+                    <div>
+                      <div className="flex items-center gap-2 mb-1.5">
+                        <span className={`px-2.5 py-0.5 rounded-md text-[10px] font-black uppercase tracking-wider ${card.themeBadge}`}>
+                          {card.badge}
+                        </span>
+                        <span className="text-[11px] font-bold text-slate-400">
+                          {recs.length} Símbolos Clave
+                        </span>
+                      </div>
+                      <h2 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight group-hover:text-blue-700 transition-colors">
+                        {card.title}
+                      </h2>
+                    </div>
 
                     {/* Description */}
-                    <p className="text-slate-600 text-base leading-relaxed line-clamp-3">
+                    <p className="text-slate-600 text-sm sm:text-base leading-relaxed line-clamp-2">
                       {card.description}
                     </p>
+
+                    {/* SÍMBOLOS QUE CONTIENE CADA CASILLA (Llamativos en colores fuertes) */}
+                    <div className="pt-3 border-t border-slate-100">
+                      <div className="flex items-center justify-between mb-2 px-0.5">
+                        <span className="text-[11px] font-black uppercase tracking-wider text-slate-700 flex items-center gap-1.5">
+                          <Sparkles className="w-3.5 h-3.5 text-amber-500 fill-amber-400" />
+                          <span>Símbolos que contiene:</span>
+                        </span>
+                        <span className="text-[10px] font-extrabold text-blue-700 bg-blue-50 px-2 py-0.5 rounded-md border border-blue-200/60 flex items-center gap-1">
+                          <span>Toca para abrir</span>
+                          <ArrowRight className="w-2.5 h-2.5" />
+                        </span>
+                      </div>
+
+                      {/* Cuadrícula de 4 Símbolos Oficiales con colores fuertes */}
+                      <div className="grid grid-cols-4 gap-2">
+                        {recs.map((rec: KeyRecommendation, rIdx: number) => (
+                          <div
+                            key={rec.id || rIdx}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleOpenGuide(card, rIdx);
+                            }}
+                            className="cursor-pointer"
+                            title={`Toca para abrir información y significado de: ${rec.title}`}
+                          >
+                            <RecommendationLogo
+                              recommendation={rec}
+                              size="sm"
+                              index={rIdx}
+                            />
+                          </div>
+                        ))}
+                      </div>
+                    </div>
                   </div>
                 </div>
 
-                {/* Aprender más Button */}
+                {/* Abrir Información Action Button */}
                 <div className="p-6 sm:p-7 pt-0">
                   <button
-                    onClick={() => setSelectedGuide(card)}
-                    className="w-full sm:w-auto px-5 py-3 rounded-xl bg-[#0a193b] text-white hover:bg-[#0055d4] text-sm sm:text-base font-bold transition-all duration-200 cursor-pointer flex items-center justify-center gap-2 shadow-xs"
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleOpenGuide(card, 0);
+                    }}
+                    className="w-full py-3.5 px-4 rounded-xl bg-gradient-to-r from-[#0a193b] via-[#0b2b63] to-[#0057d9] hover:from-[#0057d9] hover:to-[#0042a6] text-white text-sm sm:text-base font-black transition-all duration-200 cursor-pointer flex items-center justify-center gap-2.5 shadow-md hover:shadow-lg group-hover:scale-[1.01]"
                   >
-                    <span>Aprender más y ver símbolos clave</span>
-                    <ArrowRight className="w-4 h-4" />
+                    <Eye className="w-4.5 h-4.5" />
+                    <span>Abrir Información y Símbolos Clave ({recs.length})</span>
+                    <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                   </button>
                 </div>
               </div>
@@ -483,7 +584,8 @@ export const SafetyScreen: React.FC<SafetyScreenProps> = ({
           {filteredAlerts.map((alert) => (
             <div
               key={alert.id}
-              className="bg-white rounded-[24px] border border-slate-200/90 shadow-[0_4px_16px_rgba(0,0,0,0.03)] overflow-hidden flex flex-col justify-between hover:shadow-[0_8px_24px_rgba(0,0,0,0.06)] hover:border-slate-300 transition-all duration-300"
+              onClick={() => setSelectedAlertForMap(alert)}
+              className="cursor-pointer group bg-white rounded-[24px] border border-slate-200/90 shadow-[0_4px_16px_rgba(0,0,0,0.03)] overflow-hidden flex flex-col justify-between hover:shadow-[0_12px_28px_rgba(0,0,0,0.08)] hover:-translate-y-1 hover:border-slate-300 transition-all duration-300"
             >
               <div>
                 {/* Thumbnail Image with Badge Overlay matching image 2 */}
@@ -491,22 +593,22 @@ export const SafetyScreen: React.FC<SafetyScreenProps> = ({
                   <img
                     src={alert.image}
                     alt={alert.title}
-                    className="w-full h-full object-cover"
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                   />
 
                   {/* Badge top-left */}
                   <div className="absolute top-3 left-3">
                     {alert.badgeType === 'red' ? (
-                      <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-md bg-[#c0262b] text-white text-xs font-extrabold uppercase tracking-wider shadow-sm">
-                        <AlertTriangle className="w-3.5 h-3.5 text-white fill-white/20" />
+                      <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#c0262b] text-white text-xs font-black uppercase tracking-wider shadow-md">
+                        <AlertTriangle className="w-4 h-4 text-white fill-white/20 animate-pulse" />
                         <span>{alert.severityLabel}</span>
                       </div>
                     ) : (
-                      <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-md bg-white/95 backdrop-blur-sm text-slate-800 border border-slate-200/80 text-xs font-extrabold uppercase tracking-wider shadow-sm">
+                      <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/95 backdrop-blur-md text-slate-800 border border-slate-200/80 text-xs font-black uppercase tracking-wider shadow-md">
                         {alert.type === 'obras' ? (
-                          <Wrench className="w-3.5 h-3.5 text-slate-700" />
+                          <Wrench className="w-4 h-4 text-amber-600" />
                         ) : (
-                          <Activity className="w-3.5 h-3.5 text-slate-700" />
+                          <Activity className="w-4 h-4 text-blue-600" />
                         )}
                         <span>{alert.severityLabel}</span>
                       </div>
@@ -566,124 +668,271 @@ export const SafetyScreen: React.FC<SafetyScreenProps> = ({
         </div>
       </section>
 
-      {/* Guide Detail Modal (Aprender más) */}
+      {/* Guide Detail Modal (Información Completa al dar clic con símbolos llamativos) */}
       {selectedGuide && (() => {
         const guideRecs: KeyRecommendation[] = (selectedGuide.recommendations && selectedGuide.recommendations.length > 0)
           ? selectedGuide.recommendations
           : getRecommendationsForTopic(selectedGuide.id);
 
+        const currentSymbol = guideRecs[selectedSymbolIndex] || guideRecs[0];
+
         return (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-950/70 backdrop-blur-sm animate-fade-in">
-            <div className="relative w-full max-w-4xl rounded-3xl bg-white border border-slate-200 p-6 sm:p-8 text-slate-900 shadow-2xl space-y-6 max-h-[92vh] overflow-y-auto">
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-5 bg-slate-950/75 backdrop-blur-md animate-fade-in">
+            <div className="relative w-full max-w-4xl rounded-[28px] bg-white border border-slate-200 p-6 sm:p-8 text-slate-900 shadow-2xl space-y-6 max-h-[92vh] overflow-y-auto">
+              
+              {/* Header Modal */}
               <div className="flex items-center justify-between border-b border-slate-100 pb-4">
-                <div>
-                  <span className="text-xs sm:text-sm font-bold uppercase tracking-wider text-blue-600 bg-blue-50 px-3 py-1 rounded-md border border-blue-100">
-                    {selectedGuide.badge || 'Seguridad Vial'}
-                  </span>
-                  <h3 className="text-2xl sm:text-3xl font-black text-[#0a193b] mt-1.5">{selectedGuide.title}</h3>
+                <div className="space-y-1">
+                  <div className="flex items-center gap-2">
+                    <span className={`text-xs font-black uppercase tracking-wider px-3 py-1 rounded-full shadow-xs bg-gradient-to-r ${selectedGuide.themeGradient || 'from-blue-600 to-indigo-700'} text-white`}>
+                      {selectedGuide.badge || 'Seguridad Vial'}
+                    </span>
+                    <span className="text-xs font-bold text-slate-500 bg-slate-100 px-2.5 py-1 rounded-full">
+                      {guideRecs.length} Símbolos Oficiales
+                    </span>
+                  </div>
+                  <h3 className="text-2xl sm:text-3xl font-black text-[#0a193b] tracking-tight">
+                    {selectedGuide.title}
+                  </h3>
+                  {selectedGuide.tagline && (
+                    <p className="text-xs sm:text-sm text-slate-500 font-medium">
+                      {selectedGuide.tagline}
+                    </p>
+                  )}
                 </div>
                 <button
                   onClick={() => setSelectedGuide(null)}
-                  className="p-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-500 hover:text-slate-800 transition-colors cursor-pointer"
+                  className="p-2.5 rounded-2xl bg-slate-100 hover:bg-red-50 hover:text-red-600 text-slate-500 transition-colors cursor-pointer"
+                  title="Cerrar ventana de información"
                 >
                   <X className="w-5 h-5" />
                 </button>
               </div>
 
-              {/* Guide Image Banner with Zoom Capability */}
-              {selectedGuide.image && (
-                <div 
-                  onClick={() => setLightboxImage({ src: selectedGuide.image, title: selectedGuide.title, category: selectedGuide.badge })}
-                  className="relative h-72 sm:h-96 md:h-[460px] bg-slate-50 w-full rounded-2xl overflow-hidden border border-slate-200 shadow-sm group cursor-zoom-in"
-                  title="Haz clic para ampliar la imagen en pantalla completa"
-                >
-                  <img
-                    src={selectedGuide.image}
-                    alt={selectedGuide.title}
-                    referrerPolicy="no-referrer"
-                    className="w-full h-full object-contain bg-white p-3 sm:p-5 group-hover:scale-[1.02] transition-transform duration-300"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent pointer-events-none" />
-                  
-                  {/* Floating Action: Open Lightbox */}
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setLightboxImage({ src: selectedGuide.image, title: selectedGuide.title, category: selectedGuide.badge });
-                    }}
-                    className="absolute top-3.5 right-3.5 px-3.5 py-2 rounded-xl bg-slate-900/85 hover:bg-blue-600 text-white text-xs sm:text-sm font-bold flex items-center gap-2 shadow-lg backdrop-blur-md border border-white/20 transition-all cursor-pointer z-10 hover:scale-105"
-                  >
-                    <Maximize2 className="w-4 h-4" />
-                    <span>Ampliar en Pantalla Completa (Zoom HD)</span>
-                  </button>
-
-                  <span className="absolute bottom-3 left-3.5 text-xs sm:text-sm font-bold text-white bg-black/60 backdrop-blur-md px-3 py-1 rounded-lg border border-white/20 pointer-events-none">
-                    Guía Oficial VIANOVA • Ecosistema Inteligente
-                  </span>
-                </div>
-              )}
-
-              <p className="text-base sm:text-lg text-slate-600 leading-relaxed">{selectedGuide.description}</p>
-
-              {/* Casilla: Recomendaciones Clave con Símbolos Viales Oficiales */}
-              <div className="space-y-4 bg-gradient-to-b from-slate-50 to-blue-50/20 p-5 sm:p-6 rounded-2xl border border-slate-200/90 shadow-2xs">
-                <div className="flex items-center justify-between border-b border-slate-200/80 pb-3">
+              {/* SPOTLIGHT DEL SÍMBOLO ACTIVO (Llamativo, enfocado e interactivo) */}
+              <div className="rounded-2xl p-5 sm:p-6 bg-gradient-to-br from-slate-50 via-blue-50/30 to-indigo-50/20 border-2 border-blue-200/80 shadow-sm space-y-4">
+                {/* Selector de pestañas para cambiar rápidamente entre los 4 símbolos */}
+                <div className="flex items-center justify-between border-b border-blue-200/60 pb-3">
                   <div className="flex items-center gap-2">
-                    <span className="w-2.5 h-2.5 rounded-full bg-[#0066ff] animate-pulse"></span>
-                    <h4 className="text-sm sm:text-base font-black uppercase tracking-wider text-[#0066ff]">
-                      Recomendaciones Clave • Símbolos Viales
-                    </h4>
+                    <Sparkles className="w-4 h-4 text-amber-500 fill-amber-400" />
+                    <span className="text-xs sm:text-sm font-black uppercase tracking-wider text-slate-800">
+                      Explorar Símbolo Activo ({selectedSymbolIndex + 1} de {guideRecs.length}):
+                    </span>
                   </div>
-                  <span className="text-xs sm:text-sm font-bold text-slate-700 bg-white px-3 py-1 rounded-lg border border-slate-200/90 shadow-2xs">
-                    {guideRecs.length} símbolos oficiales
-                  </span>
+                  
+                  {/* Botones rápidos para alternar entre los 4 símbolos */}
+                  <div className="flex items-center gap-1.5">
+                    {guideRecs.map((rec, idx) => (
+                      <button
+                        key={rec.id || idx}
+                        onClick={() => setSelectedSymbolIndex(idx)}
+                        className={`px-3 py-1 rounded-xl text-xs font-black transition-all cursor-pointer ${
+                          selectedSymbolIndex === idx
+                            ? 'bg-[#0057d9] text-white shadow-md scale-105 ring-2 ring-blue-400/50'
+                            : 'bg-white hover:bg-slate-100 text-slate-700 border border-slate-200 shadow-2xs'
+                        }`}
+                      >
+                        {rec.logoCode || `S-${idx + 1}`}
+                      </button>
+                    ))}
+                  </div>
                 </div>
 
-                {/* Listado de Casillas con Logos */}
-                <div className="grid grid-cols-1 gap-3.5">
-                  {guideRecs.map((rec: KeyRecommendation, idx: number) => (
-                    <div
-                      key={rec.id || idx}
-                      className="bg-white rounded-2xl p-4 sm:p-5 border border-slate-200/90 shadow-2xs hover:border-blue-300 hover:shadow-xs transition-all flex flex-col sm:flex-row gap-4 items-start"
-                    >
-                      {/* Logo oficial de la recomendación */}
+                {/* Vista ampliada del símbolo activo */}
+                {currentSymbol && (
+                  <div className="flex flex-col sm:flex-row gap-5 items-start pt-1">
+                    {/* Emblema grande oficial */}
+                    <div className="shrink-0 w-full sm:w-auto flex justify-center">
                       <RecommendationLogo
-                        recommendation={rec}
+                        recommendation={currentSymbol}
                         size="lg"
-                        index={idx}
+                        index={selectedSymbolIndex}
+                        className="scale-105"
                       />
+                    </div>
 
-                      {/* Contenido descriptivo */}
-                      <div className="flex-1 min-w-0 space-y-2">
-                        <div className="flex items-start gap-2">
-                          <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0 mt-0.5 stroke-[2.4]" />
-                          <h5 className="text-base sm:text-lg font-extrabold text-[#0a193b] leading-snug">
-                            {rec.title}
-                          </h5>
+                    {/* Explicación y detalle en colores fuertes */}
+                    <div className="flex-1 space-y-3 min-w-0">
+                      <div>
+                        <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md bg-blue-100 text-[#0055d4] text-[11px] font-black uppercase tracking-wide mb-1">
+                          <span>Símbolo Vial en Foco</span>
                         </div>
-                        <p className="text-sm sm:text-base text-slate-600 leading-relaxed pl-7">
-                          {rec.description}
-                        </p>
-                        {rec.highlight && (
-                          <div className="pl-7 pt-1">
-                            <span className="inline-flex items-center gap-2 text-xs sm:text-sm font-bold text-[#0055d4] bg-blue-50/90 px-3 py-1 rounded-lg border border-blue-200/60">
-                              <span>💡</span>
-                              <span>{rec.highlight}</span>
+                        <h4 className="text-lg sm:text-xl font-black text-[#0a193b] leading-snug">
+                          {currentSymbol.title}
+                        </h4>
+                      </div>
+
+                      <p className="text-sm sm:text-base text-slate-700 leading-relaxed font-normal">
+                        {currentSymbol.description}
+                      </p>
+
+                      {currentSymbol.highlight && (
+                        <div className="p-3 rounded-xl bg-amber-50 border border-amber-200/80 flex items-start gap-2.5 text-amber-900 shadow-2xs">
+                          <span className="text-base">💡</span>
+                          <div>
+                            <span className="text-xs font-black uppercase tracking-wider text-amber-800 block">
+                              Regla de Oro en la Vía:
+                            </span>
+                            <span className="text-xs sm:text-sm font-bold text-amber-900">
+                              {currentSymbol.highlight}
                             </span>
                           </div>
-                        )}
-                      </div>
+                        </div>
+                      )}
                     </div>
-                  ))}
+                  </div>
+                )}
+              </div>
+
+              {/* LISTADO COMPLETO DE TODOS LOS SÍMBOLOS CONTENIDOS EN ESTA CASILLA */}
+              <div className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <h4 className="text-sm sm:text-base font-black uppercase tracking-wider text-[#0a193b] flex items-center gap-2">
+                    <span className="w-2.5 h-2.5 rounded-full bg-[#0066ff] animate-pulse"></span>
+                    <span>Todos los Símbolos Contenidos ({guideRecs.length})</span>
+                  </h4>
+                  <span className="text-xs font-bold text-slate-500">
+                    Haz clic en cualquiera para enfocarlo
+                  </span>
+                </div>
+
+                <div className="grid grid-cols-1 gap-3">
+                  {guideRecs.map((rec: KeyRecommendation, idx: number) => {
+                    const isSelected = selectedSymbolIndex === idx;
+
+                    return (
+                      <div
+                        key={rec.id || idx}
+                        onClick={() => setSelectedSymbolIndex(idx)}
+                        className={`rounded-2xl p-4 sm:p-5 border-2 transition-all cursor-pointer flex flex-col sm:flex-row gap-4 items-start ${
+                          isSelected
+                            ? 'bg-blue-50/50 border-[#0057d9] shadow-md ring-2 ring-blue-400/20'
+                            : 'bg-white border-slate-200 hover:border-blue-300 hover:shadow-xs'
+                        }`}
+                      >
+                        {/* Logo oficial */}
+                        <RecommendationLogo
+                          recommendation={rec}
+                          size="lg"
+                          index={idx}
+                        />
+
+                        {/* Descripción y reglas */}
+                        <div className="flex-1 min-w-0 space-y-2">
+                          <div className="flex items-start justify-between gap-2">
+                            <div className="flex items-center gap-2">
+                              <CheckCircle2 className={`w-5 h-5 shrink-0 ${isSelected ? 'text-blue-600' : 'text-emerald-600'}`} />
+                              <h5 className="text-base sm:text-lg font-black text-[#0a193b] leading-snug">
+                                {rec.title}
+                              </h5>
+                            </div>
+                            {isSelected && (
+                              <span className="text-[10px] font-black uppercase px-2 py-0.5 rounded-md bg-[#0057d9] text-white shrink-0">
+                                En Foco
+                              </span>
+                            )}
+                          </div>
+
+                          <p className="text-sm sm:text-base text-slate-600 leading-relaxed pl-7">
+                            {rec.description}
+                          </p>
+
+                          {rec.highlight && (
+                            <div className="pl-7 pt-1">
+                              <span className="inline-flex items-center gap-2 text-xs sm:text-sm font-bold text-[#0055d4] bg-blue-50 px-3 py-1 rounded-lg border border-blue-200/80">
+                                <span>💡</span>
+                                <span>{rec.highlight}</span>
+                              </span>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    );
+                  })}
                 </div>
               </div>
 
-              <button
-                onClick={() => setSelectedGuide(null)}
-                className="w-full py-3.5 rounded-xl bg-[#0a193b] hover:bg-[#0055d4] text-white text-base font-bold transition-colors shadow-sm cursor-pointer"
-              >
-                Cerrar Guía
-              </button>
+              {/* Guía Visual e Infografía con opción Zoom HD */}
+              {selectedGuide.image && (
+                <div className="space-y-2 pt-2">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs sm:text-sm font-black uppercase tracking-wider text-slate-700">
+                      Lámina Oficial de Señalización (Gráfico de Referencia)
+                    </span>
+                    <button
+                      onClick={() => setLightboxImage({ src: selectedGuide.image, title: selectedGuide.title, category: selectedGuide.badge })}
+                      className="text-xs font-bold text-[#0057d9] hover:text-blue-700 flex items-center gap-1 cursor-pointer"
+                    >
+                      <Maximize2 className="w-3.5 h-3.5" />
+                      <span>Ver a Pantalla Completa</span>
+                    </button>
+                  </div>
+
+                  <div 
+                    onClick={() => setLightboxImage({ src: selectedGuide.image, title: selectedGuide.title, category: selectedGuide.badge })}
+                    className="relative h-64 sm:h-80 bg-slate-50 w-full rounded-2xl overflow-hidden border border-slate-200 shadow-xs group cursor-zoom-in"
+                  >
+                    <img
+                      src={selectedGuide.image}
+                      alt={selectedGuide.title}
+                      referrerPolicy="no-referrer"
+                      className="w-full h-full object-contain bg-white p-3 sm:p-4 group-hover:scale-[1.02] transition-transform duration-300"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent pointer-events-none" />
+                    
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setLightboxImage({ src: selectedGuide.image, title: selectedGuide.title, category: selectedGuide.badge });
+                      }}
+                      className="absolute top-3 right-3 px-3 py-1.5 rounded-xl bg-slate-950/85 hover:bg-blue-600 text-white text-xs font-bold flex items-center gap-1.5 shadow-md backdrop-blur-md border border-white/20 transition cursor-pointer z-10"
+                    >
+                      <Maximize2 className="w-3.5 h-3.5" />
+                      <span>Ampliar en HD</span>
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              {/* Normas y Directrices del Módulo */}
+              {selectedGuide.details && selectedGuide.details.length > 0 && (
+                <div className="p-5 rounded-2xl bg-slate-50 border border-slate-200/90 space-y-2.5">
+                  <h4 className="text-sm font-black uppercase tracking-wider text-slate-800 flex items-center gap-2">
+                    <ShieldCheck className="w-4 h-4 text-blue-600" />
+                    <span>Pautas y Normativas Clave:</span>
+                  </h4>
+                  <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-1">
+                    {selectedGuide.details.map((detail: string, dIdx: number) => (
+                      <li key={dIdx} className="text-xs sm:text-sm text-slate-700 flex items-start gap-2 bg-white p-2.5 rounded-xl border border-slate-200/70 shadow-2xs">
+                        <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
+                        <span>{detail}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+
+              {/* Botón de cierre y acción */}
+              <div className="flex flex-col sm:flex-row gap-3 pt-2">
+                <button
+                  onClick={() => setSelectedGuide(null)}
+                  className="flex-1 py-3.5 rounded-xl bg-[#0a193b] hover:bg-[#0055d4] text-white text-base font-bold transition-colors shadow-sm cursor-pointer text-center"
+                >
+                  Cerrar Guía
+                </button>
+                {onNavigateToEducation && (
+                  <button
+                    onClick={() => {
+                      setSelectedGuide(null);
+                      onNavigateToEducation();
+                    }}
+                    className="py-3.5 px-6 rounded-xl bg-amber-400 hover:bg-amber-300 text-slate-950 font-black text-sm sm:text-base transition-colors shadow-sm cursor-pointer flex items-center justify-center gap-2"
+                  >
+                    <Gamepad2 className="w-4 h-4" />
+                    <span>Practicar en Juegos Viales</span>
+                  </button>
+                )}
+              </div>
             </div>
           </div>
         );
