@@ -585,8 +585,8 @@ export const EducationScreen: React.FC = () => {
         {/* NAVEGACIÓN DIDÁCTICA POR FORMATO (Zero aburrimiento, alta interacción) */}
         <div className="flex items-center gap-2 overflow-x-auto pb-2 border-b border-slate-200/80 pt-2">
           {[
-            { id: 'juegos', label: '🎮 Juegos Educaplay', icon: Gamepad2, count: '6 Juegos', isSpecial: true },
-            { id: 'videos', label: 'Videoteca Vial', icon: Video, count: `${DIDACTIC_VIDEOS.length} Videos` },
+            { id: 'juegos', label: '🎮 Retos & Juegos Viales', icon: Gamepad2, count: '6 Juegos', isSpecial: true },
+            { id: 'videos', label: '🎬 Videoteca Vial Explicada', icon: Video, count: `${DIDACTIC_VIDEOS.length} Videos`, isSpecial: true },
             { id: 'cursos', label: 'Cursos & Módulos', icon: BookOpen, count: `${COURSES_DATA.length} Cursos` },
             { id: 'infografias', label: 'Infografías & Guías', icon: FileText, count: `${DIDACTIC_INFOGRAPHICS.length} Guías` },
             { id: 'simulador', label: 'Simulador "¿Qué harías?"', icon: Compass, count: `${ROAD_SCENARIOS.length} Casos` },
@@ -795,7 +795,7 @@ export const EducationScreen: React.FC = () => {
 
       {/* ========================================================================= */}
       {/* ========================================================================= */}
-      {/* VISTA 2: VIDEOTECA DIDÁCTICA REAL (YOUTUBE EMBEDS Y CÁPSULAS VIALES)      */}
+      {/* VISTA 2: VIDEOTECA VIAL DIDÁCTICA (LLAMATIVA Y EXPLICADA CON COLORES FUERTES) */}
       {/* ========================================================================= */}
       {activeTab === 'videos' && (() => {
         const filteredVideos = DIDACTIC_VIDEOS.filter((video) => {
@@ -803,161 +803,462 @@ export const EducationScreen: React.FC = () => {
           return video.topic === videoTopicFilter;
         });
 
-        const topicBadges: { id: 'Todos' | VideoTopicType; label: string; icon: string; count: number }[] = [
-          { id: 'Todos', label: 'Todos los Videos', icon: '🎬', count: DIDACTIC_VIDEOS.length },
-          { id: 'Tráfico', label: 'Tráfico & Congestión', icon: '🚦', count: DIDACTIC_VIDEOS.filter(v => v.topic === 'Tráfico').length },
-          { id: 'Tránsito', label: 'Tránsito & Normativa', icon: '🚸', count: DIDACTIC_VIDEOS.filter(v => v.topic === 'Tránsito').length },
-          { id: 'Prevención', label: 'Prevención & Reflejos', icon: '🛡️', count: DIDACTIC_VIDEOS.filter(v => v.topic === 'Prevención').length },
-          { id: 'Movilidad', label: 'Movilidad Sostenible', icon: '🚲', count: DIDACTIC_VIDEOS.filter(v => v.topic === 'Movilidad').length },
+        const topicBadges: { 
+          id: 'Todos' | VideoTopicType; 
+          label: string; 
+          icon: string; 
+          count: number;
+          activeClass: string;
+        }[] = [
+          { 
+            id: 'Todos', 
+            label: 'Todos los Videos', 
+            icon: '🎬', 
+            count: DIDACTIC_VIDEOS.length,
+            activeClass: 'bg-gradient-to-r from-slate-900 via-[#0a193b] to-blue-900 text-white border-blue-600 shadow-lg shadow-blue-950/30'
+          },
+          { 
+            id: 'Tráfico', 
+            label: 'Tráfico & Congestión', 
+            icon: '🚦', 
+            count: DIDACTIC_VIDEOS.filter(v => v.topic === 'Tráfico').length,
+            activeClass: 'bg-gradient-to-r from-amber-500 to-orange-500 text-slate-950 font-black border-amber-300 shadow-lg shadow-amber-500/30'
+          },
+          { 
+            id: 'Tránsito', 
+            label: 'Tránsito & Normativa', 
+            icon: '🚸', 
+            count: DIDACTIC_VIDEOS.filter(v => v.topic === 'Tránsito').length,
+            activeClass: 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-black border-blue-400 shadow-lg shadow-blue-500/30'
+          },
+          { 
+            id: 'Prevención', 
+            label: 'Prevención & Reflejos', 
+            icon: '🛡️', 
+            count: DIDACTIC_VIDEOS.filter(v => v.topic === 'Prevención').length,
+            activeClass: 'bg-gradient-to-r from-rose-600 to-red-600 text-white font-black border-rose-400 shadow-lg shadow-rose-500/30'
+          },
+          { 
+            id: 'Movilidad', 
+            label: 'Movilidad Sostenible', 
+            icon: '🚲', 
+            count: DIDACTIC_VIDEOS.filter(v => v.topic === 'Movilidad').length,
+            activeClass: 'bg-gradient-to-r from-emerald-600 to-teal-600 text-white font-black border-emerald-400 shadow-lg shadow-emerald-500/30'
+          },
         ];
 
+        // Color palettes for topics ("Colores Fuertes")
+        const getTopicColors = (topic: VideoTopicType) => {
+          switch (topic) {
+            case 'Tráfico':
+              return {
+                gradient: 'from-amber-500 via-orange-500 to-amber-600',
+                badgeBg: 'bg-amber-500 text-slate-950 font-black',
+                badgeBorder: 'border-amber-400',
+                cardBorder: 'hover:border-amber-400 hover:shadow-xl hover:shadow-amber-500/20',
+                goldenBox: 'bg-gradient-to-r from-amber-500 via-amber-400 to-orange-500 text-slate-950 font-black border border-amber-300 shadow-md',
+                stepBadge: 'bg-amber-500 text-slate-950 font-black',
+                btnGradient: 'bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 text-slate-950 font-black shadow-md shadow-amber-500/30',
+                calloutBg: 'bg-amber-50 border-2 border-amber-300 text-amber-950',
+                pillText: 'text-amber-800'
+              };
+            case 'Tránsito':
+              return {
+                gradient: 'from-blue-600 via-indigo-600 to-cyan-500',
+                badgeBg: 'bg-blue-600 text-white font-black',
+                badgeBorder: 'border-blue-400',
+                cardBorder: 'hover:border-blue-400 hover:shadow-xl hover:shadow-blue-500/20',
+                goldenBox: 'bg-gradient-to-r from-blue-600 via-indigo-600 to-blue-700 text-white font-black border border-blue-400 shadow-md',
+                stepBadge: 'bg-blue-600 text-white font-black',
+                btnGradient: 'bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-black shadow-md shadow-blue-500/30',
+                calloutBg: 'bg-blue-50 border-2 border-blue-300 text-blue-950',
+                pillText: 'text-blue-800'
+              };
+            case 'Prevención':
+              return {
+                gradient: 'from-rose-600 via-red-600 to-pink-600',
+                badgeBg: 'bg-rose-600 text-white font-black',
+                badgeBorder: 'border-rose-400',
+                cardBorder: 'hover:border-rose-400 hover:shadow-xl hover:shadow-rose-500/20',
+                goldenBox: 'bg-gradient-to-r from-rose-600 via-red-600 to-rose-700 text-white font-black border border-rose-400 shadow-md',
+                stepBadge: 'bg-rose-600 text-white font-black',
+                btnGradient: 'bg-gradient-to-r from-rose-600 to-red-600 hover:from-rose-500 hover:to-red-500 text-white font-black shadow-md shadow-rose-500/30',
+                calloutBg: 'bg-rose-50 border-2 border-rose-300 text-rose-950',
+                pillText: 'text-rose-800'
+              };
+            case 'Movilidad':
+            default:
+              return {
+                gradient: 'from-emerald-600 via-teal-600 to-green-600',
+                badgeBg: 'bg-emerald-600 text-white font-black',
+                badgeBorder: 'border-emerald-400',
+                cardBorder: 'hover:border-emerald-400 hover:shadow-xl hover:shadow-emerald-500/20',
+                goldenBox: 'bg-gradient-to-r from-emerald-600 via-teal-600 to-emerald-700 text-white font-black border border-emerald-400 shadow-md',
+                stepBadge: 'bg-emerald-600 text-white font-black',
+                btnGradient: 'bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-black shadow-md shadow-emerald-500/30',
+                calloutBg: 'bg-emerald-50 border-2 border-emerald-300 text-emerald-950',
+                pillText: 'text-emerald-800'
+              };
+          }
+        };
+
+        const heroVideo = filteredVideos[0] || DIDACTIC_VIDEOS[0];
+        const heroColors = getTopicColors(heroVideo.topic);
+
         return (
-          <section className="max-w-6xl mx-auto space-y-7 animate-fade-in">
-            {/* Header */}
-            <div className="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200 shadow-sm flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
-              <div className="space-y-1.5 max-w-2xl">
-                <span className="text-xs font-black text-rose-600 uppercase tracking-wider flex items-center gap-1.5">
-                  <PlayCircle className="w-4 h-4" />
-                  <span>Videoteca Oficial de Tráfico, Tránsito y Prevención</span>
-                </span>
-                <h2 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
-                  Cápsulas en Video de Movilidad y Prevención
-                </h2>
-                <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
-                  Material didáctico verificado de la Agencia Nacional de Seguridad Vial, DGT y organismos internacionales. Cada video incluye puntos clave y un mini-quiz interactivo para sumar puntos.
-                </p>
-              </div>
+          <section className="max-w-6xl mx-auto space-y-8 animate-fade-in">
+            {/* Header de la Videoteca Vial */}
+            <div className="bg-gradient-to-r from-[#0a193b] via-[#0f2b66] to-[#004dc7] rounded-3xl p-6 sm:p-8 text-white border border-white/10 shadow-2xl relative overflow-hidden">
+              <div className="absolute -right-12 -bottom-12 w-64 h-64 bg-rose-500/10 rounded-full blur-3xl pointer-events-none" />
+              <div className="absolute top-0 right-1/4 w-40 h-40 bg-amber-400/10 rounded-full blur-2xl pointer-events-none" />
 
-              <div className="px-4 py-2.5 rounded-2xl bg-rose-50 border border-rose-200 text-rose-700 text-xs font-black flex items-center gap-2 shrink-0">
-                <Video className="w-4 h-4 text-rose-600" />
-                <span>{DIDACTIC_VIDEOS.length} Videos Disponibles</span>
+              <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 relative z-10">
+                <div className="space-y-2 max-w-2xl">
+                  <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/10 backdrop-blur-md text-amber-300 text-xs font-black tracking-wide border border-white/15">
+                    <Sparkles className="w-4 h-4 text-amber-300" />
+                    <span>VIDEOTECA VIAL OFICIAL • EXPLICACIONES CON COLORES FUERTES</span>
+                  </div>
+                  <h2 className="text-2xl sm:text-3xl lg:text-4xl font-black text-white tracking-tight">
+                    Cápsulas en Video de Tráfico, Tránsito y Prevención
+                  </h2>
+                  <p className="text-blue-100 text-xs sm:text-sm leading-relaxed">
+                    Videos oficiales analizados paso a paso. Cada cápsula cuenta con <strong>Regla de Oro en color vivo</strong>, explicación de la física y comportamiento vial, do's & don'ts, y un <strong>Mini-Quiz de comprobación</strong> con puntuación instantánea.
+                  </p>
+                </div>
+
+                <div className="flex flex-col sm:flex-row lg:flex-col gap-3 shrink-0">
+                  <div className="px-5 py-3 rounded-2xl bg-white/10 backdrop-blur-md border border-white/15 text-white flex items-center gap-3">
+                    <Video className="w-5 h-5 text-rose-400" />
+                    <div>
+                      <span className="text-[10px] uppercase font-bold text-blue-200 block">Catálogo Oficial</span>
+                      <span className="text-lg font-black">{DIDACTIC_VIDEOS.length} Cápsulas Verificadas</span>
+                    </div>
+                  </div>
+                  <div className="px-5 py-3 rounded-2xl bg-white/10 backdrop-blur-md border border-white/15 text-white flex items-center gap-3">
+                    <Award className="w-5 h-5 text-amber-300" />
+                    <div>
+                      <span className="text-[10px] uppercase font-bold text-blue-200 block">Evaluación Interactiva</span>
+                      <span className="text-lg font-black">Mini-Quiz en cada video</span>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
 
-            {/* Topic Filter Pills */}
-            <div className="flex flex-wrap gap-2 pt-1">
-              {topicBadges.map((badge) => {
-                const isSelected = videoTopicFilter === badge.id;
-                return (
-                  <button
-                    key={badge.id}
-                    type="button"
-                    onClick={() => setVideoTopicFilter(badge.id)}
-                    className={`px-4 py-2 rounded-2xl text-xs sm:text-sm font-bold flex items-center gap-2 transition-all cursor-pointer border ${
-                      isSelected
-                        ? 'bg-[#0a193b] text-white border-[#0a193b] shadow-md scale-[1.02]'
-                        : 'bg-white text-slate-700 border-slate-200 hover:border-slate-300 hover:bg-slate-50'
-                    }`}
-                  >
-                    <span>{badge.icon}</span>
-                    <span>{badge.label}</span>
-                    <span className={`px-2 py-0.5 rounded-full text-[10px] font-extrabold ${
-                      isSelected ? 'bg-white/20 text-white' : 'bg-slate-100 text-slate-500'
-                    }`}>
-                      {badge.count}
-                    </span>
-                  </button>
-                );
-              })}
-            </div>
-
-            {/* Video Cards Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-7">
-              {filteredVideos.map((video) => (
-                <div
-                  key={video.id}
-                  className="bg-white rounded-3xl border border-slate-200/90 shadow-sm overflow-hidden flex flex-col justify-between hover:shadow-xl hover:border-slate-300 transition-all duration-300 group"
-                >
-                  <div>
-                    {/* Thumbnail with Video Play Overlay */}
-                    <div
-                      onClick={() => {
-                        setSelectedVideoModal(video);
-                        setVideoQuizSelectedOpt(null);
-                        setVideoQuizAnswered(false);
-                      }}
-                      className="relative h-52 sm:h-60 w-full overflow-hidden bg-slate-900 cursor-pointer"
+            {/* BARRA DE FILTROS POR PILARES EN COLORES FUERTES */}
+            <div className="space-y-2">
+              <span className="text-[11px] font-black uppercase text-slate-500 tracking-wider block px-1">
+                Filtrar Cápsulas por Eje Temático:
+              </span>
+              <div className="flex flex-wrap gap-2.5">
+                {topicBadges.map((badge) => {
+                  const isSelected = videoTopicFilter === badge.id;
+                  return (
+                    <button
+                      key={badge.id}
+                      type="button"
+                      onClick={() => setVideoTopicFilter(badge.id)}
+                      className={`px-4 sm:px-5 py-2.5 rounded-2xl text-xs sm:text-sm font-bold flex items-center gap-2.5 transition-all duration-200 cursor-pointer border ${
+                        isSelected
+                          ? `${badge.activeClass} scale-[1.03]`
+                          : 'bg-white text-slate-700 border-slate-200 hover:border-slate-300 hover:bg-slate-50 shadow-xs'
+                      }`}
                     >
-                      <img
-                        src={video.thumbnail}
-                        alt={video.title}
-                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 opacity-90"
-                      />
-                      <div className="absolute inset-0 bg-gradient-to-t from-slate-950/85 via-black/30 to-transparent" />
-                      
-                      {/* Floating Play Button */}
-                      <div className="absolute inset-0 flex items-center justify-center">
-                        <div className="w-16 h-16 rounded-full bg-rose-600 text-white flex items-center justify-center shadow-2xl group-hover:scale-110 group-hover:bg-rose-700 transition-all">
-                          <PlayCircle className="w-10 h-10 fill-white/20" />
+                      <span className="text-base">{badge.icon}</span>
+                      <span>{badge.label}</span>
+                      <span className={`px-2 py-0.5 rounded-full text-[10px] font-black ${
+                        isSelected ? 'bg-black/20 text-white' : 'bg-slate-100 text-slate-600'
+                      }`}>
+                        {badge.count}
+                      </span>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* CÁPSULA ESTRELLA DESTACADA (HERO CARD CON COLORES FUERTES) */}
+            {heroVideo && (
+              <div className="bg-white rounded-3xl border-2 border-slate-200 overflow-hidden shadow-lg transition-all duration-300 hover:shadow-2xl">
+                {/* Accent Top Strip with Topic Gradient */}
+                <div className={`h-3 w-full bg-gradient-to-r ${heroColors.gradient}`} />
+                
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-0">
+                  {/* Left: Big Media Thumbnail with Play Trigger */}
+                  <div 
+                    onClick={() => {
+                      setSelectedVideoModal(heroVideo);
+                      setVideoQuizSelectedOpt(null);
+                      setVideoQuizAnswered(false);
+                    }}
+                    className="lg:col-span-6 relative h-64 sm:h-80 lg:h-full min-h-[280px] bg-slate-950 overflow-hidden cursor-pointer group"
+                  >
+                    <img
+                      src={heroVideo.thumbnail}
+                      alt={heroVideo.title}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 opacity-90"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-black/40 to-transparent" />
+
+                    {/* Floating Glow Play Button */}
+                    <div className="absolute inset-0 flex items-center justify-center">
+                      <div className="w-20 h-20 rounded-full bg-white text-slate-950 flex items-center justify-center shadow-2xl group-hover:scale-110 transition-all duration-300">
+                        <PlayCircle className="w-12 h-12 fill-rose-600 text-white" />
+                      </div>
+                    </div>
+
+                    {/* Floating Badges */}
+                    <div className="absolute top-4 left-4 flex flex-wrap items-center gap-2">
+                      <span className={`px-3.5 py-1 rounded-full text-xs font-black shadow-lg ${heroColors.badgeBg}`}>
+                        {heroVideo.topic}
+                      </span>
+                      <span className="px-3 py-1 rounded-full bg-black/75 backdrop-blur-md text-amber-300 text-xs font-black shadow-md border border-white/10">
+                        {heroVideo.highlightTag}
+                      </span>
+                    </div>
+
+                    <div className="absolute top-4 right-4 px-3 py-1 rounded-xl bg-black/80 backdrop-blur-md text-white text-xs font-bold flex items-center gap-1.5 border border-white/10">
+                      <Clock className="w-3.5 h-3.5 text-amber-300" />
+                      <span>{heroVideo.duration}</span>
+                    </div>
+
+                    <div className="absolute bottom-4 left-4 right-4 flex items-center justify-between text-xs font-bold text-white/90">
+                      <span className="truncate">{heroVideo.sourceBadge} • {heroVideo.sourceName}</span>
+                      <span className="px-2.5 py-1 rounded-lg bg-rose-600 text-white font-black text-[10px] shrink-0">
+                        {heroVideo.impactMetric}
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Right: Rich Pedagogical Breakdown in Strong Colors */}
+                  <div className="lg:col-span-6 p-6 sm:p-8 flex flex-col justify-between space-y-5 bg-gradient-to-br from-white via-slate-50/50 to-slate-100/50">
+                    <div className="space-y-4">
+                      <div className="flex items-center gap-2">
+                        <span className="px-2.5 py-0.5 rounded-full bg-rose-100 text-rose-700 text-[10px] font-extrabold uppercase tracking-wider">
+                          ⭐ Cápsula Recomendada de la Semana
+                        </span>
+                        <span className="text-xs font-bold text-slate-400">• {heroVideo.category}</span>
+                      </div>
+
+                      <h3 className="text-xl sm:text-2xl font-black text-slate-900 leading-snug">
+                        {heroVideo.title}
+                      </h3>
+
+                      <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
+                        {heroVideo.summary}
+                      </p>
+
+                      {/* Regla de Oro en Color Fuerte */}
+                      <div className={`p-4 rounded-2xl shadow-sm ${heroColors.goldenBox}`}>
+                        <div className="flex items-start gap-2.5">
+                          <Lightbulb className="w-5 h-5 shrink-0 mt-0.5 text-current" />
+                          <div className="space-y-0.5">
+                            <span className="text-[10px] uppercase font-black tracking-wider block opacity-90">
+                              REGLA DE ORO VIAL:
+                            </span>
+                            <p className="text-xs sm:text-sm font-extrabold leading-snug">
+                              {heroVideo.goldenRule}
+                            </p>
+                          </div>
                         </div>
                       </div>
 
-                      {/* Topic Pill */}
-                      <div className="absolute top-3 left-3 flex items-center gap-1.5">
-                        <span className={`px-3 py-1 rounded-full text-white text-[11px] font-black shadow-md ${
-                          video.topic === 'Tráfico' ? 'bg-amber-600' :
-                          video.topic === 'Tránsito' ? 'bg-blue-600' :
-                          video.topic === 'Prevención' ? 'bg-rose-600' : 'bg-emerald-600'
-                        }`}>
-                          {video.topic}
+                      {/* 3 Pasos Explicados */}
+                      <div className="space-y-2 pt-1">
+                        <span className="text-[11px] font-black text-slate-500 uppercase tracking-wider block">
+                          Pasos de Acción Explicados:
                         </span>
-                        <span className="px-2.5 py-1 rounded-full bg-black/60 backdrop-blur-md text-white text-[10px] font-semibold hidden sm:inline">
-                          {video.category}
-                        </span>
-                      </div>
-
-                      <div className="absolute top-3 right-3 px-2.5 py-1 rounded-lg bg-black/75 backdrop-blur-md text-white text-xs font-semibold flex items-center gap-1">
-                        <Clock className="w-3.5 h-3.5 text-slate-300" />
-                        <span>{video.duration}</span>
-                      </div>
-
-                      <div className="absolute bottom-3 left-4 right-4 text-xs font-bold text-white/90 truncate flex items-center gap-2">
-                        <span className="w-2 h-2 rounded-full bg-rose-500 animate-pulse" />
-                        <span>{video.sourceBadge} • {video.sourceName}</span>
+                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                          {heroVideo.solutionSteps.map((step, idx) => (
+                            <div key={idx} className="p-3 rounded-xl bg-white border border-slate-200/90 shadow-2xs space-y-1">
+                              <div className="flex items-center gap-1.5">
+                                <span className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-black shrink-0 ${heroColors.stepBadge}`}>
+                                  {step.stepNumber}
+                                </span>
+                                <h5 className="text-[11px] font-bold text-slate-900 truncate">
+                                  {step.title}
+                                </h5>
+                              </div>
+                              <p className="text-[10px] text-slate-500 line-clamp-2 leading-relaxed">
+                                {step.desc}
+                              </p>
+                            </div>
+                          ))}
+                        </div>
                       </div>
                     </div>
 
-                    {/* Body */}
-                    <div className="p-6 space-y-4">
-                      <h3 className="text-lg sm:text-xl font-bold text-slate-900 group-hover:text-blue-600 transition-colors leading-snug">
-                        {video.title}
-                      </h3>
-                      <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
-                        {video.summary}
-                      </p>
-
-                      {/* Key takeaways pills */}
-                      <div className="pt-2 border-t border-slate-100 space-y-1.5">
-                        <span className="text-[11px] font-black text-slate-400 uppercase tracking-wider block">
-                          Puntos Clave del Video:
-                        </span>
-                        {video.keyTakeaways.slice(0, 2).map((takeaway, idx) => (
-                          <div key={idx} className="flex items-start gap-2 text-xs text-slate-700">
-                            <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0 mt-0.5" />
-                            <span className="line-clamp-2 leading-relaxed">{takeaway}</span>
-                          </div>
-                        ))}
-                      </div>
+                    {/* Action Button */}
+                    <div className="pt-2">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setSelectedVideoModal(heroVideo);
+                          setVideoQuizSelectedOpt(null);
+                          setVideoQuizAnswered(false);
+                        }}
+                        className={`w-full py-4 px-6 rounded-2xl text-xs sm:text-sm font-black transition-all flex items-center justify-center gap-3 cursor-pointer ${heroColors.btnGradient}`}
+                      >
+                        <PlayCircle className="w-5 h-5" />
+                        <span>Ver Cápsula Completa & Responder Quiz Didáctico</span>
+                        <ArrowRight className="w-4 h-4" />
+                      </button>
                     </div>
-                  </div>
-
-                  {/* Footer Action: 100% In-App */}
-                  <div className="p-6 pt-0">
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setSelectedVideoModal(video);
-                        setVideoQuizSelectedOpt(null);
-                        setVideoQuizAnswered(false);
-                      }}
-                      className="w-full py-3.5 px-4 rounded-xl bg-[#0a193b] hover:bg-[#0057d9] text-white text-xs sm:text-sm font-bold transition-all flex items-center justify-center gap-2 cursor-pointer shadow-sm group-hover:shadow-md"
-                    >
-                      <PlayCircle className="w-4 h-4 text-rose-400" />
-                      <span>Ver Video en Pantalla & Responder Mini-Quiz</span>
-                    </button>
                   </div>
                 </div>
-              ))}
+              </div>
+            )}
+
+            {/* GRILLA DE VIDEOS (TODOS EXPLICADOS CON COLORES FUERTES) */}
+            <div className="space-y-3 pt-4">
+              <div className="flex items-center justify-between">
+                <h3 className="text-lg sm:text-xl font-black text-slate-900 flex items-center gap-2">
+                  <span>Todas las Cápsulas Didácticas</span>
+                  <span className="text-xs px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-600 font-bold">
+                    {filteredVideos.length} disponibles
+                  </span>
+                </h3>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-7">
+                {filteredVideos.map((video) => {
+                  const colors = getTopicColors(video.topic);
+
+                  return (
+                    <div
+                      key={video.id}
+                      className={`bg-white rounded-3xl border-2 border-slate-200 shadow-sm overflow-hidden flex flex-col justify-between transition-all duration-300 group ${colors.cardBorder}`}
+                    >
+                      {/* Top colored gradient strip */}
+                      <div className={`h-2.5 w-full bg-gradient-to-r ${colors.gradient}`} />
+
+                      <div>
+                        {/* Thumbnail with Video Play Overlay */}
+                        <div
+                          onClick={() => {
+                            setSelectedVideoModal(video);
+                            setVideoQuizSelectedOpt(null);
+                            setVideoQuizAnswered(false);
+                          }}
+                          className="relative h-52 sm:h-60 w-full overflow-hidden bg-slate-900 cursor-pointer"
+                        >
+                          <img
+                            src={video.thumbnail}
+                            alt={video.title}
+                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 opacity-90"
+                          />
+                          <div className="absolute inset-0 bg-gradient-to-t from-slate-950/85 via-black/35 to-transparent" />
+                          
+                          {/* Floating Play Button */}
+                          <div className="absolute inset-0 flex items-center justify-center">
+                            <div className="w-16 h-16 rounded-full bg-white text-slate-950 flex items-center justify-center shadow-2xl group-hover:scale-110 transition-all">
+                              <PlayCircle className="w-10 h-10 fill-rose-600 text-white" />
+                            </div>
+                          </div>
+
+                          {/* Topic Pill & Highlight Tag */}
+                          <div className="absolute top-3 left-3 flex items-center gap-1.5 flex-wrap">
+                            <span className={`px-3 py-1 rounded-full text-[11px] font-black shadow-md ${colors.badgeBg}`}>
+                              {video.topic}
+                            </span>
+                            <span className="px-2.5 py-1 rounded-full bg-black/75 backdrop-blur-md text-amber-300 text-[10px] font-black border border-white/10">
+                              {video.highlightTag}
+                            </span>
+                          </div>
+
+                          {/* Duration */}
+                          <div className="absolute top-3 right-3 px-2.5 py-1 rounded-lg bg-black/75 backdrop-blur-md text-white text-xs font-semibold flex items-center gap-1 border border-white/10">
+                            <Clock className="w-3.5 h-3.5 text-amber-300" />
+                            <span>{video.duration}</span>
+                          </div>
+
+                          {/* Source & Impact Metric */}
+                          <div className="absolute bottom-3 left-3 right-3 flex items-center justify-between text-xs font-bold text-white/90">
+                            <span className="truncate">{video.sourceBadge} • {video.sourceName}</span>
+                            <span className="px-2 py-0.5 rounded-md bg-rose-600 text-white text-[10px] font-black shrink-0">
+                              {video.impactMetric}
+                            </span>
+                          </div>
+                        </div>
+
+                        {/* Card Body - Thoroughly Explained */}
+                        <div className="p-6 space-y-4">
+                          <h4 className="text-base sm:text-lg font-black text-slate-900 group-hover:text-blue-600 transition-colors leading-snug">
+                            {video.title}
+                          </h4>
+
+                          <p className="text-xs text-slate-600 leading-relaxed">
+                            {video.summary}
+                          </p>
+
+                          {/* REGLA DE ORO EN COLOR FUERTE */}
+                          <div className={`p-3.5 rounded-2xl ${colors.goldenBox}`}>
+                            <div className="flex items-start gap-2">
+                              <Lightbulb className="w-4 h-4 shrink-0 mt-0.5" />
+                              <div className="space-y-0.5">
+                                <span className="text-[9px] uppercase font-black tracking-wider block opacity-90">
+                                  REGLA DE ORO EXPLICADA:
+                                </span>
+                                <p className="text-xs font-bold leading-tight">
+                                  {video.goldenRule}
+                                </p>
+                              </div>
+                            </div>
+                          </div>
+
+                          {/* Pasos de Solución Paso a Paso */}
+                          <div className="space-y-1.5 pt-1">
+                            <span className="text-[10px] font-black text-slate-400 uppercase tracking-wider block">
+                              3 Pasos Clave de la Maniobra:
+                            </span>
+                            <div className="grid grid-cols-1 gap-1.5">
+                              {video.solutionSteps.slice(0, 3).map((step, sIdx) => (
+                                <div key={sIdx} className="flex items-start gap-2 p-2 rounded-xl bg-slate-50 border border-slate-200/80 text-xs">
+                                  <span className={`w-4 h-4 rounded-full flex items-center justify-center text-[10px] font-black shrink-0 mt-0.5 ${colors.stepBadge}`}>
+                                    {step.stepNumber}
+                                  </span>
+                                  <div className="min-w-0">
+                                    <strong className="text-slate-900 block text-[11px]">{step.title}</strong>
+                                    <span className="text-slate-600 text-[10px] leading-tight block line-clamp-1">{step.desc}</span>
+                                  </div>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+
+                          {/* Do vs Don't Chips */}
+                          <div className="pt-2 border-t border-slate-100 flex flex-col gap-1.5 text-[11px]">
+                            <div className="flex items-center gap-1.5 text-emerald-800 font-bold bg-emerald-50 px-2.5 py-1 rounded-lg border border-emerald-200">
+                              <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
+                              <span className="truncate">SÍ: {video.doAndDont.dos[0]}</span>
+                            </div>
+                            <div className="flex items-center gap-1.5 text-rose-800 font-bold bg-rose-50 px-2.5 py-1 rounded-lg border border-rose-200">
+                              <X className="w-3.5 h-3.5 text-rose-600 shrink-0" />
+                              <span className="truncate">NUNCA: {video.doAndDont.donts[0]}</span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Footer Action Button */}
+                      <div className="p-6 pt-0">
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setSelectedVideoModal(video);
+                            setVideoQuizSelectedOpt(null);
+                            setVideoQuizAnswered(false);
+                          }}
+                          className={`w-full py-3.5 px-4 rounded-xl text-xs font-black transition-all flex items-center justify-center gap-2 cursor-pointer ${colors.btnGradient}`}
+                        >
+                          <PlayCircle className="w-4 h-4" />
+                          <span>Ver Video & Resolver Quiz con Explicación</span>
+                        </button>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
             </div>
           </section>
         );
@@ -1442,126 +1743,242 @@ export const EducationScreen: React.FC = () => {
       )}
 
       {/* ========================================================================= */}
-      {/* MODAL 1: REPRODUCTOR DIDÁCTICO DE VIDEO (YOUTUBE EMBED + PREGUNTA)        */}
+      {/* MODAL 1: REPRODUCTOR DIDÁCTICO DE VIDEO (EXPLICACIÓN CON COLORES FUERTES) */}
       {/* ========================================================================= */}
-      {selectedVideoModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-5 bg-slate-950/75 backdrop-blur-sm animate-fade-in">
-          <div className="bg-white rounded-3xl max-w-3xl w-full border border-slate-200 shadow-2xl overflow-hidden flex flex-col max-h-[92vh]">
-            {/* Header */}
-            <div className="p-4 sm:p-5 bg-slate-900 text-white flex items-center justify-between border-b border-slate-800">
-              <div className="flex items-center gap-2.5">
-                <Video className="w-5 h-5 text-rose-500" />
-                <div>
-                  <h3 className="text-sm sm:text-base font-black truncate max-w-md">
-                    {selectedVideoModal.title}
-                  </h3>
-                  <p className="text-[11px] text-slate-400">
-                    <span className="text-rose-400 font-bold">{selectedVideoModal.topic}</span> • {selectedVideoModal.category} • {selectedVideoModal.sourceName} • {selectedVideoModal.duration}
-                  </p>
-                </div>
-              </div>
-              <button
-                type="button"
-                onClick={() => setSelectedVideoModal(null)}
-                className="p-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white transition cursor-pointer"
-              >
-                <X className="w-5 h-5" />
-              </button>
-            </div>
+      {selectedVideoModal && (() => {
+        const modalTopic = selectedVideoModal.topic;
+        const modalHeaderGradient = 
+          modalTopic === 'Tráfico' ? 'bg-gradient-to-r from-amber-500 via-orange-500 to-amber-600 text-slate-950' :
+          modalTopic === 'Tránsito' ? 'bg-gradient-to-r from-blue-600 via-indigo-600 to-cyan-600 text-white' :
+          modalTopic === 'Prevención' ? 'bg-gradient-to-r from-rose-600 via-red-600 to-pink-600 text-white' :
+          'bg-gradient-to-r from-emerald-600 via-teal-600 to-green-600 text-white';
 
-            {/* Video Player 16:9 */}
-            <div className="relative w-full aspect-video bg-black">
-              <iframe
-                src={selectedVideoModal.embedUrl}
-                title={selectedVideoModal.title}
-                className="w-full h-full border-0"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                allowFullScreen
-              />
-            </div>
+        const modalAccentBox = 
+          modalTopic === 'Tráfico' ? 'bg-amber-500/15 border-2 border-amber-400 text-amber-950' :
+          modalTopic === 'Tránsito' ? 'bg-blue-500/15 border-2 border-blue-400 text-blue-950' :
+          modalTopic === 'Prevención' ? 'bg-rose-500/15 border-2 border-rose-400 text-rose-950' :
+          'bg-emerald-500/15 border-2 border-emerald-400 text-emerald-950';
 
-            {/* Content & Mini Quiz */}
-            <div className="p-6 space-y-5 overflow-y-auto flex-1">
-              <div className="p-4 rounded-2xl bg-blue-50/70 border border-blue-100 space-y-2">
-                <h4 className="text-xs font-extrabold uppercase text-blue-900 tracking-wider">
-                  Lo que debes recordar de esta cápsula:
-                </h4>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-1">
-                  {selectedVideoModal.keyTakeaways.map((point, idx) => (
-                    <div key={idx} className="flex items-start gap-2 text-xs text-slate-700">
-                      <CheckCircle2 className="w-3.5 h-3.5 text-blue-600 shrink-0 mt-0.5" />
-                      <span>{point}</span>
+        const modalStepNumber = 
+          modalTopic === 'Tráfico' ? 'bg-amber-500 text-slate-950' :
+          modalTopic === 'Tránsito' ? 'bg-blue-600 text-white' :
+          modalTopic === 'Prevención' ? 'bg-rose-600 text-white' :
+          'bg-emerald-600 text-white';
+
+        return (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-5 bg-slate-950/80 backdrop-blur-md animate-fade-in">
+            <div className="bg-white rounded-3xl max-w-4xl w-full border-2 border-slate-300 shadow-2xl overflow-hidden flex flex-col max-h-[94vh]">
+              {/* Header with Topic-Colored Strong Gradient */}
+              <div className={`p-4 sm:p-5 ${modalHeaderGradient} flex items-center justify-between border-b border-white/20 shadow-sm`}>
+                <div className="flex items-center gap-3 min-w-0">
+                  <div className="w-10 h-10 rounded-2xl bg-black/20 backdrop-blur-md flex items-center justify-center shrink-0">
+                    <Video className="w-5 h-5 text-current" />
+                  </div>
+                  <div className="min-w-0">
+                    <div className="flex items-center gap-2">
+                      <span className="px-2.5 py-0.5 rounded-full bg-black/25 text-[10px] font-black uppercase tracking-wider">
+                        {selectedVideoModal.topic} • {selectedVideoModal.highlightTag}
+                      </span>
+                      <span className="text-[11px] font-bold opacity-80 hidden sm:inline">
+                        {selectedVideoModal.duration}
+                      </span>
                     </div>
-                  ))}
+                    <h3 className="text-sm sm:text-base font-black truncate max-w-xl">
+                      {selectedVideoModal.title}
+                    </h3>
+                  </div>
                 </div>
+                <button
+                  type="button"
+                  onClick={() => setSelectedVideoModal(null)}
+                  className="p-2 rounded-2xl bg-black/20 hover:bg-black/35 text-current transition cursor-pointer shrink-0 ml-2"
+                  title="Cerrar video"
+                >
+                  <X className="w-5 h-5" />
+                </button>
               </div>
 
-              {/* Comprehension Quiz */}
-              <div className="p-5 rounded-2xl bg-slate-50 border border-slate-200 space-y-3">
-                <div className="flex items-center gap-2">
-                  <Lightbulb className="w-4 h-4 text-amber-500" />
-                  <span className="text-xs font-black uppercase tracking-wider text-slate-700">
-                    Pregunta rápida de refuerzo:
-                  </span>
-                </div>
-                <h5 className="text-sm font-bold text-slate-900 leading-snug">
-                  {selectedVideoModal.quizQuestion.question}
-                </h5>
+              {/* Video Player 16:9 (Embedded YouTube No-Cookie) */}
+              <div className="relative w-full aspect-video bg-black shrink-0">
+                <iframe
+                  src={selectedVideoModal.embedUrl}
+                  title={selectedVideoModal.title}
+                  className="w-full h-full border-0"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                />
+              </div>
 
-                <div className="space-y-2 pt-1">
-                  {selectedVideoModal.quizQuestion.options.map((opt, idx) => {
-                    const isSelected = videoQuizSelectedOpt === idx;
-                    const isCorrect = idx === selectedVideoModal.quizQuestion.correctIndex;
-                    let style = 'bg-white border-slate-200 hover:border-blue-300 text-slate-800';
-
-                    if (videoQuizAnswered) {
-                      if (isCorrect) {
-                        style = 'bg-emerald-50 border-emerald-400 text-emerald-950 ring-1 ring-emerald-500 font-bold';
-                      } else if (isSelected && !isCorrect) {
-                        style = 'bg-rose-50 border-rose-400 text-rose-950 font-medium';
-                      } else {
-                        style = 'bg-slate-100 border-slate-200 opacity-60';
-                      }
-                    }
-
-                    return (
-                      <button
-                        key={idx}
-                        type="button"
-                        disabled={videoQuizAnswered}
-                        onClick={() => handleAnswerVideoQuiz(idx, selectedVideoModal.quizQuestion.correctIndex)}
-                        className={`w-full p-3 rounded-xl border text-left text-xs transition-all flex items-center justify-between gap-2 cursor-pointer disabled:cursor-default ${style}`}
-                      >
-                        <span>{opt}</span>
-                        {videoQuizAnswered && isCorrect && (
-                          <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
-                        )}
-                      </button>
-                    );
-                  })}
-                </div>
-
-                {videoQuizAnswered && (
-                  <p className="text-xs text-slate-600 pt-1 leading-relaxed bg-white p-3 rounded-xl border border-slate-200">
-                    <strong>Explicación:</strong> {selectedVideoModal.quizQuestion.explanation}
+              {/* Scrollable Educational Body with Strong Colors */}
+              <div className="p-5 sm:p-7 space-y-6 overflow-y-auto flex-1 bg-slate-50/60">
+                {/* REGLA DE ORO VIAL (COLORES FUERTES) */}
+                <div className={`p-4 sm:p-5 rounded-2xl ${modalAccentBox} shadow-sm space-y-1`}>
+                  <div className="flex items-center gap-2 text-xs font-black uppercase tracking-wider">
+                    <Lightbulb className="w-4 h-4 shrink-0" />
+                    <span>Regla de Oro Inquebrantable de esta Maniobra:</span>
+                  </div>
+                  <p className="text-sm sm:text-base font-extrabold leading-snug">
+                    {selectedVideoModal.goldenRule}
                   </p>
-                )}
-              </div>
-            </div>
+                </div>
 
-            {/* Footer */}
-            <div className="p-4 border-t border-slate-200 bg-slate-50 flex items-center justify-end">
-              <button
-                type="button"
-                onClick={() => setSelectedVideoModal(null)}
-                className="px-5 py-2.5 rounded-xl bg-slate-900 hover:bg-[#0057d9] text-white text-xs font-bold transition cursor-pointer"
-              >
-                Cerrar Reproductor
-              </button>
+                {/* ¿POR QUÉ OCURRE ESTE PROBLEMA? (EXPLICACIÓN PEDAGÓGICA) */}
+                <div className="p-4 sm:p-5 rounded-2xl bg-white border-2 border-slate-200 shadow-2xs space-y-2">
+                  <div className="flex items-center gap-2">
+                    <Info className="w-4 h-4 text-blue-600 shrink-0" />
+                    <h4 className="text-xs sm:text-sm font-black uppercase tracking-wider text-slate-900">
+                      ¿Por qué ocurre este fenómeno en las vías públicas?
+                    </h4>
+                  </div>
+                  <p className="text-xs sm:text-sm text-slate-700 leading-relaxed font-medium">
+                    {selectedVideoModal.whyItHappens}
+                  </p>
+                </div>
+
+                {/* PASOS DIDÁCTICOS EXPLICADOS */}
+                <div className="space-y-2.5">
+                  <h4 className="text-xs sm:text-sm font-black uppercase tracking-wider text-slate-900 flex items-center gap-2">
+                    <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+                    <span>Pasos de Actuación Correcta Explicados:</span>
+                  </h4>
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                    {selectedVideoModal.solutionSteps.map((step, idx) => (
+                      <div key={idx} className="p-4 rounded-2xl bg-white border-2 border-slate-200/90 shadow-2xs space-y-2">
+                        <div className="flex items-center gap-2">
+                          <span className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-black shrink-0 ${modalStepNumber}`}>
+                            {step.stepNumber}
+                          </span>
+                          <h5 className="text-xs font-black text-slate-900">
+                            {step.title}
+                          </h5>
+                        </div>
+                        <p className="text-xs text-slate-600 leading-relaxed">
+                          {step.desc}
+                        </p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* COMPARATIVA: LO QUE SÍ DEBES HACER (VERDE FUERTE) VS NUNCA HACER (ROJO FUERTE) */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  {/* SÍ DEBES HACER */}
+                  <div className="p-4 sm:p-5 rounded-2xl bg-emerald-500/10 border-2 border-emerald-500 space-y-3">
+                    <div className="flex items-center gap-2">
+                      <span className="px-2.5 py-1 rounded-lg bg-emerald-600 text-white text-xs font-black uppercase tracking-wider flex items-center gap-1.5">
+                        <Check className="w-3.5 h-3.5" />
+                        <span>Lo que SÍ debes hacer</span>
+                      </span>
+                    </div>
+                    <ul className="space-y-2">
+                      {selectedVideoModal.doAndDont.dos.map((item, dIdx) => (
+                        <li key={dIdx} className="flex items-start gap-2 text-xs text-emerald-950 font-semibold leading-relaxed">
+                          <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
+                          <span>{item}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+
+                  {/* NUNCA DEBES HACER */}
+                  <div className="p-4 sm:p-5 rounded-2xl bg-rose-500/10 border-2 border-rose-500 space-y-3">
+                    <div className="flex items-center gap-2">
+                      <span className="px-2.5 py-1 rounded-lg bg-rose-600 text-white text-xs font-black uppercase tracking-wider flex items-center gap-1.5">
+                        <X className="w-3.5 h-3.5" />
+                        <span>Lo que NUNCA debes hacer</span>
+                      </span>
+                    </div>
+                    <ul className="space-y-2">
+                      {selectedVideoModal.doAndDont.donts.map((item, nIdx) => (
+                        <li key={nIdx} className="flex items-start gap-2 text-rose-950 font-semibold text-xs leading-relaxed">
+                          <X className="w-4 h-4 text-rose-600 shrink-0 mt-0.5" />
+                          <span>{item}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                </div>
+
+                {/* MINI-QUIZ DIDÁCTICO DE COMPROBACIÓN */}
+                <div className="p-5 sm:p-6 rounded-3xl bg-slate-900 text-white space-y-4 shadow-xl border-2 border-slate-800">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2 text-amber-400">
+                      <HelpCircle className="w-5 h-5" />
+                      <span className="text-xs font-black uppercase tracking-wider">
+                        Mini-Quiz de Refuerzo Didáctico:
+                      </span>
+                    </div>
+                    <span className="text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-white/10 text-slate-300">
+                      +100 pts por acierto
+                    </span>
+                  </div>
+
+                  <h5 className="text-sm sm:text-base font-bold text-white leading-snug">
+                    {selectedVideoModal.quizQuestion.question}
+                  </h5>
+
+                  <div className="space-y-2 pt-1">
+                    {selectedVideoModal.quizQuestion.options.map((opt, idx) => {
+                      const isSelected = videoQuizSelectedOpt === idx;
+                      const isCorrect = idx === selectedVideoModal.quizQuestion.correctIndex;
+                      
+                      let btnStyle = 'bg-slate-800/90 hover:bg-slate-700/90 border-slate-700 text-slate-200';
+
+                      if (videoQuizAnswered) {
+                        if (isCorrect) {
+                          btnStyle = 'bg-emerald-600 text-white font-black border-emerald-400 ring-2 ring-emerald-400 shadow-lg shadow-emerald-500/30 scale-[1.01]';
+                        } else if (isSelected && !isCorrect) {
+                          btnStyle = 'bg-rose-600 text-white font-black border-rose-400 ring-2 ring-rose-400';
+                        } else {
+                          btnStyle = 'bg-slate-800/40 border-slate-800 text-slate-500 opacity-50';
+                        }
+                      }
+
+                      return (
+                        <button
+                          key={idx}
+                          type="button"
+                          disabled={videoQuizAnswered}
+                          onClick={() => handleAnswerVideoQuiz(idx, selectedVideoModal.quizQuestion.correctIndex)}
+                          className={`w-full p-3.5 rounded-2xl border text-left text-xs transition-all flex items-center justify-between gap-3 cursor-pointer disabled:cursor-default ${btnStyle}`}
+                        >
+                          <span className="leading-snug">{opt}</span>
+                          {videoQuizAnswered && isCorrect && (
+                            <CheckCircle2 className="w-5 h-5 text-white shrink-0" />
+                          )}
+                        </button>
+                      );
+                    })}
+                  </div>
+
+                  {videoQuizAnswered && (
+                    <div className="p-4 rounded-2xl bg-blue-600 text-white text-xs leading-relaxed space-y-1 shadow-md border border-blue-400">
+                      <span className="font-black uppercase tracking-wider block text-cyan-200">
+                        💡 Explicación Oficial ANSV:
+                      </span>
+                      <p>{selectedVideoModal.quizQuestion.explanation}</p>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Modal Footer */}
+              <div className="p-4 border-t border-slate-200 bg-white flex items-center justify-between">
+                <span className="text-xs font-bold text-slate-500 hidden sm:inline">
+                  {selectedVideoModal.sourceName} • Contenido Didáctico Verificado
+                </span>
+                <button
+                  type="button"
+                  onClick={() => setSelectedVideoModal(null)}
+                  className="px-6 py-2.5 rounded-2xl bg-slate-900 hover:bg-[#0057d9] text-white text-xs font-black transition cursor-pointer ml-auto"
+                >
+                  Cerrar Reproductor
+                </button>
+              </div>
             </div>
           </div>
-        </div>
-      )}
+        );
+      })()}
 
       {/* ========================================================================= */}
       {/* MODAL 2: VISOR DE INFOGRAFÍA COMPLETA                                     */}

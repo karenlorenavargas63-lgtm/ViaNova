@@ -437,7 +437,7 @@ export const EducaplayGamesSuite: React.FC<EducaplayGamesSuiteProps> = ({
           <div className="space-y-2 max-w-xl">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 backdrop-blur-md text-amber-300 text-xs font-black tracking-wide border border-white/10">
               <Sparkles className="w-3.5 h-3.5" />
-              <span>ZONA DE JUEGOS DIDÁCTICOS • ESTILO EDUCAPLAY</span>
+              <span>ZONA DE JUEGOS Y RETOS VIALES • APRENDIZAJE INTERACTIVO</span>
             </div>
             <h2 className="text-2xl sm:text-3xl lg:text-4xl font-black tracking-tight text-white">
               Aprende Jugando: Tráfico, Tránsito y Prevención
