@@ -17,8 +17,7 @@ import {
   Radio,
   Search,
   Loader2,
-  X,
-  ExternalLink
+  X
 } from 'lucide-react';
 import { REALTIME_COLOMBIA_INCIDENTS, RealtimeIncident, COLOMBIA_CITIES, ColombiaCity } from '../data/colombiaPlaces';
 import { CalculatedRoute } from '../services/routingService';
@@ -708,16 +707,6 @@ export const InteractiveMap: React.FC<InteractiveMapProps> = ({
           )}
         </div>
 
-        {/* Quick Launch in Google Maps */}
-        <a
-          href={`https://www.google.com/maps/dir/?api=1&origin=${originCoords[0]},${originCoords[1]}&destination=${destinationCoords[0]},${destinationCoords[1]}&travelmode=driving`}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="w-10 h-10 rounded-xl bg-white hover:bg-blue-50 text-slate-700 hover:text-blue-600 flex items-center justify-center shadow-md border border-slate-200/90 transition-transform active:scale-95 group cursor-pointer"
-          title="Abrir esta ruta directamente en Google Maps"
-        >
-          <ExternalLink className="w-5 h-5 group-hover:scale-110 transition-transform" />
-        </a>
 
         {/* Locate User in Colombia */}
         <button
@@ -884,16 +873,7 @@ export const InteractiveMap: React.FC<InteractiveMapProps> = ({
             <span className="ml-1 text-slate-800 font-bold">Maps</span>
           </div>
           <span className="w-1 h-1 rounded-full bg-slate-300"></span>
-          <a
-            href={`https://www.google.com/maps/dir/?api=1&origin=${originCoords[0]},${originCoords[1]}&destination=${destinationCoords[0]},${destinationCoords[1]}&travelmode=driving`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-[#0055d4] hover:text-[#0040a8] flex items-center gap-1 text-[11px] font-bold hover:underline cursor-pointer"
-            title="Abrir esta ruta en Google Maps"
-          >
-            <span>Ver en Google Maps</span>
-            <ExternalLink className="w-3 h-3" />
-          </a>
+          <span className="text-slate-600 text-[11px] font-semibold">Tráfico en tiempo real</span>
         </div>
 
         <div className="hidden md:flex items-center gap-3 px-3 py-1.5 rounded-xl bg-white/90 backdrop-blur-md border border-slate-200/90 shadow-xs text-[11px] text-slate-600 font-medium">

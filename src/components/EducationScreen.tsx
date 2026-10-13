@@ -14,9 +14,20 @@ import {
   BookOpen,
   X,
   Award,
-  CheckSquare,
-  Square,
-  PlayCircle
+  PlayCircle,
+  Video,
+  FileText,
+  Compass,
+  AlertTriangle,
+  Lightbulb,
+  ExternalLink,
+  ShieldCheck,
+  Maximize2,
+  Bike,
+  Footprints,
+  Scale,
+  Zap,
+  RotateCw
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 
@@ -27,7 +38,19 @@ import roundaboutDiagram from '../assets/images/roundabout_diagram_1788438648636
 import incidentResponseAgent from '../assets/images/incident_response_agent_1788438663707.jpg';
 import pedestrianSafeCrosswalk from '../assets/images/pedestrian_safe_crosswalk_1788876049804.jpg';
 
-// Categories Configuration
+import { 
+  DIDACTIC_VIDEOS, 
+  DidacticVideo, 
+  DIDACTIC_INFOGRAPHICS, 
+  DidacticInfographic, 
+  ROAD_SCENARIOS, 
+  RoadScenario 
+} from '../data/didacticSafetyData';
+
+// Educational Navigation Modes
+export type DidacticSectionType = 'cursos' | 'videos' | 'infografias' | 'simulador' | 'evaluacion';
+
+// Categories Configuration for Courses
 export type CourseCategoryType = 'micromovilidad' | 'peatonal' | 'normativa';
 
 export interface CategoryTabItem {
@@ -89,8 +112,7 @@ export const COURSES_DATA: CourseItem[] = [
       'Identificación de puntos ciegos vehiculares',
       'Uso correcto de luces y cascos certificados',
       'Convivencia con transporte público masivo',
-      'Anticipación a puertas de autos estacionados',
-      'Evaluación práctica de conocimientos viales'
+      'Anticipación a puertas de autos estacionados'
     ]
   },
   {
@@ -176,7 +198,7 @@ export const COURSES_DATA: CourseItem[] = [
   }
 ];
 
-// Módulo 1 base quiz questions with designated correct and incorrect choices
+// Módulo 1 base quiz questions
 interface QuizOptionItem {
   id: string;
   text: string;
@@ -249,60 +271,50 @@ const BASE_QUIZ_QUESTIONS = [
     number: 5,
     category: 'MÓDULO 1: SEÑALIZACIÓN BÁSICA',
     title: 'Evaluación de Conocimientos',
-    question: '¿Qué significa la luz amarilla fija en el semáforo vehicular?',
-    correctText: 'Advertencia de cambio inminente a rojo; detenerse de manera segura.',
+    question: '¿En una glorieta o rotonda, quién tiene la prelación o derecho de paso?',
+    correctText: 'El vehículo que ya se encuentra circulando dentro del anillo de la glorieta.',
     incorrectTexts: [
-      'Acelerar antes de que el semáforo cambie a luz roja.',
-      'Paso libre preferencial para motocicletas.',
-      'Giro obligatorio a la derecha sin parar.',
+      'El vehículo que ingresa a mayor velocidad.',
+      'Siempre el vehículo que viene por la izquierda en la vía de acceso.',
+      'Los vehículos de transporte pesado independientemente de su posición.',
     ],
-    correctExplanation: 'La luz amarilla advierte la conclusión inminente del derecho de paso; se debe detener el vehículo antes de la línea de detención salvo que no pueda hacerse con seguridad.',
+    correctExplanation: 'La regla universal de tránsito otorga prioridad total a los vehículos que ya están dentro de la glorieta para mantener el flujo continuo.',
   },
 ];
 
-// Generates randomized options distributed across A, B, C, D (ensuring questions are never all B)
-const getRandomizedQuizQuestions = (): QuizQuestionItem[] => {
-  const letters = ['A', 'B', 'C', 'D'];
-  const targetPositions = [0, 1, 2, 3, Math.floor(Math.random() * 4)].sort(() => Math.random() - 0.5);
-
-  return BASE_QUIZ_QUESTIONS.map((base, idx) => {
-    const targetIdx = targetPositions[idx % targetPositions.length];
-    const shuffledIncorrect = [...base.incorrectTexts].sort(() => Math.random() - 0.5);
-
-    const options: QuizOptionItem[] = [];
-    let incIdx = 0;
-
-    for (let i = 0; i < 4; i++) {
-      if (i === targetIdx) {
-        options.push({
-          id: letters[i],
-          text: base.correctText,
-          isCorrect: true,
-        });
-      } else {
-        options.push({
-          id: letters[i],
-          text: shuffledIncorrect[incIdx++],
-          isCorrect: false,
-        });
-      }
+function buildRandomizedQuestions(): QuizQuestionItem[] {
+  return BASE_QUIZ_QUESTIONS.map((item) => {
+    const rawOptions = [
+      { text: item.correctText, isCorrect: true },
+      ...item.incorrectTexts.map((txt) => ({ text: txt, isCorrect: false })),
+    ];
+    for (let i = rawOptions.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [rawOptions[i], rawOptions[j]] = [rawOptions[j], rawOptions[i]];
     }
-
+    const letters = ['A', 'B', 'C', 'D'];
+    const options: QuizOptionItem[] = rawOptions.map((opt, idx) => ({
+      id: letters[idx],
+      text: opt.text,
+      isCorrect: opt.isCorrect,
+    }));
     return {
-      number: base.number,
-      category: base.category,
-      title: base.title,
-      question: base.question,
+      number: item.number,
+      category: item.category,
+      title: item.title,
+      question: item.question,
       options,
-      correctExplanation: base.correctExplanation,
+      correctExplanation: item.correctExplanation,
     };
   });
-};
+}
 
 export const EducationScreen: React.FC = () => {
+  // Navigation tabs for didactic formats
+  const [activeTab, setActiveTab] = useState<DidacticSectionType>('cursos');
   const [selectedCategory, setSelectedCategory] = useState<CourseCategoryType>('micromovilidad');
 
-  // Track progress of each course in state and localStorage
+  // Track progress of courses
   const [coursesProgress, setCoursesProgress] = useState<Record<string, number>>(() => {
     try {
       const saved = localStorage.getItem('vianova_courses_progress');
@@ -318,7 +330,6 @@ export const EducationScreen: React.FC = () => {
     };
   });
 
-  // Track completed lessons inside each course
   const [completedLessons, setCompletedLessons] = useState<Record<string, string[]>>(() => {
     try {
       const saved = localStorage.getItem('vianova_completed_lessons');
@@ -327,174 +338,79 @@ export const EducationScreen: React.FC = () => {
     return {};
   });
 
-  // Active modal for studying a course module
+  // Modals for Interactive Content
   const [activeCourseModal, setActiveCourseModal] = useState<CourseItem | null>(null);
+  const [selectedVideoModal, setSelectedVideoModal] = useState<DidacticVideo | null>(null);
+  const [selectedInfographicModal, setSelectedInfographicModal] = useState<DidacticInfographic | null>(null);
 
-  // Quiz evaluation state (Module 1)
-  const [quizQuestions, setQuizQuestions] = useState<QuizQuestionItem[]>(() => getRandomizedQuizQuestions());
+  // Video mini-quiz state
+  const [videoQuizSelectedOpt, setVideoQuizSelectedOpt] = useState<number | null>(null);
+  const [videoQuizAnswered, setVideoQuizAnswered] = useState<boolean>(false);
+
+  // Road Simulator state
+  const [scenarioIndex, setScenarioIndex] = useState<number>(0);
+  const [scenarioSelectedOpt, setScenarioSelectedOpt] = useState<string | null>(null);
+  const [scenarioSubmitted, setScenarioSubmitted] = useState<boolean>(false);
+  const [scenarioScore, setScenarioScore] = useState<number>(0);
+
+  // Knowledge Quiz state
+  const [quizQuestions, setQuizQuestions] = useState<QuizQuestionItem[]>(() => buildRandomizedQuestions());
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState<number>(0);
-  const [userAnswers, setUserAnswers] = useState<Record<number, { selectedOption: string | null; isSubmitted: boolean; isCorrect: boolean }>>({});
+  const [selectedOption, setSelectedOption] = useState<string | null>(null);
+  const [isAnswerSubmitted, setIsAnswerSubmitted] = useState<boolean>(false);
+  const [userAnswers, setUserAnswers] = useState<Record<number, { selectedId: string; isCorrect: boolean; isSubmitted: boolean }>>({});
   const [quizCompleted, setQuizCompleted] = useState<boolean>(false);
 
-  // Sync courses progress to localStorage
-  useEffect(() => {
-    try {
-      localStorage.setItem('vianova_courses_progress', JSON.stringify(coursesProgress));
-    } catch (_) {}
-  }, [coursesProgress]);
-
-  // Sync completed lessons to localStorage
-  useEffect(() => {
-    try {
-      localStorage.setItem('vianova_completed_lessons', JSON.stringify(completedLessons));
-    } catch (_) {}
-  }, [completedLessons]);
-
-  // Helper to update progress of any course
-  const updateCourseProgress = (courseId: string, progress: number) => {
-    const clamped = Math.min(100, Math.max(0, Math.round(progress)));
-    setCoursesProgress((prev) => ({
-      ...prev,
-      [courseId]: clamped,
-    }));
-  };
-
-  // Calculate Global Progress based on the average of all courses
+  // Compute Global Progress
   const totalCourses = COURSES_DATA.length;
-  const globalProgress = Math.round(
-    COURSES_DATA.reduce((sum, c) => sum + (coursesProgress[c.id] || 0), 0) / totalCourses
-  );
+  const progressSum = (Object.values(coursesProgress) as number[]).reduce((acc: number, curr: number) => acc + (curr || 0), 0);
+  const globalProgress = Math.round(progressSum / totalCourses);
+  const completedCoursesCount = (Object.values(coursesProgress) as number[]).filter((p) => p === 100).length;
 
-  const completedCoursesCount = COURSES_DATA.filter((c) => (coursesProgress[c.id] || 0) >= 100).length;
-
-  const getGlobalLevel = (progress: number) => {
-    if (progress === 0) return 'Nivel Inicial';
-    if (progress < 25) return 'Nivel Principiante';
-    if (progress < 50) return 'Nivel Aprendiz';
-    if (progress < 75) return 'Nivel Intermedio';
-    if (progress < 100) return 'Nivel Avanzado';
-    return 'Experto Vial Certificado';
-  };
-
-  // Scroll to Módulo 1 Quiz smoothly
-  const scrollToQuiz = () => {
-    const el = document.getElementById('evaluacion-conocimientos');
-    if (el) {
-      el.scrollIntoView({ behavior: 'smooth' });
-    }
-  };
-
-  // Handle Starting Course 1 (Navegación Urbana Segura)
-  const handleStartCourse1 = () => {
-    // If not started yet, advance to 15% immediately so user sees immediate progress
-    if (!coursesProgress['course_1'] || coursesProgress['course_1'] === 0) {
-      updateCourseProgress('course_1', 15);
-    }
-    scrollToQuiz();
-  };
-
-  // Handle Quiz Answers & Auto Progression
-  const totalQuestions = quizQuestions.length;
-  const currentQ = quizQuestions[currentQuestionIndex] || quizQuestions[0];
-  const currentAnswer = userAnswers[currentQuestionIndex];
-  const selectedOption = currentAnswer?.selectedOption || null;
-  const isAnswerSubmitted = currentAnswer?.isSubmitted || false;
-
-  const handleSelectOption = (optionId: string) => {
-    if (!isAnswerSubmitted) {
-      setUserAnswers((prev) => ({
-        ...prev,
-        [currentQuestionIndex]: {
-          selectedOption: optionId,
-          isSubmitted: false,
-          isCorrect: false,
-        },
-      }));
-    }
-  };
-
-  const handleAnswerSubmit = () => {
-    if (!selectedOption) return;
-    const correct = currentQ.options.find((o) => o.id === selectedOption)?.isCorrect || false;
-    const updated = {
-      ...userAnswers,
-      [currentQuestionIndex]: {
-        selectedOption,
-        isSubmitted: true,
-        isCorrect: correct,
-      },
-    };
-    setUserAnswers(updated);
-
-    // Dynamic progression: each answered question increases Course 1 and Global Progress
-    const answeredCount = Object.keys(updated).filter((k) => updated[Number(k)]?.isSubmitted).length;
-    // 1 answered: 32%, 2: 49%, 3: 66%, 4: 83%, 5: 95% (or 100% when finished)
-    const newCourseProgress = Math.min(95, Math.max(15, 15 + answeredCount * 17));
-    updateCourseProgress('course_1', newCourseProgress);
-  };
-
-  const handleNextQuestion = () => {
-    if (currentQuestionIndex < totalQuestions - 1) {
-      setCurrentQuestionIndex(currentQuestionIndex + 1);
-    } else {
-      setQuizCompleted(true);
-      // Course 1 is 100% completed
-      updateCourseProgress('course_1', 100);
+  const updateCourseProgress = (courseId: string, percentage: number) => {
+    setCoursesProgress((prev) => {
+      const next = { ...prev, [courseId]: percentage };
       try {
-        confetti({
-          particleCount: 90,
-          spread: 70,
-          origin: { y: 0.6 },
-        });
-      } catch (err) {
-        // Fallback
-      }
-    }
-  };
-
-  const handlePrevQuestion = () => {
-    if (currentQuestionIndex > 0) {
-      setCurrentQuestionIndex(currentQuestionIndex - 1);
-    }
-  };
-
-  const handleRestartQuiz = () => {
-    setQuizQuestions(getRandomizedQuizQuestions());
-    setCurrentQuestionIndex(0);
-    setUserAnswers({});
-    setQuizCompleted(false);
-    updateCourseProgress('course_1', 15);
-  };
-
-  // Toggle a lesson as completed inside the modal
-  const handleToggleLesson = (courseId: string, lessonTitle: string, totalCourseLessons: number) => {
-    const currentList = completedLessons[courseId] || [];
-    const isAlreadyDone = currentList.includes(lessonTitle);
-
-    let updatedList: string[];
-    if (isAlreadyDone) {
-      updatedList = currentList.filter((l) => l !== lessonTitle);
-    } else {
-      updatedList = [...currentList, lessonTitle];
-    }
-
-    setCompletedLessons((prev) => ({
-      ...prev,
-      [courseId]: updatedList,
-    }));
-
-    // Calculate new progress for this course
-    const newPercent = Math.round((updatedList.length / totalCourseLessons) * 100);
-    updateCourseProgress(courseId, newPercent);
-
-    if (newPercent === 100) {
-      try {
-        confetti({ particleCount: 50, spread: 60, origin: { y: 0.7 } });
+        localStorage.setItem('vianova_courses_progress', JSON.stringify(next));
       } catch (_) {}
-    }
+      return next;
+    });
   };
 
-  // Mark an entire module as 100% completed
+  const getGlobalLevel = (pct: number) => {
+    if (pct >= 85) return 'Experto en Movilidad Vial';
+    if (pct >= 50) return 'Conductor / Ciclista Avanzado';
+    if (pct >= 25) return 'Nivel Intermedio en Vía';
+    if (pct > 0) return 'Nivel Inicial en Progreso';
+    return 'Principiante';
+  };
+
+  // Lesson toggle handler
+  const handleToggleLesson = (courseId: string, lessonTitle: string, totalCount: number) => {
+    setCompletedLessons((prev) => {
+      const current = prev[courseId] || [];
+      const isAlreadyDone = current.includes(lessonTitle);
+      const updated = isAlreadyDone
+        ? current.filter((item) => item !== lessonTitle)
+        : [...current, lessonTitle];
+
+      const pct = Math.round((updated.length / totalCount) * 100);
+      updateCourseProgress(courseId, pct);
+
+      if (!isAlreadyDone && updated.length === totalCount) {
+        try {
+          confetti({ particleCount: 70, spread: 60, origin: { y: 0.6 } });
+        } catch (_) {}
+      }
+
+      const nextState = { ...prev, [courseId]: updated };
+      try {
+        localStorage.setItem('vianova_completed_lessons', JSON.stringify(nextState));
+      } catch (_) {}
+      return nextState;
+    });
+  };
+
   const handleCompleteAllLessons = (course: CourseItem) => {
     setCompletedLessons((prev) => ({
       ...prev,
@@ -506,31 +422,124 @@ export const EducationScreen: React.FC = () => {
     } catch (_) {}
   };
 
-  // Filtered courses based strictly on selected category
-  const filteredCourses = COURSES_DATA.filter((course) => course.categoryKey === selectedCategory);
+  // Video Quiz Handlers
+  const handleAnswerVideoQuiz = (optIdx: number, correctIdx: number) => {
+    setVideoQuizSelectedOpt(optIdx);
+    setVideoQuizAnswered(true);
+    if (optIdx === correctIdx) {
+      try {
+        confetti({ particleCount: 40, spread: 50, origin: { y: 0.7 } });
+      } catch (_) {}
+    }
+  };
+
+  // Simulator Handlers
+  const currentScenario = ROAD_SCENARIOS[scenarioIndex];
+  const handleSelectScenarioOption = (optId: string) => {
+    if (scenarioSubmitted) return;
+    setScenarioSelectedOpt(optId);
+  };
+
+  const handleSubmitScenarioDecision = () => {
+    if (!scenarioSelectedOpt) return;
+    setScenarioSubmitted(true);
+    const chosen = currentScenario.options.find((o) => o.id === scenarioSelectedOpt);
+    if (chosen?.isCorrect) {
+      setScenarioScore((prev) => prev + 1);
+      try {
+        confetti({ particleCount: 60, spread: 60, origin: { y: 0.6 } });
+      } catch (_) {}
+    }
+  };
+
+  const handleNextScenario = () => {
+    setScenarioSubmitted(false);
+    setScenarioSelectedOpt(null);
+    setScenarioIndex((prev) => (prev + 1) % ROAD_SCENARIOS.length);
+  };
+
+  // Knowledge Quiz Handlers
+  const currentQ = quizQuestions[currentQuestionIndex];
+  const totalQuestions = quizQuestions.length;
+
+  const handleSelectOption = (id: string) => {
+    if (isAnswerSubmitted) return;
+    setSelectedOption(id);
+  };
+
+  const handleAnswerSubmit = () => {
+    if (!selectedOption) return;
+    const opt = currentQ.options.find((o) => o.id === selectedOption);
+    const isCorrect = !!opt?.isCorrect;
+
+    setUserAnswers((prev) => ({
+      ...prev,
+      [currentQuestionIndex]: {
+        selectedId: selectedOption,
+        isCorrect,
+        isSubmitted: true,
+      },
+    }));
+    setIsAnswerSubmitted(true);
+
+    if (isCorrect) {
+      try {
+        confetti({ particleCount: 45, spread: 60, origin: { y: 0.7 } });
+      } catch (_) {}
+    }
+  };
+
+  const handleNextQuestion = () => {
+    if (currentQuestionIndex < totalQuestions - 1) {
+      const nextIdx = currentQuestionIndex + 1;
+      setCurrentQuestionIndex(nextIdx);
+      const existing = userAnswers[nextIdx];
+      setSelectedOption(existing?.selectedId || null);
+      setIsAnswerSubmitted(!!existing?.isSubmitted);
+    } else {
+      setQuizCompleted(true);
+      updateCourseProgress('course_1', 100);
+      try {
+        confetti({ particleCount: 90, spread: 80, origin: { y: 0.5 } });
+      } catch (_) {}
+    }
+  };
+
+  const handleRestartQuiz = () => {
+    setQuizQuestions(buildRandomizedQuestions());
+    setCurrentQuestionIndex(0);
+    setSelectedOption(null);
+    setIsAnswerSubmitted(false);
+    setUserAnswers({});
+    setQuizCompleted(false);
+  };
+
+  const filteredCourses = COURSES_DATA.filter((c) => c.categoryKey === selectedCategory);
   const activeCategoryInfo = CATEGORY_TABS.find((tab) => tab.id === selectedCategory);
 
   return (
-    <div className="w-full py-8 sm:py-12 space-y-20 animate-fade-in text-slate-800">
+    <div className="w-full py-8 sm:py-12 space-y-14 animate-fade-in text-slate-800">
       
       {/* ========================================================================= */}
-      {/* 1. PRIMERA SECCIÓN: APRENDE MIENTRAS AVANZAS                              */}
+      {/* ENCABEZADO PRINCIPAL DIDÁCTICO & WIDGET DE PROGRESO GLOBAL                */}
       {/* ========================================================================= */}
-      <section className="max-w-6xl mx-auto space-y-8">
-        
-        {/* Header with Title and Global Progress Widget */}
+      <section className="max-w-6xl mx-auto space-y-6">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
           <div className="space-y-3 max-w-2xl">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-100/80 border border-blue-200 text-[#0057d9] text-xs font-bold">
+              <Sparkles className="w-3.5 h-3.5" />
+              <span>Aprende de forma interactiva y práctica</span>
+            </div>
             <h1 className="text-3xl sm:text-4xl font-extrabold text-[#0a193b] tracking-tight">
-              Aprende mientras avanzas
+              Educación y Cultura Vial
             </h1>
             <p className="text-slate-600 text-sm sm:text-base leading-relaxed">
-              Mejora tu conocimiento sobre seguridad vial, micromovilidad y normativas urbanas. A medida que inicias y avanzas en tus cursos, tu progreso global se actualiza en tiempo real.
+              Material interactivo diseñado para todos los actores de la vía: videos didácticos reales, infografías explicativas, simulador de toma de decisiones y cursos prácticos.
             </p>
           </div>
 
-          {/* Top Right Radial Progress Widget: Dynamic & Animated */}
-          <div className="shrink-0 bg-white rounded-2xl p-4 sm:p-5 border-2 border-slate-200/90 shadow-[0_4px_20px_rgba(0,0,0,0.04)] flex items-center gap-4 transition-all">
+          {/* Radial Progress Widget */}
+          <div className="shrink-0 bg-white rounded-3xl p-5 border-2 border-slate-200/90 shadow-[0_4px_20px_rgba(0,0,0,0.04)] flex items-center gap-4 transition-all">
             <div className="relative w-16 h-16 flex items-center justify-center">
               <svg className="w-full h-full -rotate-90" viewBox="0 0 36 36">
                 <path
@@ -558,7 +567,7 @@ export const EducationScreen: React.FC = () => {
               <div className="flex items-center gap-1.5">
                 <p className="text-xs text-slate-500 font-bold uppercase tracking-wider">Progreso Global</p>
                 {globalProgress > 0 && (
-                  <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" title="Progreso activo" />
+                  <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
                 )}
               </div>
               <h4 className="text-sm font-black text-slate-900 mt-0.5">{getGlobalLevel(globalProgress)}</h4>
@@ -569,427 +578,989 @@ export const EducationScreen: React.FC = () => {
           </div>
         </div>
 
-        {/* Category Tabs: Specific Categories Only (Micromovilidad, Seguridad Peatonal, Normativa Urbana) */}
-        <div className="space-y-3.5 pt-1">
-          <div className="flex flex-wrap gap-2.5 sm:gap-3">
-            {CATEGORY_TABS.map((tab) => {
-              const isSelected = selectedCategory === tab.id;
-              const count = COURSES_DATA.filter((c) => c.categoryKey === tab.id).length;
-
-              return (
-                <button
-                  key={tab.id}
-                  type="button"
-                  onClick={() => setSelectedCategory(tab.id)}
-                  className={`px-5 py-2.5 rounded-full text-xs sm:text-sm font-bold transition-all cursor-pointer flex items-center gap-2.5 ${
-                    isSelected
-                      ? 'bg-[#0a193b] text-white shadow-md ring-2 ring-[#0a193b]/20 scale-[1.02]'
-                      : 'bg-white border border-slate-200 text-slate-700 hover:border-slate-300 hover:bg-slate-50'
-                  }`}
-                >
-                  <span>{tab.label}</span>
-                  <span
-                    className={`px-2 py-0.5 rounded-full text-[11px] font-extrabold ${
-                      isSelected ? 'bg-white/20 text-white' : 'bg-slate-100 text-slate-500'
-                    }`}
-                  >
-                    {count} {count === 1 ? 'curso' : 'cursos'}
-                  </span>
-                </button>
-              );
-            })}
-          </div>
-
-          {/* Active Category Description Notice */}
-          {activeCategoryInfo && (
-            <div className="p-3.5 sm:p-4 rounded-2xl bg-blue-50/70 border border-blue-100 flex items-center justify-between gap-4 text-xs text-blue-900 animate-fade-in">
-              <div className="flex items-center gap-2.5">
-                <Info className="w-4 h-4 text-[#0066ff] shrink-0" />
-                <span className="font-medium text-slate-700">{activeCategoryInfo.description}</span>
-              </div>
-              <span className="text-[11px] font-bold text-[#0066ff] shrink-0 hidden sm:inline">
-                Cursos de {activeCategoryInfo.label}
-              </span>
-            </div>
-          )}
-        </div>
-
-        {/* Courses Grid: Displays only the courses that concord with the selected category */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-2">
-          {filteredCourses.map((course) => {
-            const progress = coursesProgress[course.id] || 0;
-
+        {/* NAVEGACIÓN DIDÁCTICA POR FORMATO (Zero aburrimiento, alta interacción) */}
+        <div className="flex items-center gap-2 overflow-x-auto pb-2 border-b border-slate-200/80 pt-2">
+          {[
+            { id: 'cursos', label: 'Cursos & Módulos', icon: BookOpen, count: COURSES_DATA.length },
+            { id: 'videos', label: 'Videoteca Didáctica', icon: Video, count: DIDACTIC_VIDEOS.length },
+            { id: 'infografias', label: 'Infografías & Guías', icon: FileText, count: DIDACTIC_INFOGRAPHICS.length },
+            { id: 'simulador', label: 'Simulador "¿Qué harías?"', icon: Compass, count: ROAD_SCENARIOS.length },
+            { id: 'evaluacion', label: 'Evaluación Rápida', icon: Award, count: 5 }
+          ].map((item) => {
+            const Icon = item.icon;
+            const isCurrent = activeTab === item.id;
             return (
-              <div
-                key={course.id}
-                className="flex flex-col justify-between bg-white rounded-[24px] border border-slate-200/90 shadow-[0_4px_16px_rgba(0,0,0,0.03)] overflow-hidden hover:shadow-[0_8px_24px_rgba(0,0,0,0.06)] hover:border-slate-300 transition-all duration-300"
+              <button
+                key={item.id}
+                type="button"
+                onClick={() => setActiveTab(item.id as DidacticSectionType)}
+                className={`px-4 sm:px-5 py-2.5 rounded-2xl text-xs sm:text-sm font-bold flex items-center gap-2 transition-all whitespace-nowrap cursor-pointer ${
+                  isCurrent
+                    ? 'bg-[#0a193b] text-white shadow-md scale-[1.02]'
+                    : 'bg-white text-slate-700 border border-slate-200 hover:border-slate-300 hover:bg-slate-50'
+                }`}
               >
-                {/* Image section */}
-                <div className="relative h-48 sm:h-52 w-full overflow-hidden bg-slate-100">
-                  <img
-                    src={course.image}
-                    alt={course.title}
-                    className="w-full h-full object-cover"
-                  />
-                  {course.recommended && (
-                    <div className="absolute top-4 left-4 inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/95 backdrop-blur-sm text-[#0066ff] text-[11px] font-bold shadow-sm">
-                      <Sparkles className="w-3.5 h-3.5 text-[#0066ff]" />
-                      <span>Recomendado</span>
-                    </div>
-                  )}
-                  {progress === 100 && (
-                    <div className="absolute top-4 right-4 inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-emerald-600 text-white text-[11px] font-bold shadow-md">
-                      <Check className="w-3.5 h-3.5" />
-                      <span>Completado</span>
-                    </div>
-                  )}
-                </div>
-
-                {/* Content section */}
-                <div className="p-6 sm:p-7 flex flex-col justify-between space-y-4 flex-1">
-                  <div className="space-y-3">
-                    <div className="flex items-center gap-2 flex-wrap">
-                      <span className="px-2.5 py-0.5 rounded-md bg-blue-50 text-[#0066ff] text-xs font-bold">
-                        {course.level}
-                      </span>
-                      <span className="px-2.5 py-0.5 rounded-md bg-slate-100 text-slate-700 text-xs font-semibold">
-                        {course.categoryLabel}
-                      </span>
-                      <span className="flex items-center gap-1 text-slate-500 text-xs font-medium ml-auto">
-                        <Clock className="w-3.5 h-3.5" />
-                        {course.duration}
-                      </span>
-                    </div>
-
-                    <h3 className="text-xl font-bold text-slate-900 tracking-tight">
-                      {course.title}
-                    </h3>
-                    
-                    <p className="text-slate-600 text-xs sm:text-[13px] leading-relaxed">
-                      {course.description}
-                    </p>
-                  </div>
-
-                  <div className="space-y-4 pt-2">
-                    {/* Dynamic Progress Bar */}
-                    <div className="space-y-1.5">
-                      <div className="flex items-center justify-between text-xs">
-                        <span className="text-slate-500 font-medium">Progreso</span>
-                        <span className={`font-bold transition-colors ${progress > 0 ? 'text-[#0066ff]' : 'text-slate-400'}`}>
-                          {progress}%
-                        </span>
-                      </div>
-                      <div className="w-full h-2 bg-slate-100 rounded-full overflow-hidden">
-                        <div
-                          className="h-full bg-[#0066ff] rounded-full transition-all duration-500 ease-out"
-                          style={{ width: `${progress}%` }}
-                        />
-                      </div>
-                    </div>
-
-                    {/* Interactive Action Button */}
-                    {course.id === 'course_1' ? (
-                      <button
-                        onClick={handleStartCourse1}
-                        className="w-full py-3 px-4 rounded-xl bg-[#0a193b] hover:bg-[#07132c] text-white text-xs font-bold transition-all shadow-sm flex items-center justify-center gap-2 cursor-pointer hover:scale-[1.01]"
-                      >
-                        {progress === 0 ? (
-                          <span>Iniciar Curso</span>
-                        ) : progress < 100 ? (
-                          <span>Continuar Curso ({progress}%)</span>
-                        ) : (
-                          <span className="flex items-center gap-1.5 text-emerald-300">
-                            <Check className="w-4 h-4" /> Módulo Completado
-                          </span>
-                        )}
-                      </button>
-                    ) : (
-                      <button
-                        onClick={() => {
-                          if (progress === 0) {
-                            updateCourseProgress(course.id, 25);
-                          }
-                          setActiveCourseModal(course);
-                        }}
-                        className="w-full py-3 px-4 rounded-xl bg-[#0a193b] hover:bg-[#07132c] text-white text-xs font-bold transition-all shadow-sm flex items-center justify-center gap-2 cursor-pointer hover:scale-[1.01]"
-                      >
-                        {progress === 0 ? (
-                          <span>Iniciar Curso</span>
-                        ) : progress < 100 ? (
-                          <span>Continuar Lecciones ({progress}%)</span>
-                        ) : (
-                          <span className="flex items-center gap-1.5 text-emerald-300">
-                            <Check className="w-4 h-4" /> Lecciones Completadas
-                          </span>
-                        )}
-                      </button>
-                    )}
-                  </div>
-                </div>
-              </div>
+                <Icon className={`w-4 h-4 ${isCurrent ? 'text-blue-300' : 'text-blue-600'}`} />
+                <span>{item.label}</span>
+                <span className={`px-2 py-0.5 rounded-full text-[10px] font-extrabold ${
+                  isCurrent ? 'bg-white/20 text-white' : 'bg-slate-100 text-slate-500'
+                }`}>
+                  {item.count}
+                </span>
+              </button>
             );
           })}
         </div>
       </section>
 
       {/* ========================================================================= */}
-      {/* 2. SEGUNDA SECCIÓN: EVALUACIÓN DE CONOCIMIENTOS (Exactamente como Imagen 2) */}
+      {/* VISTA 1: CURSOS & MÓDULOS DE APRENDIZAJE                                   */}
       {/* ========================================================================= */}
-      <section id="evaluacion-conocimientos" className="max-w-4xl mx-auto space-y-8 pt-8 border-t border-slate-200/80">
-        
-        {/* Module Header Bar */}
-        <div className="space-y-4">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-            <div>
-              <p className="text-xs font-bold uppercase tracking-wider text-[#0066ff]">
-                {currentQ.category}
-              </p>
-              <h2 className="text-2xl sm:text-3xl font-extrabold text-[#0a193b] tracking-tight">
-                {currentQ.title}
-              </h2>
-            </div>
-
-            {/* Question indicators / Direct jump pills */}
-            <div className="flex items-center gap-1.5 bg-slate-100/90 p-1.5 rounded-2xl border border-slate-200 self-start sm:self-auto">
-              <span className="text-[11px] font-bold text-slate-500 px-2">Pregunta:</span>
-              {quizQuestions.map((q, idx) => {
-                const ans = userAnswers[idx];
-                const isCurrent = idx === currentQuestionIndex;
+      {activeTab === 'cursos' && (
+        <section className="max-w-6xl mx-auto space-y-7 animate-fade-in">
+          {/* Category Tabs: Micromovilidad, Seguridad Peatonal, Normativa Urbana */}
+          <div className="space-y-3.5">
+            <div className="flex flex-wrap gap-2.5 sm:gap-3">
+              {CATEGORY_TABS.map((tab) => {
+                const isSelected = selectedCategory === tab.id;
+                const count = COURSES_DATA.filter((c) => c.categoryKey === tab.id).length;
                 return (
                   <button
-                    key={q.number}
+                    key={tab.id}
                     type="button"
-                    onClick={() => setCurrentQuestionIndex(idx)}
-                    className={`w-8 h-8 rounded-xl text-xs font-bold transition-all flex items-center justify-center cursor-pointer ${
-                      isCurrent
-                        ? 'bg-[#0066ff] text-white shadow-xs scale-105'
-                        : ans?.isSubmitted
-                        ? ans.isCorrect
-                          ? 'bg-emerald-100 text-emerald-800 hover:bg-emerald-200'
-                          : 'bg-rose-100 text-rose-800 hover:bg-rose-200'
-                        : 'bg-white text-slate-700 hover:bg-slate-200 border border-slate-200'
+                    onClick={() => setSelectedCategory(tab.id)}
+                    className={`px-5 py-2.5 rounded-full text-xs sm:text-sm font-bold transition-all cursor-pointer flex items-center gap-2.5 ${
+                      isSelected
+                        ? 'bg-[#0057d9] text-white shadow-md scale-[1.02]'
+                        : 'bg-white border border-slate-200 text-slate-700 hover:border-slate-300 hover:bg-slate-50'
                     }`}
-                    title={`Ir a pregunta ${idx + 1}`}
                   >
-                    {idx + 1}
+                    <span>{tab.label}</span>
+                    <span className={`px-2 py-0.5 rounded-full text-[11px] font-extrabold ${
+                      isSelected ? 'bg-white/20 text-white' : 'bg-slate-100 text-slate-500'
+                    }`}>
+                      {count} cursos
+                    </span>
                   </button>
                 );
               })}
             </div>
-          </div>
 
-          {/* Module Progress Bar */}
-          <div className="space-y-2">
-            <div className="flex items-center justify-between text-xs text-slate-600 font-semibold">
-              <span>Pregunta {currentQuestionIndex + 1} de {totalQuestions}</span>
-              <span className="text-[#0066ff] font-bold">
-                Curso: {coursesProgress['course_1'] || 0}% | Global: {globalProgress}%
-              </span>
-            </div>
-            <div className="w-full h-2.5 bg-slate-100 rounded-full overflow-hidden">
-              <div 
-                className="h-full bg-[#0066ff] rounded-full transition-all duration-300"
-                style={{ width: `${((currentQuestionIndex + 1) / totalQuestions) * 100}%` }}
-              />
-            </div>
-          </div>
-        </div>
-
-        {/* Assessment Card (Matching Image 2 Layout) */}
-        <div className="bg-white rounded-3xl border border-slate-200/90 shadow-[0_4px_24px_rgba(0,0,0,0.03)] p-6 sm:p-10 space-y-8">
-          
-          {!quizCompleted ? (
-            <>
-              {/* Question Text */}
-              <div className="space-y-2">
-                <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">
-                  Pregunta {currentQuestionIndex + 1}
+            {/* Context notice */}
+            {activeCategoryInfo && (
+              <div className="p-3.5 sm:p-4 rounded-2xl bg-blue-50/70 border border-blue-100 flex items-center justify-between gap-4 text-xs text-blue-900 animate-fade-in">
+                <div className="flex items-center gap-2.5">
+                  <Info className="w-4 h-4 text-[#0066ff] shrink-0" />
+                  <span className="font-medium text-slate-700">{activeCategoryInfo.description}</span>
+                </div>
+                <span className="text-[11px] font-bold text-[#0066ff] shrink-0 hidden sm:inline">
+                  Cursos de {activeCategoryInfo.label}
                 </span>
-                <h3 className="text-xl sm:text-2xl font-bold text-slate-900 leading-snug">
-                  {currentQ.question}
-                </h3>
               </div>
+            )}
+          </div>
 
-              {/* Options List */}
-              <div className="space-y-3">
-                {currentQ.options.map((opt) => {
-                  const isSelected = selectedOption === opt.id;
-                  const isSubmitted = isAnswerSubmitted;
-                  const isCorrect = opt.isCorrect;
+          {/* Courses Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-1">
+            {filteredCourses.map((course) => {
+              const progress = coursesProgress[course.id] || 0;
+              return (
+                <div
+                  key={course.id}
+                  className="flex flex-col justify-between bg-white rounded-3xl border border-slate-200/90 shadow-[0_4px_16px_rgba(0,0,0,0.03)] overflow-hidden hover:shadow-[0_8px_24px_rgba(0,0,0,0.06)] hover:border-slate-300 transition-all duration-300"
+                >
+                  {/* Image */}
+                  <div className="relative h-48 sm:h-52 w-full overflow-hidden bg-slate-100">
+                    <img
+                      src={course.image}
+                      alt={course.title}
+                      className="w-full h-full object-cover"
+                    />
+                    {course.recommended && (
+                      <div className="absolute top-3 left-3 bg-[#0a193b] text-white px-3 py-1 rounded-full text-xs font-semibold shadow-md flex items-center gap-1.5">
+                        <Sparkles className="w-3.5 h-3.5 text-blue-400" />
+                        <span>Recomendado</span>
+                      </div>
+                    )}
+                  </div>
 
-                  let borderClass = 'border-slate-200 hover:border-slate-300 bg-white';
-                  let badgeClass = 'bg-slate-100 text-slate-700';
-
-                  if (isSubmitted) {
-                    if (isCorrect) {
-                      borderClass = 'border-emerald-500 bg-emerald-50/60 ring-1 ring-emerald-500';
-                      badgeClass = 'bg-emerald-600 text-white';
-                    } else if (isSelected && !isCorrect) {
-                      borderClass = 'border-rose-500 bg-rose-50/60 ring-1 ring-rose-500';
-                      badgeClass = 'bg-rose-600 text-white';
-                    } else {
-                      borderClass = 'border-slate-200 bg-slate-50/50 opacity-60';
-                    }
-                  } else if (isSelected) {
-                    borderClass = 'border-[#0066ff] bg-blue-50/40 ring-1 ring-[#0066ff]';
-                    badgeClass = 'bg-[#0066ff] text-white';
-                  }
-
-                  return (
-                    <button
-                      key={opt.id}
-                      type="button"
-                      disabled={isSubmitted}
-                      onClick={() => handleSelectOption(opt.id)}
-                      className={`w-full p-4 sm:p-5 rounded-2xl border text-left transition-all flex items-center justify-between gap-4 cursor-pointer disabled:cursor-default ${borderClass}`}
-                    >
-                      <div className="flex items-center gap-4">
-                        <span className={`w-8 h-8 rounded-xl flex items-center justify-center text-xs font-bold shrink-0 transition-colors ${badgeClass}`}>
-                          {opt.id}
+                  {/* Body */}
+                  <div className="p-6 sm:p-7 flex flex-col justify-between space-y-4 flex-1">
+                    <div className="space-y-3">
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <span className="px-2.5 py-0.5 rounded-md bg-blue-50 text-[#0066ff] text-xs font-bold">
+                          {course.level}
                         </span>
-                        <span className="text-sm sm:text-base font-medium text-slate-900">
-                          {opt.text}
+                        <span className="px-2.5 py-0.5 rounded-md bg-slate-100 text-slate-700 text-xs font-semibold">
+                          {course.categoryLabel}
+                        </span>
+                        <span className="flex items-center gap-1 text-slate-500 text-xs font-medium ml-auto">
+                          <Clock className="w-3.5 h-3.5" />
+                          {course.duration}
                         </span>
                       </div>
 
-                      {isSubmitted && isCorrect && (
-                        <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0" />
-                      )}
+                      <h3 className="text-xl font-bold text-slate-900 tracking-tight">
+                        {course.title}
+                      </h3>
+                      
+                      <p className="text-xs sm:text-sm text-slate-600 leading-relaxed line-clamp-2">
+                        {course.description}
+                      </p>
+
+                      {/* Micro lessons checklist */}
+                      <div className="pt-2 border-t border-slate-100 space-y-1.5">
+                        <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider block">
+                          Temario práctico ({course.lessons.length} lecciones):
+                        </span>
+                        {course.lessons.slice(0, 2).map((les, idx) => (
+                          <div key={idx} className="flex items-center gap-2 text-xs text-slate-700">
+                            <CheckCircle2 className="w-3.5 h-3.5 text-blue-500 shrink-0" />
+                            <span className="truncate">{les}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Progress Bar & Actions */}
+                    <div className="space-y-3 pt-2">
+                      <div className="space-y-1.5">
+                        <div className="flex items-center justify-between text-xs font-semibold">
+                          <span className="text-slate-500">Avance de lecciones</span>
+                          <span className={progress === 100 ? 'text-emerald-600 font-bold' : 'text-slate-800'}>
+                            {progress}%
+                          </span>
+                        </div>
+                        <div className="w-full h-2 bg-slate-100 rounded-full overflow-hidden">
+                          <div
+                            className={`h-full rounded-full transition-all duration-500 ${
+                              progress === 100 ? 'bg-emerald-500' : 'bg-[#0066ff]'
+                            }`}
+                            style={{ width: `${progress}%` }}
+                          />
+                        </div>
+                      </div>
+
+                      <button
+                        type="button"
+                        onClick={() => setActiveCourseModal(course)}
+                        className={`w-full py-3 px-4 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center justify-center gap-2 shadow-xs ${
+                          progress === 100
+                            ? 'bg-emerald-50 border border-emerald-200 text-emerald-800 hover:bg-emerald-100'
+                            : progress > 0
+                            ? 'bg-[#0a193b] hover:bg-[#07132c] text-white'
+                            : 'bg-[#0057d9] hover:bg-blue-700 text-white'
+                        }`}
+                      >
+                        {progress === 0 ? (
+                          <span>Iniciar Lecciones Prácticas</span>
+                        ) : progress < 100 ? (
+                          <span>Continuar Módulo ({progress}%)</span>
+                        ) : (
+                          <span className="flex items-center gap-1.5 text-emerald-800">
+                            <Check className="w-4 h-4 text-emerald-600" />
+                            <span>Módulo Completado • Repasar</span>
+                          </span>
+                        )}
+                        <ArrowRight className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </section>
+      )}
+
+      {/* ========================================================================= */}
+      {/* VISTA 2: VIDEOTECA DIDÁCTICA REAL (YOUTUBE EMBEDS Y CÁPSULAS VIALES)      */}
+      {/* ========================================================================= */}
+      {activeTab === 'videos' && (
+        <section className="max-w-6xl mx-auto space-y-8 animate-fade-in">
+          <div className="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200 shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            <div className="space-y-1">
+              <span className="text-xs font-bold text-blue-600 uppercase tracking-wider">Material Audiovisual Didáctico</span>
+              <h2 className="text-2xl font-black text-slate-900">Cápsulas en Video de Seguridad Vial</h2>
+              <p className="text-xs sm:text-sm text-slate-600">
+                Videos oficiales y didácticos de la Agencia Nacional de Seguridad Vial y organismos de tránsito. Visualiza los peligros reales en menos de 4 minutos.
+              </p>
+            </div>
+            <div className="px-4 py-2 rounded-2xl bg-rose-50 border border-rose-200 text-rose-700 text-xs font-bold flex items-center gap-2 shrink-0">
+              <Video className="w-4 h-4" />
+              <span>{DIDACTIC_VIDEOS.length} Cápsulas Seleccionadas</span>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-7">
+            {DIDACTIC_VIDEOS.map((video) => (
+              <div
+                key={video.id}
+                className="bg-white rounded-3xl border border-slate-200/90 shadow-sm overflow-hidden flex flex-col justify-between hover:shadow-lg hover:border-slate-300 transition-all group"
+              >
+                <div>
+                  {/* Thumbnail with Video Play Overlay */}
+                  <div
+                    onClick={() => {
+                      setSelectedVideoModal(video);
+                      setVideoQuizSelectedOpt(null);
+                      setVideoQuizAnswered(false);
+                    }}
+                    className="relative h-52 sm:h-56 w-full overflow-hidden bg-slate-900 cursor-pointer"
+                  >
+                    <img
+                      src={video.thumbnail}
+                      alt={video.title}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 opacity-90"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-black/20 to-transparent" />
+                    
+                    {/* Floating Play Button */}
+                    <div className="absolute inset-0 flex items-center justify-center">
+                      <div className="w-16 h-16 rounded-full bg-rose-600 text-white flex items-center justify-center shadow-xl group-hover:scale-110 group-hover:bg-rose-700 transition-all">
+                        <PlayCircle className="w-9 h-9 fill-white/20" />
+                      </div>
+                    </div>
+
+                    <div className="absolute top-3 left-3 px-3 py-1 rounded-full bg-black/60 backdrop-blur-md text-white text-[11px] font-bold">
+                      {video.category}
+                    </div>
+
+                    <div className="absolute top-3 right-3 px-2.5 py-1 rounded-lg bg-black/70 backdrop-blur-md text-white text-xs font-semibold flex items-center gap-1">
+                      <Clock className="w-3.5 h-3.5 text-slate-300" />
+                      <span>{video.duration}</span>
+                    </div>
+
+                    <div className="absolute bottom-3 left-4 right-4 text-xs font-medium text-white/90 truncate">
+                      {video.sourceBadge} • {video.sourceName}
+                    </div>
+                  </div>
+
+                  {/* Body */}
+                  <div className="p-6 space-y-3.5">
+                    <h3 className="text-lg font-bold text-slate-900 group-hover:text-blue-600 transition-colors leading-snug">
+                      {video.title}
+                    </h3>
+                    <p className="text-xs text-slate-600 leading-relaxed">
+                      {video.summary}
+                    </p>
+
+                    {/* Key takeaways pills */}
+                    <div className="pt-2 border-t border-slate-100 space-y-1.5">
+                      <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider block">
+                        Puntos clave del video:
+                      </span>
+                      {video.keyTakeaways.slice(0, 2).map((takeaway, idx) => (
+                        <div key={idx} className="flex items-start gap-2 text-xs text-slate-700">
+                          <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0 mt-0.5" />
+                          <span className="line-clamp-2">{takeaway}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Footer Action */}
+                <div className="p-6 pt-0 flex gap-2">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setSelectedVideoModal(video);
+                      setVideoQuizSelectedOpt(null);
+                      setVideoQuizAnswered(false);
+                    }}
+                    className="flex-1 py-3 px-4 rounded-xl bg-slate-900 hover:bg-[#0057d9] text-white text-xs font-bold transition-all flex items-center justify-center gap-2 cursor-pointer shadow-xs"
+                  >
+                    <PlayCircle className="w-4 h-4" />
+                    <span>Ver Video Didáctico & Evaluación</span>
+                  </button>
+                  <a
+                    href={video.externalUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="p-3 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-600 hover:text-slate-900 transition-colors"
+                    title="Abrir en YouTube externo"
+                  >
+                    <ExternalLink className="w-4 h-4" />
+                  </a>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
+
+      {/* ========================================================================= */}
+      {/* VISTA 3: INFOGRAFÍAS DIDÁCTICAS & AFICHES VIALES VISUALES                  */}
+      {/* ========================================================================= */}
+      {activeTab === 'infografias' && (
+        <section className="max-w-6xl mx-auto space-y-8 animate-fade-in">
+          <div className="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200 shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            <div className="space-y-1">
+              <span className="text-xs font-bold text-blue-600 uppercase tracking-wider">Material Didáctico Visual</span>
+              <h2 className="text-2xl font-black text-slate-900">Infografías y Guías Gráficas de Supervivencia Vial</h2>
+              <p className="text-xs sm:text-sm text-slate-600">
+                Gráficos claros y estructurados para memorizar con rapidez las reglas de la vía, distancias de frenado y jerarquía urbana.
+              </p>
+            </div>
+            <div className="px-4 py-2 rounded-2xl bg-blue-50 border border-blue-200 text-blue-700 text-xs font-bold flex items-center gap-2 shrink-0">
+              <FileText className="w-4 h-4" />
+              <span>{DIDACTIC_INFOGRAPHICS.length} Guías Visuales</span>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {DIDACTIC_INFOGRAPHICS.map((info) => (
+              <div
+                key={info.id}
+                className="bg-white rounded-3xl border border-slate-200/90 shadow-sm overflow-hidden flex flex-col justify-between hover:shadow-lg hover:border-blue-300 transition-all"
+              >
+                <div>
+                  {/* Colored Header Banner */}
+                  <div 
+                    className="p-6 text-white space-y-2 relative overflow-hidden"
+                    style={{ backgroundColor: info.accentColor }}
+                  >
+                    <div className="absolute -right-6 -bottom-6 w-24 h-24 rounded-full bg-white/10 pointer-events-none" />
+                    <span className="px-2.5 py-0.5 rounded-full bg-white/20 text-white text-[10px] font-extrabold uppercase tracking-wider inline-block">
+                      {info.badge}
+                    </span>
+                    <h3 className="text-lg font-black leading-snug">
+                      {info.title}
+                    </h3>
+                  </div>
+
+                  {/* Body Content */}
+                  <div className="p-6 space-y-4">
+                    <p className="text-xs text-slate-600 leading-relaxed">
+                      {info.summary}
+                    </p>
+
+                    {/* Step by step points */}
+                    <div className="space-y-2.5 pt-2 border-t border-slate-100">
+                      {info.keyPoints.slice(0, 3).map((pt, idx) => (
+                        <div key={idx} className="p-2.5 rounded-xl bg-slate-50 border border-slate-100 flex items-start gap-2.5">
+                          <span className="text-lg shrink-0 mt-0.5">{pt.iconEmoji}</span>
+                          <div className="min-w-0">
+                            <h4 className="text-xs font-bold text-slate-900 leading-tight">{pt.title}</h4>
+                            <p className="text-[11px] text-slate-500 leading-relaxed mt-0.5">{pt.desc}</p>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Open Full Screen Button */}
+                <div className="p-6 pt-0">
+                  <button
+                    type="button"
+                    onClick={() => setSelectedInfographicModal(info)}
+                    className="w-full py-2.5 px-4 rounded-xl bg-slate-900 hover:bg-[#0057d9] text-white text-xs font-bold transition-all flex items-center justify-center gap-2 cursor-pointer shadow-xs"
+                  >
+                    <Maximize2 className="w-3.5 h-3.5" />
+                    <span>Ver Infografía Completa y Detalles</span>
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
+
+      {/* ========================================================================= */}
+      {/* VISTA 4: SIMULADOR DE DECISIONES VIALES ("¿QUÉ HARÍAS TÚ?")               */}
+      {/* ========================================================================= */}
+      {activeTab === 'simulador' && (
+        <section className="max-w-4xl mx-auto space-y-7 animate-fade-in">
+          {/* Header */}
+          <div className="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200 shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            <div className="space-y-1">
+              <span className="text-xs font-bold text-blue-600 uppercase tracking-wider">Simulador de Toma de Decisiones</span>
+              <h2 className="text-2xl sm:text-3xl font-black text-slate-900">¿Qué harías tú en esta situación real?</h2>
+              <p className="text-xs sm:text-sm text-slate-600">
+                Ponte a prueba en escenarios críticos de tráfico: glorietas, lluvia, ángulos ciegos y pasos peatonales.
+              </p>
+            </div>
+            <div className="p-3 rounded-2xl bg-blue-50 border border-blue-200 text-center shrink-0">
+              <span className="text-[10px] font-bold uppercase text-blue-800 block">Aciertos</span>
+              <span className="text-2xl font-black text-[#0057d9]">{scenarioScore} / {ROAD_SCENARIOS.length}</span>
+            </div>
+          </div>
+
+          {/* Interactive Card */}
+          <div className="bg-white rounded-3xl border border-slate-200/90 shadow-md p-6 sm:p-9 space-y-7">
+            {/* Scenario Meta */}
+            <div className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 pb-4">
+              <div className="flex items-center gap-2">
+                <span className="px-3 py-1 rounded-full bg-slate-900 text-white text-xs font-bold">
+                  Caso {scenarioIndex + 1} de {ROAD_SCENARIOS.length}
+                </span>
+                <span className="px-3 py-1 rounded-full bg-blue-50 text-blue-700 text-xs font-bold border border-blue-200">
+                  Rol: {currentScenario.role}
+                </span>
+              </div>
+              <span className={`px-2.5 py-0.5 rounded-lg text-xs font-black uppercase ${
+                currentScenario.dangerLevel === 'Crítico' ? 'bg-rose-100 text-rose-800' : 'bg-amber-100 text-amber-800'
+              }`}>
+                Peligro: {currentScenario.dangerLevel}
+              </span>
+            </div>
+
+            {/* Scenario Image Banner */}
+            <div className="relative h-56 sm:h-64 w-full rounded-2xl overflow-hidden bg-slate-100">
+              <img
+                src={currentScenario.imageIllustration}
+                alt={currentScenario.title}
+                className="w-full h-full object-cover"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent" />
+              <div className="absolute bottom-4 left-4 right-4 text-white">
+                <span className="text-xs font-bold text-blue-300 uppercase block tracking-wider">
+                  {currentScenario.contextTag}
+                </span>
+                <h3 className="text-xl font-black text-white mt-0.5">
+                  {currentScenario.title}
+                </h3>
+              </div>
+            </div>
+
+            {/* Situation Narrative */}
+            <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 text-slate-800 text-sm sm:text-base leading-relaxed font-medium">
+              {currentScenario.situation}
+            </div>
+
+            {/* Decision Options */}
+            <div className="space-y-3">
+              <span className="text-xs font-bold text-slate-400 uppercase tracking-wider block">
+                Selecciona la acción defensiva correcta:
+              </span>
+
+              {currentScenario.options.map((opt) => {
+                const isSelected = scenarioSelectedOpt === opt.id;
+                let btnStyle = 'border-slate-200 hover:border-slate-300 bg-white text-slate-800';
+
+                if (scenarioSubmitted) {
+                  if (opt.isCorrect) {
+                    btnStyle = 'border-emerald-500 bg-emerald-50/70 text-emerald-950 ring-2 ring-emerald-500';
+                  } else if (isSelected && !opt.isCorrect) {
+                    btnStyle = 'border-rose-500 bg-rose-50/70 text-rose-950 ring-2 ring-rose-500';
+                  } else {
+                    btnStyle = 'border-slate-200 bg-slate-50 opacity-60';
+                  }
+                } else if (isSelected) {
+                  btnStyle = 'border-[#0057d9] bg-blue-50/60 ring-2 ring-[#0057d9] text-blue-950';
+                }
+
+                return (
+                  <button
+                    key={opt.id}
+                    type="button"
+                    disabled={scenarioSubmitted}
+                    onClick={() => handleSelectScenarioOption(opt.id)}
+                    className={`w-full p-4 sm:p-5 rounded-2xl border text-left transition-all flex items-start gap-3.5 cursor-pointer disabled:cursor-default ${btnStyle}`}
+                  >
+                    <span className={`w-8 h-8 rounded-xl flex items-center justify-center text-xs font-black shrink-0 ${
+                      isSelected ? 'bg-[#0057d9] text-white' : 'bg-slate-100 text-slate-700'
+                    }`}>
+                      {opt.id}
+                    </span>
+                    <span className="text-sm font-semibold pt-1 flex-1 leading-snug">
+                      {opt.text}
+                    </span>
+                    {scenarioSubmitted && opt.isCorrect && (
+                      <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0 mt-1" />
+                    )}
+                  </button>
+                );
+              })}
+            </div>
+
+            {/* Instant Educational Feedback */}
+            {scenarioSubmitted && (() => {
+              const chosen = currentScenario.options.find((o) => o.id === scenarioSelectedOpt);
+              const isWin = chosen?.isCorrect;
+
+              return (
+                <div className={`p-5 rounded-2xl border text-sm animate-fade-in space-y-2 ${
+                  isWin ? 'bg-emerald-50 border-emerald-300 text-emerald-950' : 'bg-rose-50 border-rose-300 text-rose-950'
+                }`}>
+                  <div className="flex items-center gap-2">
+                    {isWin ? (
+                      <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0" />
+                    ) : (
+                      <AlertTriangle className="w-5 h-5 text-rose-600 shrink-0" />
+                    )}
+                    <h5 className="font-black text-base">
+                      {isWin ? '¡Decisión Acertada! Salvaste la vida en la vía' : '¡Decisión Incorrecta o Peligrosa!'}
+                    </h5>
+                  </div>
+                  <p className="text-xs sm:text-sm leading-relaxed pl-7">
+                    {chosen?.consequence}
+                  </p>
+                  <div className="pl-7 pt-1 text-xs font-bold text-slate-700 flex items-center gap-1.5">
+                    <Lightbulb className="w-4 h-4 text-amber-500 shrink-0" />
+                    <span>Consejo de oro: {chosen?.advice}</span>
+                  </div>
+                </div>
+              );
+            })()}
+
+            {/* Action Bar */}
+            <div className="flex items-center justify-between pt-4 border-t border-slate-100">
+              <span className="text-xs text-slate-500 font-medium">
+                Caso {scenarioIndex + 1} de {ROAD_SCENARIOS.length}
+              </span>
+
+              {!scenarioSubmitted ? (
+                <button
+                  type="button"
+                  disabled={!scenarioSelectedOpt}
+                  onClick={handleSubmitScenarioDecision}
+                  className="px-6 py-2.5 rounded-xl bg-[#0057d9] hover:bg-blue-700 disabled:bg-slate-200 disabled:text-slate-400 text-white text-xs font-bold transition-all shadow-xs cursor-pointer"
+                >
+                  Confirmar mi Decisión
+                </button>
+              ) : (
+                <button
+                  type="button"
+                  onClick={handleNextScenario}
+                  className="px-6 py-2.5 rounded-xl bg-[#0a193b] hover:bg-slate-800 text-white text-xs font-bold transition-all flex items-center gap-2 cursor-pointer shadow-xs"
+                >
+                  <span>Siguiente Caso</span>
+                  <ChevronRight className="w-4 h-4" />
+                </button>
+              )}
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* ========================================================================= */}
+      {/* VISTA 5: EVALUACIÓN DE CONOCIMIENTOS (QUIZ INTERACTIVO MEJORADO)          */}
+      {/* ========================================================================= */}
+      {activeTab === 'evaluacion' && (
+        <section className="max-w-4xl mx-auto space-y-8 animate-fade-in">
+          {/* Header Bar */}
+          <div className="space-y-4">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <div>
+                <p className="text-xs font-bold uppercase tracking-wider text-[#0066ff]">
+                  {currentQ.category}
+                </p>
+                <h2 className="text-2xl sm:text-3xl font-extrabold text-[#0a193b] tracking-tight">
+                  {currentQ.title}
+                </h2>
+              </div>
+
+              {/* Question indicators */}
+              <div className="flex items-center gap-1.5 bg-slate-100/90 p-1.5 rounded-2xl border border-slate-200 self-start sm:self-auto">
+                <span className="text-[11px] font-bold text-slate-500 px-2">Pregunta:</span>
+                {quizQuestions.map((q, idx) => {
+                  const ans = userAnswers[idx];
+                  const isCurrent = idx === currentQuestionIndex;
+                  return (
+                    <button
+                      key={q.number}
+                      type="button"
+                      onClick={() => setCurrentQuestionIndex(idx)}
+                      className={`w-8 h-8 rounded-xl text-xs font-bold transition-all flex items-center justify-center cursor-pointer ${
+                        isCurrent
+                          ? 'bg-[#0066ff] text-white shadow-xs scale-105'
+                          : ans?.isSubmitted
+                          ? ans.isCorrect
+                            ? 'bg-emerald-100 text-emerald-800 hover:bg-emerald-200'
+                            : 'bg-rose-100 text-rose-800 hover:bg-rose-200'
+                          : 'bg-white text-slate-700 hover:bg-slate-200 border border-slate-200'
+                      }`}
+                    >
+                      {idx + 1}
                     </button>
                   );
                 })}
               </div>
+            </div>
 
-              {/* Feedback and Explanation */}
-              {isAnswerSubmitted && (
-                <div className={`p-4 rounded-2xl border text-sm animate-fade-in ${
-                  currentAnswer?.isCorrect 
-                    ? 'bg-emerald-50/80 border-emerald-200 text-emerald-900' 
-                    : 'bg-rose-50/80 border-rose-200 text-rose-900'
-                }`}>
-                  <div className="flex items-start gap-3">
-                    <Info className="w-5 h-5 shrink-0 mt-0.5" />
-                    <div>
-                      <h5 className="font-bold">
-                        {currentAnswer?.isCorrect ? '¡Respuesta Correcta!' : 'Respuesta Incorrecta'}
-                      </h5>
-                      <p className="text-xs text-slate-600 mt-1 leading-relaxed">
-                        {currentQ.correctExplanation}
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              {/* Footer Controls */}
-              <div className="flex items-center justify-between pt-4 border-t border-slate-100">
-                <button
-                  type="button"
-                  id="btn-quiz-prev-question"
-                  onClick={handlePrevQuestion}
-                  disabled={currentQuestionIndex === 0}
-                  className={`inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs font-bold transition-all ${
-                    currentQuestionIndex > 0
-                      ? 'bg-slate-100 hover:bg-slate-200 text-slate-700 cursor-pointer shadow-xs'
-                      : 'bg-slate-50 text-slate-300 cursor-not-allowed border border-slate-100'
-                  }`}
-                  title={currentQuestionIndex > 0 ? "Devolverse a la pregunta anterior" : "Estás en la primera pregunta"}
-                >
-                  <ChevronLeft className="w-4 h-4" />
-                  <span>Pregunta Anterior</span>
-                </button>
-
-                {!isAnswerSubmitted ? (
-                  <button
-                    type="button"
-                    id="btn-quiz-submit-answer"
-                    disabled={!selectedOption}
-                    onClick={handleAnswerSubmit}
-                    className="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl bg-[#0066ff] hover:bg-blue-700 disabled:bg-slate-200 disabled:text-slate-400 disabled:cursor-not-allowed text-white text-xs font-bold transition-all cursor-pointer shadow-xs"
-                  >
-                    <span>Comprobar Respuesta</span>
-                    <ArrowRight className="w-4 h-4" />
-                  </button>
-                ) : (
-                  <button
-                    type="button"
-                    id="btn-quiz-next-question"
-                    onClick={handleNextQuestion}
-                    className="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl bg-[#0a193b] hover:bg-[#07132c] text-white text-xs font-bold transition-all cursor-pointer shadow-xs"
-                  >
-                    <span>{currentQuestionIndex === totalQuestions - 1 ? 'Finalizar Evaluación' : 'Siguiente Pregunta'}</span>
-                    <ChevronRight className="w-4 h-4" />
-                  </button>
-                )}
-              </div>
-            </>
-          ) : (
-            /* Quiz Completed View */
-            <div className="text-center py-8 space-y-6 animate-fade-in">
-              <div className="w-20 h-20 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center mx-auto shadow-md border-2 border-emerald-300">
-                <Trophy className="w-10 h-10" />
-              </div>
-
-              <div className="space-y-2">
-                <span className="px-3 py-1 rounded-full bg-emerald-100 text-emerald-800 text-xs font-black uppercase">
-                  Módulo 1 Completado
+            {/* Progress Bar */}
+            <div className="space-y-2">
+              <div className="flex items-center justify-between text-xs text-slate-600 font-semibold">
+                <span>Pregunta {currentQuestionIndex + 1} de {totalQuestions}</span>
+                <span className="text-[#0066ff] font-bold">
+                  Progreso Global: {globalProgress}%
                 </span>
-                <h3 className="text-2xl sm:text-3xl font-extrabold text-[#0a193b]">
-                  ¡Felicidades, Evaluación Completada!
-                </h3>
-                <p className="text-slate-600 text-sm max-w-md mx-auto">
-                  Has completado las 5 preguntas del módulo. Tu progreso global ahora refleja tu avance en la plataforma.
-                </p>
               </div>
-
-              <div className="grid grid-cols-2 gap-4 max-w-md mx-auto pt-2">
-                <div className="p-4 rounded-2xl bg-blue-50 border border-blue-200 text-center">
-                  <span className="text-xs text-blue-700 font-bold block uppercase">Curso Navegación</span>
-                  <span className="text-3xl font-black text-blue-900">100%</span>
-                </div>
-                <div className="p-4 rounded-2xl bg-emerald-50 border border-emerald-200 text-center">
-                  <span className="text-xs text-emerald-700 font-bold block uppercase">Progreso Global</span>
-                  <span className="text-3xl font-black text-emerald-900">{globalProgress}%</span>
-                </div>
-              </div>
-
-              <div className="pt-4 flex flex-col sm:flex-row items-center justify-center gap-3">
-                <button
-                  type="button"
-                  onClick={handleRestartQuiz}
-                  className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-bold transition-all cursor-pointer"
-                >
-                  <RotateCcw className="w-4 h-4" />
-                  <span>Repetir Evaluación</span>
-                </button>
-
-                <button
-                  type="button"
-                  onClick={() => {
-                    const el = document.getElementById('evaluacion-conocimientos');
-                    if (el) {
-                      window.scrollTo({ top: 0, behavior: 'smooth' });
-                    }
-                  }}
-                  className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-[#0066ff] hover:bg-blue-700 text-white text-xs font-bold transition-all cursor-pointer shadow-sm"
-                >
-                  <BookOpen className="w-4 h-4" />
-                  <span>Explorar Otros Cursos</span>
-                </button>
+              <div className="w-full h-2.5 bg-slate-100 rounded-full overflow-hidden">
+                <div 
+                  className="h-full bg-[#0066ff] rounded-full transition-all duration-300"
+                  style={{ width: `${((currentQuestionIndex + 1) / totalQuestions) * 100}%` }}
+                />
               </div>
             </div>
-          )}
+          </div>
 
-        </div>
-      </section>
+          {/* Assessment Card */}
+          <div className="bg-white rounded-3xl border border-slate-200/90 shadow-[0_4px_24px_rgba(0,0,0,0.03)] p-6 sm:p-10 space-y-8">
+            {!quizCompleted ? (
+              <>
+                <div className="space-y-2">
+                  <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">
+                    Pregunta {currentQuestionIndex + 1}
+                  </span>
+                  <h3 className="text-xl sm:text-2xl font-bold text-slate-900 leading-snug">
+                    {currentQ.question}
+                  </h3>
+                </div>
+
+                {/* Options */}
+                <div className="space-y-3">
+                  {currentQ.options.map((opt) => {
+                    const isSelected = selectedOption === opt.id;
+                    const isSubmitted = isAnswerSubmitted;
+                    const isCorrect = opt.isCorrect;
+
+                    let borderClass = 'border-slate-200 hover:border-slate-300 bg-white';
+                    let badgeClass = 'bg-slate-100 text-slate-700';
+
+                    if (isSubmitted) {
+                      if (isCorrect) {
+                        borderClass = 'border-emerald-500 bg-emerald-50/60 ring-1 ring-emerald-500';
+                        badgeClass = 'bg-emerald-600 text-white';
+                      } else if (isSelected && !isCorrect) {
+                        borderClass = 'border-rose-500 bg-rose-50/60 ring-1 ring-rose-500';
+                        badgeClass = 'bg-rose-600 text-white';
+                      } else {
+                        borderClass = 'border-slate-200 bg-slate-50/50 opacity-60';
+                      }
+                    } else if (isSelected) {
+                      borderClass = 'border-[#0066ff] bg-blue-50/40 ring-1 ring-[#0066ff]';
+                      badgeClass = 'bg-[#0066ff] text-white';
+                    }
+
+                    return (
+                      <button
+                        key={opt.id}
+                        type="button"
+                        disabled={isSubmitted}
+                        onClick={() => handleSelectOption(opt.id)}
+                        className={`w-full p-4 sm:p-5 rounded-2xl border text-left transition-all flex items-center justify-between gap-4 cursor-pointer disabled:cursor-default ${borderClass}`}
+                      >
+                        <div className="flex items-center gap-4">
+                          <span className={`w-8 h-8 rounded-xl flex items-center justify-center text-xs font-bold shrink-0 transition-colors ${badgeClass}`}>
+                            {opt.id}
+                          </span>
+                          <span className="text-sm sm:text-base font-medium text-slate-900">
+                            {opt.text}
+                          </span>
+                        </div>
+                        {isSubmitted && isCorrect && (
+                          <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0" />
+                        )}
+                      </button>
+                    );
+                  })}
+                </div>
+
+                {/* Feedback */}
+                {isAnswerSubmitted && (
+                  <div className={`p-4 rounded-2xl border text-sm animate-fade-in ${
+                    userAnswers[currentQuestionIndex]?.isCorrect 
+                      ? 'bg-emerald-50/80 border-emerald-200 text-emerald-900' 
+                      : 'bg-rose-50/80 border-rose-200 text-rose-900'
+                  }`}>
+                    <div className="flex items-start gap-3">
+                      <Info className="w-5 h-5 shrink-0 mt-0.5" />
+                      <div>
+                        <h5 className="font-bold">
+                          {userAnswers[currentQuestionIndex]?.isCorrect ? '¡Respuesta Correcta!' : 'Respuesta Incorrecta'}
+                        </h5>
+                        <p className="text-xs text-slate-600 mt-1 leading-relaxed">
+                          {currentQ.correctExplanation}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* Footer Controls */}
+                <div className="flex items-center justify-between pt-4 border-t border-slate-100">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      if (currentQuestionIndex > 0) {
+                        const prevIdx = currentQuestionIndex - 1;
+                        setCurrentQuestionIndex(prevIdx);
+                        const existing = userAnswers[prevIdx];
+                        setSelectedOption(existing?.selectedId || null);
+                        setIsAnswerSubmitted(!!existing?.isSubmitted);
+                      }
+                    }}
+                    disabled={currentQuestionIndex === 0}
+                    className={`inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs font-bold transition-all ${
+                      currentQuestionIndex > 0
+                        ? 'bg-slate-100 hover:bg-slate-200 text-slate-700 cursor-pointer shadow-xs'
+                        : 'bg-slate-50 text-slate-300 cursor-not-allowed border border-slate-100'
+                    }`}
+                  >
+                    <ChevronLeft className="w-4 h-4" />
+                    <span>Anterior</span>
+                  </button>
+
+                  {!isAnswerSubmitted ? (
+                    <button
+                      type="button"
+                      disabled={!selectedOption}
+                      onClick={handleAnswerSubmit}
+                      className="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl bg-[#0066ff] hover:bg-blue-700 disabled:bg-slate-200 disabled:text-slate-400 text-white text-xs font-bold transition-all cursor-pointer shadow-xs"
+                    >
+                      <span>Comprobar Respuesta</span>
+                      <ArrowRight className="w-4 h-4" />
+                    </button>
+                  ) : (
+                    <button
+                      type="button"
+                      onClick={handleNextQuestion}
+                      className="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl bg-[#0a193b] hover:bg-[#07132c] text-white text-xs font-bold transition-all cursor-pointer shadow-xs"
+                    >
+                      <span>{currentQuestionIndex === totalQuestions - 1 ? 'Finalizar Evaluación' : 'Siguiente Pregunta'}</span>
+                      <ChevronRight className="w-4 h-4" />
+                    </button>
+                  )}
+                </div>
+              </>
+            ) : (
+              /* Quiz Finished */
+              <div className="text-center py-8 space-y-6 animate-fade-in">
+                <div className="w-20 h-20 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center mx-auto shadow-md border-2 border-emerald-300">
+                  <Trophy className="w-10 h-10" />
+                </div>
+                <div className="space-y-2">
+                  <span className="px-3 py-1 rounded-full bg-emerald-100 text-emerald-800 text-xs font-black uppercase">
+                    Módulo de Evaluación Completado
+                  </span>
+                  <h3 className="text-2xl sm:text-3xl font-extrabold text-[#0a193b]">
+                    ¡Excelente trabajo, Evaluación Aprobada!
+                  </h3>
+                  <p className="text-slate-600 text-sm max-w-md mx-auto">
+                    Has completado las preguntas clave del módulo con éxito. Tu progreso global se ha actualizado.
+                  </p>
+                </div>
+                <div className="pt-4 flex flex-col sm:flex-row items-center justify-center gap-3">
+                  <button
+                    type="button"
+                    onClick={handleRestartQuiz}
+                    className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-bold transition-all cursor-pointer"
+                  >
+                    <RotateCcw className="w-4 h-4" />
+                    <span>Repetir Evaluación</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setActiveTab('videos')}
+                    className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-[#0066ff] hover:bg-blue-700 text-white text-xs font-bold transition-all cursor-pointer shadow-sm"
+                  >
+                    <Video className="w-4 h-4" />
+                    <span>Explorar Videoteca Didáctica</span>
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
+        </section>
+      )}
 
       {/* ========================================================================= */}
-      {/* 3. MODAL DE ESTUDIO INTERACTIVO PARA CUALQUIER CURSO                      */}
+      {/* MODAL 1: REPRODUCTOR DIDÁCTICO DE VIDEO (YOUTUBE EMBED + PREGUNTA)        */}
+      {/* ========================================================================= */}
+      {selectedVideoModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-5 bg-slate-950/75 backdrop-blur-sm animate-fade-in">
+          <div className="bg-white rounded-3xl max-w-3xl w-full border border-slate-200 shadow-2xl overflow-hidden flex flex-col max-h-[92vh]">
+            {/* Header */}
+            <div className="p-4 sm:p-5 bg-slate-900 text-white flex items-center justify-between border-b border-slate-800">
+              <div className="flex items-center gap-2.5">
+                <Video className="w-5 h-5 text-rose-500" />
+                <div>
+                  <h3 className="text-sm sm:text-base font-black truncate max-w-md">
+                    {selectedVideoModal.title}
+                  </h3>
+                  <p className="text-[11px] text-slate-400">
+                    {selectedVideoModal.sourceName} • {selectedVideoModal.duration}
+                  </p>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setSelectedVideoModal(null)}
+                className="p-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white transition cursor-pointer"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Video Player 16:9 */}
+            <div className="relative w-full aspect-video bg-black">
+              <iframe
+                src={selectedVideoModal.embedUrl}
+                title={selectedVideoModal.title}
+                className="w-full h-full border-0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+              />
+            </div>
+
+            {/* Content & Mini Quiz */}
+            <div className="p-6 space-y-5 overflow-y-auto flex-1">
+              <div className="p-4 rounded-2xl bg-blue-50/70 border border-blue-100 space-y-2">
+                <h4 className="text-xs font-extrabold uppercase text-blue-900 tracking-wider">
+                  Lo que debes recordar de esta cápsula:
+                </h4>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-1">
+                  {selectedVideoModal.keyTakeaways.map((point, idx) => (
+                    <div key={idx} className="flex items-start gap-2 text-xs text-slate-700">
+                      <CheckCircle2 className="w-3.5 h-3.5 text-blue-600 shrink-0 mt-0.5" />
+                      <span>{point}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Comprehension Quiz */}
+              <div className="p-5 rounded-2xl bg-slate-50 border border-slate-200 space-y-3">
+                <div className="flex items-center gap-2">
+                  <Lightbulb className="w-4 h-4 text-amber-500" />
+                  <span className="text-xs font-black uppercase tracking-wider text-slate-700">
+                    Pregunta rápida de refuerzo:
+                  </span>
+                </div>
+                <h5 className="text-sm font-bold text-slate-900 leading-snug">
+                  {selectedVideoModal.quizQuestion.question}
+                </h5>
+
+                <div className="space-y-2 pt-1">
+                  {selectedVideoModal.quizQuestion.options.map((opt, idx) => {
+                    const isSelected = videoQuizSelectedOpt === idx;
+                    const isCorrect = idx === selectedVideoModal.quizQuestion.correctIndex;
+                    let style = 'bg-white border-slate-200 hover:border-blue-300 text-slate-800';
+
+                    if (videoQuizAnswered) {
+                      if (isCorrect) {
+                        style = 'bg-emerald-50 border-emerald-400 text-emerald-950 ring-1 ring-emerald-500 font-bold';
+                      } else if (isSelected && !isCorrect) {
+                        style = 'bg-rose-50 border-rose-400 text-rose-950 font-medium';
+                      } else {
+                        style = 'bg-slate-100 border-slate-200 opacity-60';
+                      }
+                    }
+
+                    return (
+                      <button
+                        key={idx}
+                        type="button"
+                        disabled={videoQuizAnswered}
+                        onClick={() => handleAnswerVideoQuiz(idx, selectedVideoModal.quizQuestion.correctIndex)}
+                        className={`w-full p-3 rounded-xl border text-left text-xs transition-all flex items-center justify-between gap-2 cursor-pointer disabled:cursor-default ${style}`}
+                      >
+                        <span>{opt}</span>
+                        {videoQuizAnswered && isCorrect && (
+                          <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+                        )}
+                      </button>
+                    );
+                  })}
+                </div>
+
+                {videoQuizAnswered && (
+                  <p className="text-xs text-slate-600 pt-1 leading-relaxed bg-white p-3 rounded-xl border border-slate-200">
+                    <strong>Explicación:</strong> {selectedVideoModal.quizQuestion.explanation}
+                  </p>
+                )}
+              </div>
+            </div>
+
+            {/* Footer */}
+            <div className="p-4 border-t border-slate-200 bg-slate-50 flex items-center justify-end">
+              <button
+                type="button"
+                onClick={() => setSelectedVideoModal(null)}
+                className="px-5 py-2.5 rounded-xl bg-slate-900 hover:bg-[#0057d9] text-white text-xs font-bold transition cursor-pointer"
+              >
+                Cerrar Reproductor
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ========================================================================= */}
+      {/* MODAL 2: VISOR DE INFOGRAFÍA COMPLETA                                     */}
+      {/* ========================================================================= */}
+      {selectedInfographicModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-5 bg-slate-950/75 backdrop-blur-sm animate-fade-in">
+          <div className="bg-white rounded-3xl max-w-2xl w-full border border-slate-200 shadow-2xl overflow-hidden flex flex-col max-h-[92vh]">
+            <div 
+              className="p-6 text-white flex items-center justify-between"
+              style={{ backgroundColor: selectedInfographicModal.accentColor }}
+            >
+              <div>
+                <span className="px-2.5 py-0.5 rounded-full bg-white/20 text-white text-[10px] font-extrabold uppercase tracking-wider inline-block">
+                  {selectedInfographicModal.badge}
+                </span>
+                <h3 className="text-xl font-black mt-1">
+                  {selectedInfographicModal.title}
+                </h3>
+              </div>
+              <button
+                type="button"
+                onClick={() => setSelectedInfographicModal(null)}
+                className="p-2 rounded-xl bg-white/10 hover:bg-white/20 text-white transition cursor-pointer"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <div className="p-6 space-y-5 overflow-y-auto flex-1">
+              <p className="text-sm text-slate-700 leading-relaxed font-medium">
+                {selectedInfographicModal.summary}
+              </p>
+
+              <div className="space-y-3">
+                <h4 className="text-xs font-black uppercase tracking-wider text-slate-400">
+                  Desglose Detallado de la Guía:
+                </h4>
+                {selectedInfographicModal.keyPoints.map((pt, idx) => (
+                  <div key={idx} className="p-4 rounded-2xl bg-slate-50 border border-slate-200 flex items-start gap-3.5">
+                    <span className="text-2xl shrink-0 mt-0.5">{pt.iconEmoji}</span>
+                    <div>
+                      <h5 className="text-sm font-bold text-slate-900">{pt.title}</h5>
+                      <p className="text-xs text-slate-600 leading-relaxed mt-1">{pt.desc}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              <div className="p-4 rounded-2xl bg-blue-50 border border-blue-200 text-xs text-blue-900 leading-relaxed">
+                <strong>Conclusión Didáctica:</strong> {selectedInfographicModal.fullText}
+              </div>
+            </div>
+
+            <div className="p-4 border-t border-slate-200 bg-slate-50 flex items-center justify-end">
+              <button
+                type="button"
+                onClick={() => setSelectedInfographicModal(null)}
+                className="px-5 py-2.5 rounded-xl bg-[#0a193b] hover:bg-[#0057d9] text-white text-xs font-bold transition cursor-pointer"
+              >
+                Entendido • Cerrar Guía
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ========================================================================= */}
+      {/* MODAL 3: ESTUDIO INTERACTIVO DE CURSOS Y LECCIONES                        */}
       {/* ========================================================================= */}
       {activeCourseModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-xs animate-fade-in">
           <div className="bg-white rounded-3xl max-w-xl w-full border border-slate-200 shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
-            
             {/* Header */}
             <div className="relative h-40 w-full overflow-hidden bg-slate-900">
               <img
@@ -1100,7 +1671,6 @@ export const EducationScreen: React.FC = () => {
                 Cerrar y Ver Progreso
               </button>
             </div>
-
           </div>
         </div>
       )}
