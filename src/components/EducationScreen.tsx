@@ -16,12 +16,10 @@ import {
   Award,
   PlayCircle,
   Video,
-  FileText,
   Compass,
   AlertTriangle,
   Lightbulb,
   ShieldCheck,
-  Maximize2,
   Bike,
   Footprints,
   Scale,
@@ -43,15 +41,13 @@ import {
   DIDACTIC_VIDEOS, 
   DidacticVideo, 
   VideoTopicType,
-  DIDACTIC_INFOGRAPHICS, 
-  DidacticInfographic, 
   ROAD_SCENARIOS, 
   RoadScenario 
 } from '../data/didacticSafetyData';
 import { EducaplayGamesSuite } from './EducaplayGamesSuite';
 
 // Educational Navigation Modes
-export type DidacticSectionType = 'juegos' | 'videos' | 'cursos' | 'infografias' | 'simulador' | 'evaluacion';
+export type DidacticSectionType = 'juegos' | 'videos' | 'cursos' | 'simulador' | 'evaluacion';
 
 // Categories Configuration for Courses
 export type CourseCategoryType = 'micromovilidad' | 'peatonal' | 'normativa';
@@ -344,7 +340,6 @@ export const EducationScreen: React.FC = () => {
   // Modals for Interactive Content
   const [activeCourseModal, setActiveCourseModal] = useState<CourseItem | null>(null);
   const [selectedVideoModal, setSelectedVideoModal] = useState<DidacticVideo | null>(null);
-  const [selectedInfographicModal, setSelectedInfographicModal] = useState<DidacticInfographic | null>(null);
 
   // Video mini-quiz state
   const [videoQuizSelectedOpt, setVideoQuizSelectedOpt] = useState<number | null>(null);
@@ -537,7 +532,7 @@ export const EducationScreen: React.FC = () => {
               Educación y Cultura Vial
             </h1>
             <p className="text-slate-600 text-sm sm:text-base leading-relaxed">
-              Material interactivo diseñado para todos los actores de la vía: videos didácticos reales, infografías explicativas, simulador de toma de decisiones y cursos prácticos.
+              Material interactivo diseñado para todos los actores de la vía: videos didácticos reales, simulador de toma de decisiones y cursos prácticos.
             </p>
           </div>
 
@@ -585,9 +580,8 @@ export const EducationScreen: React.FC = () => {
         <div className="flex items-center gap-2 overflow-x-auto pb-2 border-b border-slate-200/80 pt-2">
           {[
             { id: 'juegos', label: '🎮 Retos & Juegos Viales', icon: Gamepad2, count: '6 Juegos', isSpecial: true },
-            { id: 'videos', label: '🎬 Videoteca Vial Explicada', icon: Video, count: `${DIDACTIC_VIDEOS.length} Videos`, isSpecial: true },
+            { id: 'videos', label: '🎬 Videos', icon: Video, count: `${DIDACTIC_VIDEOS.length} Videos`, isSpecial: true },
             { id: 'cursos', label: 'Cursos & Módulos', icon: BookOpen, count: `${COURSES_DATA.length} Cursos` },
-            { id: 'infografias', label: 'Infografías & Guías', icon: FileText, count: `${DIDACTIC_INFOGRAPHICS.length} Guías` },
             { id: 'simulador', label: 'Simulador "¿Qué harías?"', icon: Compass, count: `${ROAD_SCENARIOS.length} Casos` },
             { id: 'evaluacion', label: 'Evaluación Rápida', icon: Award, count: 'Test 5 Qs' }
           ].map((item) => {
@@ -794,7 +788,7 @@ export const EducationScreen: React.FC = () => {
 
       {/* ========================================================================= */}
       {/* ========================================================================= */}
-      {/* VISTA 2: VIDEOTECA VIAL DIDÁCTICA (LLAMATIVA Y EXPLICADA CON COLORES FUERTES) */}
+      {/* VISTA 2: VIDEOS DIDÁCTICOS (LLAMATIVOS Y EXPLICADOS CON COLORES FUERTES)   */}
       {/* ========================================================================= */}
       {activeTab === 'videos' && (() => {
         const videosList = DIDACTIC_VIDEOS;
@@ -859,7 +853,7 @@ export const EducationScreen: React.FC = () => {
 
         return (
           <section className="max-w-6xl mx-auto space-y-8 animate-fade-in">
-            {/* Header de la Videoteca Vial */}
+            {/* Header de Videos */}
             <div className="bg-gradient-to-r from-[#0a193b] via-[#0f2b66] to-[#004dc7] rounded-3xl p-6 sm:p-8 text-white border border-white/10 shadow-2xl relative overflow-hidden">
               <div className="absolute -right-12 -bottom-12 w-64 h-64 bg-rose-500/10 rounded-full blur-3xl pointer-events-none" />
               <div className="absolute top-0 right-1/4 w-40 h-40 bg-amber-400/10 rounded-full blur-2xl pointer-events-none" />
@@ -868,7 +862,7 @@ export const EducationScreen: React.FC = () => {
                 <div className="space-y-2 max-w-2xl">
                   <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/10 backdrop-blur-md text-amber-300 text-xs font-black tracking-wide border border-white/15">
                     <Sparkles className="w-4 h-4 text-amber-300" />
-                    <span>VIDEOTECA VIAL OFICIAL • EXPLICACIONES CON COLORES FUERTES</span>
+                    <span>VIDEOS OFICIALES • EXPLICACIONES CON COLORES FUERTES</span>
                   </div>
                   <h2 className="text-2xl sm:text-3xl lg:text-4xl font-black text-white tracking-tight">
                     Cápsulas en Video de Tráfico, Tránsito y Prevención
@@ -1185,84 +1179,6 @@ export const EducationScreen: React.FC = () => {
           </section>
         );
       })()}
-
-      {/* ========================================================================= */}
-      {/* VISTA 3: INFOGRAFÍAS DIDÁCTICAS & AFICHES VIALES VISUALES                  */}
-      {/* ========================================================================= */}
-      {activeTab === 'infografias' && (
-        <section className="max-w-6xl mx-auto space-y-8 animate-fade-in">
-          <div className="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200 shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-            <div className="space-y-1">
-              <span className="text-xs font-bold text-blue-600 uppercase tracking-wider">Material Didáctico Visual</span>
-              <h2 className="text-2xl font-black text-slate-900">Infografías y Guías Gráficas de Supervivencia Vial</h2>
-              <p className="text-xs sm:text-sm text-slate-600">
-                Gráficos claros y estructurados para memorizar con rapidez las reglas de la vía, distancias de frenado y jerarquía urbana.
-              </p>
-            </div>
-            <div className="px-4 py-2 rounded-2xl bg-blue-50 border border-blue-200 text-blue-700 text-xs font-bold flex items-center gap-2 shrink-0">
-              <FileText className="w-4 h-4" />
-              <span>{DIDACTIC_INFOGRAPHICS.length} Guías Visuales</span>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {DIDACTIC_INFOGRAPHICS.map((info) => (
-              <div
-                key={info.id}
-                className="bg-white rounded-3xl border border-slate-200/90 shadow-sm overflow-hidden flex flex-col justify-between hover:shadow-lg hover:border-blue-300 transition-all"
-              >
-                <div>
-                  {/* Colored Header Banner */}
-                  <div 
-                    className="p-6 text-white space-y-2 relative overflow-hidden"
-                    style={{ backgroundColor: info.accentColor }}
-                  >
-                    <div className="absolute -right-6 -bottom-6 w-24 h-24 rounded-full bg-white/10 pointer-events-none" />
-                    <span className="px-2.5 py-0.5 rounded-full bg-white/20 text-white text-[10px] font-extrabold uppercase tracking-wider inline-block">
-                      {info.badge}
-                    </span>
-                    <h3 className="text-lg font-black leading-snug">
-                      {info.title}
-                    </h3>
-                  </div>
-
-                  {/* Body Content */}
-                  <div className="p-6 space-y-4">
-                    <p className="text-xs text-slate-600 leading-relaxed">
-                      {info.summary}
-                    </p>
-
-                    {/* Step by step points */}
-                    <div className="space-y-2.5 pt-2 border-t border-slate-100">
-                      {info.keyPoints.slice(0, 3).map((pt, idx) => (
-                        <div key={idx} className="p-2.5 rounded-xl bg-slate-50 border border-slate-100 flex items-start gap-2.5">
-                          <span className="text-lg shrink-0 mt-0.5">{pt.iconEmoji}</span>
-                          <div className="min-w-0">
-                            <h4 className="text-xs font-bold text-slate-900 leading-tight">{pt.title}</h4>
-                            <p className="text-[11px] text-slate-500 leading-relaxed mt-0.5">{pt.desc}</p>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-
-                {/* Open Full Screen Button */}
-                <div className="p-6 pt-0">
-                  <button
-                    type="button"
-                    onClick={() => setSelectedInfographicModal(info)}
-                    className="w-full py-2.5 px-4 rounded-xl bg-slate-900 hover:bg-[#0057d9] text-white text-xs font-bold transition-all flex items-center justify-center gap-2 cursor-pointer shadow-xs"
-                  >
-                    <Maximize2 className="w-3.5 h-3.5" />
-                    <span>Ver Infografía Completa y Detalles</span>
-                  </button>
-                </div>
-              </div>
-            ))}
-          </div>
-        </section>
-      )}
 
       {/* ========================================================================= */}
       {/* VISTA 4: SIMULADOR DE DECISIONES VIALES ("¿QUÉ HARÍAS TÚ?")               */}
@@ -1655,7 +1571,7 @@ export const EducationScreen: React.FC = () => {
                     className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-[#0066ff] hover:bg-blue-700 text-white text-xs font-bold transition-all cursor-pointer shadow-sm"
                   >
                     <Video className="w-4 h-4" />
-                    <span>Explorar Videoteca Didáctica</span>
+                    <span>Ver Videos</span>
                   </button>
                 </div>
               </div>
@@ -1903,69 +1819,6 @@ export const EducationScreen: React.FC = () => {
       })()}
 
       {/* ========================================================================= */}
-      {/* MODAL 2: VISOR DE INFOGRAFÍA COMPLETA                                     */}
-      {/* ========================================================================= */}
-      {selectedInfographicModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-5 bg-slate-950/75 backdrop-blur-sm animate-fade-in">
-          <div className="bg-white rounded-3xl max-w-2xl w-full border border-slate-200 shadow-2xl overflow-hidden flex flex-col max-h-[92vh]">
-            <div 
-              className="p-6 text-white flex items-center justify-between"
-              style={{ backgroundColor: selectedInfographicModal.accentColor }}
-            >
-              <div>
-                <span className="px-2.5 py-0.5 rounded-full bg-white/20 text-white text-[10px] font-extrabold uppercase tracking-wider inline-block">
-                  {selectedInfographicModal.badge}
-                </span>
-                <h3 className="text-xl font-black mt-1">
-                  {selectedInfographicModal.title}
-                </h3>
-              </div>
-              <button
-                type="button"
-                onClick={() => setSelectedInfographicModal(null)}
-                className="p-2 rounded-xl bg-white/10 hover:bg-white/20 text-white transition cursor-pointer"
-              >
-                <X className="w-5 h-5" />
-              </button>
-            </div>
-
-            <div className="p-6 space-y-5 overflow-y-auto flex-1">
-              <p className="text-sm text-slate-700 leading-relaxed font-medium">
-                {selectedInfographicModal.summary}
-              </p>
-
-              <div className="space-y-3">
-                <h4 className="text-xs font-black uppercase tracking-wider text-slate-400">
-                  Desglose Detallado de la Guía:
-                </h4>
-                {selectedInfographicModal.keyPoints.map((pt, idx) => (
-                  <div key={idx} className="p-4 rounded-2xl bg-slate-50 border border-slate-200 flex items-start gap-3.5">
-                    <span className="text-2xl shrink-0 mt-0.5">{pt.iconEmoji}</span>
-                    <div>
-                      <h5 className="text-sm font-bold text-slate-900">{pt.title}</h5>
-                      <p className="text-xs text-slate-600 leading-relaxed mt-1">{pt.desc}</p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-
-              <div className="p-4 rounded-2xl bg-blue-50 border border-blue-200 text-xs text-blue-900 leading-relaxed">
-                <strong>Conclusión Didáctica:</strong> {selectedInfographicModal.fullText}
-              </div>
-            </div>
-
-            <div className="p-4 border-t border-slate-200 bg-slate-50 flex items-center justify-end">
-              <button
-                type="button"
-                onClick={() => setSelectedInfographicModal(null)}
-                className="px-5 py-2.5 rounded-xl bg-[#0a193b] hover:bg-[#0057d9] text-white text-xs font-bold transition cursor-pointer"
-              >
-                Entendido • Cerrar Guía
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
 
       {/* ========================================================================= */}
       {/* MODAL 3: ESTUDIO INTERACTIVO DE CURSOS Y LECCIONES                        */}

@@ -480,13 +480,13 @@ export const SafetyScreen: React.FC<SafetyScreenProps> = ({
               Aprende Jugando: Tráfico, Tránsito y Prevención Vial
             </h2>
             <p className="text-blue-100 text-xs sm:text-sm leading-relaxed">
-              Pon a prueba tus reflejos en la <strong>Ruleta Vial A-Z</strong>, <strong>Cruce Seguro</strong>, <strong>Sopa de Letras</strong>, <strong>Memorama de Señales</strong> y nuestra Videoteca Oficial con explicaciones en colores fuertes y mini-evaluaciones dinámicas.
+              Pon a prueba tus reflejos en la <strong>Ruleta Vial A-Z</strong>, <strong>Cruce Seguro</strong>, <strong>Sopa de Letras</strong>, <strong>Memorama de Señales</strong> y nuestra sección de Videos Oficiales con explicaciones en colores fuertes y mini-evaluaciones dinámicas.
             </p>
             <div className="flex flex-wrap gap-2 pt-1.5">
               <span className="px-3 py-1 rounded-xl bg-white/10 text-white text-[11px] font-bold">🎡 Ruleta Vial A-Z</span>
               <span className="px-3 py-1 rounded-xl bg-white/10 text-white text-[11px] font-bold">🐸 Cruce Seguro</span>
               <span className="px-3 py-1 rounded-xl bg-white/10 text-white text-[11px] font-bold">🔍 Sopa de Letras</span>
-              <span className="px-3 py-1 rounded-xl bg-white/10 text-white text-[11px] font-bold">🎬 Videoteca Explicada</span>
+              <span className="px-3 py-1 rounded-xl bg-white/10 text-white text-[11px] font-bold">🎬 Videos</span>
             </div>
           </div>
 
