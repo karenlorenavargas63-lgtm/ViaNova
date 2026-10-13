@@ -65,7 +65,7 @@ export interface RoadScenario {
   }[];
 }
 
-// 1. VIDEOS DIDÁCTICOS OFICIALES DE SEGURIDAD VIAL VIANOVA: EXACTAMENTE 4 VIDEOS DIFERENTES
+// 1. VIDEOS DIDÁCTICOS OFICIALES DE SEGURIDAD VIAL VIANOVA: EXACTAMENTE 3 VIDEOS DIFERENTES
 export const DIDACTIC_VIDEOS: DidacticVideo[] = [
   // VIDEO 1: VIANOVA GESTIÓN Y FÍSICA DEL TRÁFICO URBANO (TRANCONES FANTASMA Y FLUJO INTELIGENTE)
   {
@@ -169,105 +169,54 @@ export const DIDACTIC_VIDEOS: DidacticVideo[] = [
     }
   },
 
-  // VIDEO 3: VIANOVA TRÁNSITO, NORMAS Y GLORIETAS (INTERSECCIONES Y PRELACIÓN)
+  // VIDEO 3: VIANOVA SEGURIDAD, FÍSICA DE FRENADO Y VELOCIDAD URBANA
   {
-    id: 'vid_vianova_roundabout_rules',
-    title: 'VIANOVA Tránsito: Dominio de Glorietas, Cruces y Prelación en la Vía',
-    topic: 'Tránsito',
-    category: 'Normativa Vial y Cruces Complejos',
-    duration: '4:10 min',
-    sourceName: 'VIANOVA Escuela Vial & Normativa Urbana',
-    sourceBadge: 'VIANOVA Normativa & Tránsito',
-    youtubeId: 'k4q79JkU904',
-    embedUrl: 'https://www.youtube-nocookie.com/embed/k4q79JkU904?rel=0',
-    thumbnail: 'https://images.unsplash.com/photo-1545459720-aac8509eb02c?w=800&auto=format&fit=crop&q=80',
-    summary: 'Cómo transitar y salir de una glorieta sin incidentes según las normas de VIANOVA: prioridad de ingreso, carril correcto y prohibición de cruzar desde el interior.',
-    highlightTag: '🚸 ROTONDAS & PRELACIÓN',
-    impactMetric: '🛡️ Elimina 80% de Choques en Cruce',
-    goldenRule: 'SALIDA OBLIGATORIA POR EL CARRIL EXTERIOR: Para salir de la rotonda debes posicionarte con tiempo en el carril derecho exterior; nunca cortes transversalmente.',
-    whyItHappens: 'La mayoría de siniestros en glorietas ocurren cuando un vehículo en el carril interno corta transversalmente el paso del conductor que circula por el exterior.',
-    solutionSteps: [
-      { stepNumber: '1', title: 'Ceda el Paso al Ingreso', desc: 'La prioridad de paso la tiene siempre el vehículo que ya está circulando dentro del anillo.' },
-      { stepNumber: '2', title: 'Ubicación Estratégica', desc: 'Usa el interior para dar vuelta o tomar salidas lejanas; usa el exterior si saldrás de inmediato.' },
-      { stepNumber: '3', title: 'Salida Anticipada', desc: 'Pásate al carril exterior antes de tu salida con direccional encendida de forma segura.' }
-    ],
-    doAndDont: {
-      dos: [
-        'Dar otra vuelta al anillo con calma si no pudiste pasar al carril exterior con seguridad.',
-        'Señalizar los cambios de carril interno y la salida definitiva con la luz de giro.'
-      ],
-      donts: [
-        'Cortar en diagonal desde el carril interior para abandonar la rotonda a la fuerza.',
-        'Ingresar a la glorieta asumiendo que los que circulan adentro deben frenar por ti.'
-      ]
-    },
-    keyTakeaways: [
-      'La prioridad absoluta es del vehículo que ya circula dentro del anillo vial.',
-      'La salida se realiza única y exclusivamente desde el carril exterior derecho.',
-      'Si pierdes la salida, dar otra vuelta completa es una maniobra 100% segura y legal.',
-      'En cruces sin semáforos, el vehículo proveniente de la derecha tiene prelación.'
-    ],
-    quizQuestion: {
-      question: 'Si vas por el carril interior de una glorieta y se aproxima tu salida pero el carril exterior está ocupado, ¿qué debes hacer según VIANOVA?',
-      options: [
-        'Frenar en seco en el carril interior y esperar',
-        'Tocar la bocina y cruzar atravesando el vehículo exterior',
-        'Dar otra vuelta completa al anillo y posicionarse con tiempo en el carril exterior',
-        'Poner reversa en la rotonda'
-      ],
-      correctIndex: 2,
-      explanation: 'Nunca se debe cortar el paso de otro conductor. Dar otra vuelta al anillo permite ubicarse en el carril exterior derecho de forma segura y sin riesgos.'
-    }
-  },
-
-  // VIDEO 4: VIANOVA PREVENCIÓN, MANEJO DEFENSIVO Y PUNTOS CIEGOS
-  {
-    id: 'vid_vianova_blindspots_prevention',
-    title: 'VIANOVA Prevención: Puntos Ciegos de Camiones y Protocolos de Supervivencia',
+    id: 'vid_vianova_defensive_speed',
+    title: 'VIANOVA Seguridad: Distancia de Frenado, Velocidad Urbana y Conducción Preventiva',
     topic: 'Prevención',
-    category: 'Seguridad Preventiva y Conducción Defensiva',
-    duration: '3:45 min',
-    sourceName: 'VIANOVA Centro de Prevención de Siniestros',
-    sourceBadge: 'VIANOVA Prevención Crítica',
-    youtubeId: '7yV1E9t-rGE',
-    embedUrl: 'https://www.youtube-nocookie.com/embed/7yV1E9t-rGE?rel=0',
-    thumbnail: 'https://images.unsplash.com/photo-1519003722824-194d4455a60c?w=800&auto=format&fit=crop&q=80',
-    summary: 'Demostración de los 4 ángulos ciegos críticos en vehículos pesados de carga urbana: zonas de sombra donde eres 100% invisible para el conductor de camión o bus.',
-    highlightTag: '⚠️ ÁNGULOS CIEGOS & REFLEJOS',
-    impactMetric: '🚨 -88% de Atropellos por Giro',
-    goldenRule: 'SI NO VES SUS ESPEJOS, ÉL NO TE VE: Si no alcanzas a ver los retrovisores laterales del camión, el conductor no tiene forma de saber que estás allí.',
-    whyItHappens: 'La cabina de camiones y autobuses crea sombras ópticas de hasta 12 metros detrás y 3 metros en el lateral derecho durante maniobras urbanas.',
+    category: 'Velocidad Segura y Reacción Vial VIANOVA',
+    duration: '4:15 min',
+    sourceName: 'VIANOVA Laboratorio de Seguridad y Física Vial',
+    sourceBadge: 'VIANOVA Seguridad Crítica',
+    youtubeId: 'oVqM1vA-r3M',
+    embedUrl: 'https://www.youtube-nocookie.com/embed/oVqM1vA-r3M?rel=0',
+    thumbnail: 'https://images.unsplash.com/photo-1449965408869-eaa3f722e40d?w=800&auto=format&fit=crop&q=80',
+    summary: 'Por qué la energía cinética se cuadruplica al duplicar la velocidad: cálculo de metros de detención total, percepción humana y cómo la moderación a 30-50 km/h salva vidas en zonas residenciales.',
+    highlightTag: '🛑 FRENADO & ENERGÍA CINÉTICA',
+    impactMetric: '⏱️ -65% Distancia de Detención',
+    goldenRule: 'REGLA DE LOS 3 SEGUNDOS EN SECO Y 5 EN MOJADO: La distancia de frenado no es lineal; a 50 km/h necesitas casi 28 metros para detenerte por completo.',
+    whyItHappens: 'El tiempo de reacción humana promedio es de 1 segundo (en el que recorres 14 metros a 50 km/h) ANTES de que el pie toque el freno mecánico.',
     solutionSteps: [
-      { stepNumber: '1', title: 'Ubicación Visible', desc: 'Ubícate donde puedas ver el rostro del conductor a través de sus espejos laterales.' },
-      { stepNumber: '2', title: 'Cero Adelantos por Derecha', desc: 'Nunca te ubiques en el costado derecho de camiones o buses al acercarse a esquinas.' },
-      { stepNumber: '3', title: 'Distancia de Resguardo', desc: 'Mantén mínimo 4 metros de separación posterior con transporte de carga pesada.' }
+      { stepNumber: '1', title: 'Percepción Anticipada', desc: 'Escanea el entorno 15 segundos adelante para identificar frenados y desvíos antes de que sucedan.' },
+      { stepNumber: '2', title: 'Zona 30 en Barrios', desc: 'A 30 km/h la probabilidad de supervivencia peatonal es del 90%; a 60 km/h cae a menos del 15%.' },
+      { stepNumber: '3', title: 'Condiciones Climáticas', desc: 'En pavimento mojado o con lluvia, duplica la distancia de seguridad obligatoria de inmediato.' }
     ],
     doAndDont: {
       dos: [
-        'Esperar con paciencia detrás del vehículo pesado en intersecciones sin forzar el paso.',
-        'Hacer cambio de luces o aviso sonoro breve si vas a adelantarlo por la izquierda.'
+        'Mantener neumáticos con presión adecuada y verificar el labrado periódicamente.',
+        'Aumentar la distancia de seguimiento a 5 segundos cuando llueve o hay niebla.'
       ],
       donts: [
-        'Filtrar por la derecha cuando un autobús o camión se prepara para girar.',
-        'Detenerte pegado justo debajo del capó delantero de un camión en el semáforo.'
+        'Conducir pegado al vehículo delantero asumiendo reflejos instantáneos.',
+        'Acelerar para cruzar en luz amarilla cuando se aproxima la intersección.'
       ]
     },
     keyTakeaways: [
-      'El lateral derecho es el ángulo ciego más crítico y peligroso en giros urbanos.',
-      'Un camión articulado necesita abrirse a la izquierda para poder girar a la derecha.',
-      'Si no ves los ojos del conductor en su retrovisor, asume que eres invisible.',
-      'Conserva siempre una ruta de escape si te desplazas en moto o bicicleta.'
+      'A 50 km/h recorres 14 metros antes siquiera de presionar el freno por reflejo neurológico.',
+      'El suelo mojado duplica la distancia requerida para detener el vehículo.',
+      'Reducir la velocidad urbana de 50 a 30 km/h reduce en 80% las colisiones con heridos.',
+      'La anticipación visual previene frenadas de emergencia y desgaste innecesario.'
     ],
     quizQuestion: {
-      question: '¿Cuál es el ángulo ciego más amplio y peligroso en un camión pesado según el módulo de Prevención VIANOVA?',
+      question: '¿Por qué la distancia de frenado se cuadruplica si duplicas tu velocidad según el laboratorio de física vial VIANOVA?',
       options: [
-        'El techo de la cabina',
-        'El lateral derecho, que se amplifica cuando el camión va a realizar un giro',
-        'La rueda de repuesto',
-        'El parachoques trasero superior'
+        'Porque los frenos se calientan instantáneamente',
+        'Porque la energía cinética aumenta con el cuadrado de la velocidad (E = 1/2 m·v²)',
+        'Porque el peso del vehículo aumenta al acelerar',
+        'Porque los neumáticos pierden contacto con el suelo'
       ],
       correctIndex: 1,
-      explanation: 'El costado derecho del camión posee un área ciega masiva debido a la distancia respecto a la posición del conductor en cabinas estándar.'
+      explanation: 'La física demuestra que la energía que deben disipar los frenos es cuadrática: duplicar la velocidad multiplica por 4 la energía cinética y la distancia de frenado.'
     }
   }
 ];
