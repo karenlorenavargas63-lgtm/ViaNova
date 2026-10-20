@@ -150,8 +150,8 @@ export const ContactScreen: React.FC = () => {
                 </div>
                 <div>
                   <p className="font-black text-slate-950 text-sm">Oficina Central</p>
-                  <p className="text-slate-900 font-semibold text-xs mt-1 leading-relaxed">
-                    Av. Movilidad 1234, Edificio SmartCity, Nivel 5. Centro de Gestión Urbana.
+                  <p className="text-slate-900 font-bold text-xs sm:text-sm mt-1 leading-relaxed">
+                    Institución Educativa Arzobispo Tulio Botero
                   </p>
                 </div>
               </div>
@@ -183,19 +183,22 @@ export const ContactScreen: React.FC = () => {
           <div className="space-y-4 pt-4 border-t border-slate-200">
             <p className="text-xs font-black uppercase tracking-wider text-slate-950">Ubicación Satelital</p>
             {/* Simulated Location Map Snapshot */}
-            <div className="rounded-2xl overflow-hidden border-2 border-slate-200 h-40 relative mt-2 shadow-inner">
+            <div className="rounded-2xl overflow-hidden border-2 border-slate-200 h-44 relative mt-2 shadow-inner group">
               <img
                 src="https://images.unsplash.com/photo-1524661135-423995f22d0b?w=600&auto=format&fit=crop&q=80"
-                alt="Mapa de ubicación sede VIANOVA"
+                alt="Ubicación Satelital Institución Educativa Arzobispo Tulio Botero"
                 className="w-full h-full object-cover"
               />
-              <div className="absolute inset-0 bg-slate-950/25 flex items-center justify-center">
-                <div className="px-4 py-2 rounded-full bg-slate-950 text-white text-xs font-black flex items-center gap-2 shadow-2xl border border-white/20">
-                  <MapPin className="w-4 h-4 text-emerald-400" />
-                  <span>Sede VIANOVA SmartCity</span>
+              <div className="absolute inset-0 bg-slate-950/35 flex items-center justify-center p-3 text-center">
+                <div className="px-4 py-2.5 rounded-full bg-slate-950/90 text-white text-xs font-black flex items-center gap-2 shadow-2xl border border-white/20 backdrop-blur-xs">
+                  <MapPin className="w-4 h-4 text-emerald-400 shrink-0" />
+                  <span className="font-bold">Institución Educativa Arzobispo Tulio Botero</span>
                 </div>
               </div>
             </div>
+            <p className="text-xs text-slate-700 font-bold text-center">
+              Institución Educativa Arzobispo Tulio Botero
+            </p>
           </div>
         </div>
 

@@ -66,8 +66,8 @@ export const ContactView: React.FC = () => {
                 </div>
                 <div>
                   <span className="font-bold text-slate-900 block">Oficina Central</span>
-                  <p className="text-slate-600 text-xs mt-0.5">
-                    Av. Movilidad 1234, Edificio SmartCity, Nivel 5. CDMX.
+                  <p className="text-slate-800 font-bold text-xs mt-0.5">
+                    Institución Educativa Arzobispo Tulio Botero
                   </p>
                 </div>
               </div>
