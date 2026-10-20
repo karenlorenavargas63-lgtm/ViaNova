@@ -3,12 +3,9 @@ import {
   Zap, 
   Shield, 
   GitFork, 
-  Navigation, 
   Crosshair, 
   MapPin, 
   Check, 
-  Volume2, 
-  VolumeX, 
   ArrowRight,
   Sparkles,
   Map,
@@ -16,8 +13,7 @@ import {
   Building2,
   RotateCcw,
   ArrowUpDown,
-  Search,
-  ExternalLink
+  Search
 } from 'lucide-react';
 import { InteractiveMap } from './InteractiveMap';
 import { AddressAutocompleteInput } from './AddressAutocompleteInput';
@@ -39,9 +35,6 @@ export const RoutesScreen: React.FC = () => {
   const [selectedRouteId, setSelectedRouteId] = useState<'rapida' | 'segura' | 'alternativa'>('rapida');
   const [calculatedRoute, setCalculatedRoute] = useState<CalculatedRoute | null>(null);
   const [isCalculating, setIsCalculating] = useState(false);
-  
-  const [isNavigating, setIsNavigating] = useState(false);
-  const [voiceAssistance, setVoiceAssistance] = useState(true);
 
   // Dynamic route options with live calculated distances and durations
   const baseDistance = calculatedRoute?.distanceKm || 4.2;
@@ -166,24 +159,6 @@ export const RoutesScreen: React.FC = () => {
       },
       { enableHighAccuracy: true, timeout: 8000 }
     );
-  };
-
-  // Voice announcements on navigation start
-  const handleToggleNavigation = () => {
-    const nextState = !isNavigating;
-    setIsNavigating(nextState);
-
-    if (nextState && voiceAssistance && 'speechSynthesis' in window) {
-      try {
-        const utterance = new SpeechSynthesisUtterance(
-          `Iniciando navegación en tiempo real hacia ${destinationName}. Distancia estimada ${baseDistance} kilómetros. Buen viaje.`
-        );
-        utterance.lang = 'es-CO';
-        window.speechSynthesis.speak(utterance);
-      } catch (e) {
-        // speech synthesis not supported or blocked
-      }
-    }
   };
 
   return (
@@ -323,12 +298,6 @@ export const RoutesScreen: React.FC = () => {
                     </span>
                   )}
                 </h2>
-                {isNavigating && (
-                  <span className="flex items-center gap-1.5 text-xs font-semibold text-emerald-600">
-                    <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-                    Navegando
-                  </span>
-                )}
               </div>
 
               <div className="space-y-2.5">
@@ -389,59 +358,33 @@ export const RoutesScreen: React.FC = () => {
 
           </div>
 
-          {/* Bottom Action Button */}
-          <div className="pt-6 space-y-3">
-            <div className="flex flex-col sm:flex-row gap-2.5">
-              <button
-                id="start-navigation-cta"
-                onClick={handleToggleNavigation}
-                className={`flex-1 py-4 rounded-xl font-bold text-base sm:text-lg transition-all duration-200 flex items-center justify-center gap-2.5 shadow-md cursor-pointer ${
-                  isNavigating
-                    ? 'bg-rose-600 hover:bg-rose-700 text-white'
-                    : 'bg-[#0a193b] hover:bg-[#0055d4] text-white hover:scale-[1.01]'
-                }`}
-              >
-                <Navigation className="w-5 h-5 fill-white rotate-45" />
-                <span>{isNavigating ? 'Detener Navegación' : 'Iniciar Navegación en Vivo'}</span>
-              </button>
-
-              <a
-                id="open-google-maps-cta"
-                href={`https://www.google.com/maps/dir/?api=1&origin=${originCoords[0]},${originCoords[1]}&destination=${destinationCoords[0]},${destinationCoords[1]}&travelmode=driving`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="px-4 py-3 sm:py-4 rounded-xl font-bold text-sm sm:text-base bg-white hover:bg-blue-50 text-slate-800 border-2 border-slate-200 hover:border-blue-400 transition-all flex items-center justify-center gap-2 shadow-xs cursor-pointer active:scale-95 shrink-0"
-                title="Abrir la ruta directamente en la app oficial de Google Maps"
-              >
-                <span className="flex items-center font-black text-sm">
-                  <span className="text-[#4285F4]">G</span>
-                  <span className="text-[#EA4335]">o</span>
-                  <span className="text-[#FBBC05]">o</span>
-                  <span className="text-[#4285F4]">g</span>
-                  <span className="text-[#34A853]">l</span>
-                  <span className="text-[#EA4335]">e</span>
+          {/* Resumen de Ruta y Selección Activa */}
+          <div className="pt-4 space-y-3">
+            <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200/90 space-y-2.5">
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-bold uppercase tracking-wider text-slate-500">
+                  Resumen del Trayecto
                 </span>
-                <span className="text-slate-700 font-semibold">Maps</span>
-                <ExternalLink className="w-4 h-4 text-blue-600" />
-              </a>
-            </div>
-
-            {isNavigating && (
-              <div className="p-3.5 rounded-xl bg-blue-50 border border-blue-100 flex items-center justify-between text-sm text-blue-900 font-medium animate-in fade-in">
-                <div className="flex items-center gap-2">
-                  <span className="w-2.5 h-2.5 rounded-full bg-blue-600 animate-ping"></span>
-                  <span className="truncate">Ruta guiada en vivo hacia {destinationName}</span>
-                </div>
-                <button 
-                  type="button"
-                  onClick={() => setVoiceAssistance(!voiceAssistance)}
-                  className="text-blue-700 hover:text-blue-900 p-1 cursor-pointer"
-                  title="Asistencia por voz"
-                >
-                  {voiceAssistance ? <Volume2 className="w-5 h-5" /> : <VolumeX className="w-5 h-5" />}
-                </button>
+                <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 text-xs font-bold">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-600 animate-pulse"></span>
+                  Ruta Calculada
+                </span>
               </div>
-            )}
+              <div className="flex items-center justify-between text-sm">
+                <span className="text-slate-600 font-medium">Distancia estimada:</span>
+                <span className="font-extrabold text-slate-900">{baseDistance} km</span>
+              </div>
+              <div className="flex items-center justify-between text-sm">
+                <span className="text-slate-600 font-medium">Tiempo de recorrido:</span>
+                <span className="font-extrabold text-slate-900">
+                  {selectedRouteId === 'rapida' ? `${baseTime} min` : selectedRouteId === 'segura' ? `${Math.round(baseTime * 1.2)} min` : `${Math.round(baseTime * 1.35)} min`}
+                </span>
+              </div>
+              <div className="pt-2 border-t border-slate-200/80 flex items-center justify-between text-xs text-slate-600">
+                <span className="truncate">Hacia: <strong className="text-slate-800">{destinationName}</strong></span>
+                <span className="text-blue-600 font-bold shrink-0">Tráfico monitoreado</span>
+              </div>
+            </div>
 
             <p className="text-xs text-center text-slate-500">
               💡 Puedes hacer clic en cualquier punto del mapa para fijar nuevo origen o destino
@@ -454,7 +397,7 @@ export const RoutesScreen: React.FC = () => {
         <div className="flex-1 w-full relative min-h-[500px]">
           <InteractiveMap
             selectedRouteId={selectedRouteId}
-            isNavigating={isNavigating}
+            isNavigating={false}
             originCoords={originCoords}
             destinationCoords={destinationCoords}
             originName={originName}

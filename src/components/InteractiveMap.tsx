@@ -623,7 +623,7 @@ export const InteractiveMap: React.FC<InteractiveMapProps> = ({
           {showLayerMenu && (
             <div className="absolute right-0 mt-2 w-60 bg-white rounded-2xl shadow-2xl border border-slate-200 p-2 space-y-1 text-xs font-semibold z-30 animate-in fade-in zoom-in-95">
               <div className="px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-slate-500 flex items-center justify-between">
-                <span>Capas de Google Maps</span>
+                <span>Capas Cartográficas VIANOVA</span>
                 <span className="text-[9px] px-1.5 py-0.5 rounded bg-blue-100 text-blue-700 font-bold">Activo</span>
               </div>
 
@@ -634,8 +634,8 @@ export const InteractiveMap: React.FC<InteractiveMapProps> = ({
                 }`}
               >
                 <div className="flex items-center gap-2">
-                  <span className="w-2.5 h-2.5 rounded-full bg-[#4285F4]"></span>
-                  <span>Google Maps (Calles)</span>
+                  <span className="w-2.5 h-2.5 rounded-full bg-blue-600"></span>
+                  <span>Mapa Urbano (Calles)</span>
                 </div>
                 {mapLayer === 'google-streets' && <div className="w-2 h-2 rounded-full bg-blue-600"></div>}
               </button>
@@ -647,8 +647,8 @@ export const InteractiveMap: React.FC<InteractiveMapProps> = ({
                 }`}
               >
                 <div className="flex items-center gap-2">
-                  <span className="w-2.5 h-2.5 rounded-full bg-[#EA4335]"></span>
-                  <span>Google Maps (Tráfico en vivo)</span>
+                  <span className="w-2.5 h-2.5 rounded-full bg-rose-500"></span>
+                  <span>Tráfico en Tiempo Real</span>
                 </div>
                 {mapLayer === 'google-traffic' && <div className="w-2 h-2 rounded-full bg-blue-600"></div>}
               </button>
@@ -660,8 +660,8 @@ export const InteractiveMap: React.FC<InteractiveMapProps> = ({
                 }`}
               >
                 <div className="flex items-center gap-2">
-                  <span className="w-2.5 h-2.5 rounded-full bg-[#34A853]"></span>
-                  <span>Google Maps (Satélite Híbrido)</span>
+                  <span className="w-2.5 h-2.5 rounded-full bg-emerald-600"></span>
+                  <span>Satélite Híbrido</span>
                 </div>
                 {mapLayer === 'google-hybrid' && <div className="w-2 h-2 rounded-full bg-blue-600"></div>}
               </button>
@@ -673,8 +673,8 @@ export const InteractiveMap: React.FC<InteractiveMapProps> = ({
                 }`}
               >
                 <div className="flex items-center gap-2">
-                  <span className="w-2.5 h-2.5 rounded-full bg-[#FBBC05]"></span>
-                  <span>Google Maps (Relieve / Terreno)</span>
+                  <span className="w-2.5 h-2.5 rounded-full bg-amber-500"></span>
+                  <span>Relieve y Terreno</span>
                 </div>
                 {mapLayer === 'google-terrain' && <div className="w-2 h-2 rounded-full bg-blue-600"></div>}
               </button>
@@ -860,20 +860,13 @@ export const InteractiveMap: React.FC<InteractiveMapProps> = ({
         </div>
       )}
 
-      {/* 7. Bottom Left: Google Maps Branding & Route Quick Launcher */}
+      {/* 7. Bottom Left: VIANOVA Map Branding & Route Quick Launcher */}
       <div className="absolute bottom-4 left-4 z-10 flex flex-wrap items-center gap-2">
         <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-white/95 backdrop-blur-md border border-slate-200/90 shadow-md text-xs font-semibold text-slate-700">
-          <div className="flex items-center gap-0.5 font-black text-xs tracking-tight">
-            <span className="text-[#4285F4]">G</span>
-            <span className="text-[#EA4335]">o</span>
-            <span className="text-[#FBBC05]">o</span>
-            <span className="text-[#4285F4]">g</span>
-            <span className="text-[#34A853]">l</span>
-            <span className="text-[#EA4335]">e</span>
-            <span className="ml-1 text-slate-800 font-bold">Maps</span>
-          </div>
+          <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+          <span className="font-bold text-slate-900">Mapa VIANOVA</span>
           <span className="w-1 h-1 rounded-full bg-slate-300"></span>
-          <span className="text-slate-600 text-[11px] font-semibold">Tráfico en tiempo real</span>
+          <span className="text-slate-600 text-[11px] font-semibold">Red vial urbana</span>
         </div>
 
         <div className="hidden md:flex items-center gap-3 px-3 py-1.5 rounded-xl bg-white/90 backdrop-blur-md border border-slate-200/90 shadow-xs text-[11px] text-slate-600 font-medium">
