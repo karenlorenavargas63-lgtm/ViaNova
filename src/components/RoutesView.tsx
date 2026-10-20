@@ -218,74 +218,29 @@ export const RoutesView: React.FC<RoutesViewProps> = ({
             })}
           </div>
 
-          {/* Start Navigation Button */}
-          {!isNavigating ? (
-            <button
-              id="btn-start-navigation"
-              onClick={handleStartNavigation}
-              className="w-full py-3.5 px-4 bg-slate-900 hover:bg-slate-800 text-white rounded-2xl text-sm font-bold shadow-lg shadow-slate-900/20 flex items-center justify-center gap-2 transition active:scale-98"
-            >
-              <Navigation className="w-4 h-4 text-blue-400" />
-              <span>Iniciar Navegación</span>
-            </button>
-          ) : (
-            <div className="bg-slate-900 text-white p-4 rounded-2xl space-y-3 animate-in fade-in">
-              <div className="flex items-center justify-between border-b border-slate-800 pb-2">
-                <div className="flex items-center gap-2 text-xs font-bold text-emerald-400">
-                  <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
-                  <span>Navegando: Ruta {selectedRoute.name}</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <button
-                    onClick={() => setVoiceEnabled(!voiceEnabled)}
-                    className="p-1 text-slate-400 hover:text-white"
-                  >
-                    {voiceEnabled ? <Volume2 className="w-4 h-4" /> : <VolumeX className="w-4 h-4" />}
-                  </button>
-                  <button
-                    onClick={handleStopNavigation}
-                    className="text-xs text-rose-400 hover:text-rose-300 font-bold"
-                  >
-                    Finalizar
-                  </button>
-                </div>
-              </div>
-
-              {/* Active Step */}
-              <div className="flex items-start gap-3 py-1">
-                <div className="w-9 h-9 rounded-xl bg-blue-600 text-white flex items-center justify-center shrink-0 shadow-md">
-                  <ArrowUp className="w-5 h-5" />
-                </div>
-                <div>
-                  <span className="text-[10px] uppercase font-bold text-slate-400">
-                    Paso {currentStepIndex + 1} de {selectedRoute.steps.length} ({selectedRoute.steps[currentStepIndex].distance})
-                  </span>
-                  <p className="text-sm font-semibold text-white leading-snug">
-                    {selectedRoute.steps[currentStepIndex].instruction}
-                  </p>
-                </div>
-              </div>
-
-              <button
-                onClick={handleNextStep}
-                className="w-full py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 transition"
-              >
-                <span>
-                  {currentStepIndex === selectedRoute.steps.length - 1 ? 'Terminar Recorrido' : 'Siguiente Instrucción'}
-                </span>
-                <ArrowRight className="w-3.5 h-3.5" />
-              </button>
-            </div>
-          )}
+          {/* Info note */}
+          <div className="p-3 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-600 text-center">
+            <span>Ruta planificada y optimizada</span>
+          </div>
         </div>
 
-        {/* Right Map Canvas (Page 5) */}
+        {/* Right Map Canvas */}
         <div className="lg:col-span-7 h-[580px] sticky top-24">
           <InteractiveMap
-            selectedRoute={selectedRoute}
-            alerts={alerts}
-            onSelectAlert={onSelectAlert}
-            activeNavStep={isNavigating ? currentStepIndex + 1 : 0}
+            selectedRouteId={selectedRouteId}
+            originCoords={null}
+            destinationCoords={null}
+            originName={origin}
+            destinationName={destination}
+            calculatedRoute={null}
+            currentCity={{
+              id: 'medellin',
+              name: 'Medellín',
+              department: 'Antioquia',
+              center: [6.2442, -75.5812],
+              zoom: 13,
+              popularRoutes: []
+            }}
           />
         </div>
       </div>
