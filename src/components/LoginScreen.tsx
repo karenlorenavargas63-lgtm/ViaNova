@@ -243,20 +243,38 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({
               <Logo size="lg" showSubtitle={true} />
               <div className="flex items-center gap-2">
                 {onToggleTheme && (
-                  <button
-                    type="button"
-                    onClick={onToggleTheme}
-                    className={`p-2 rounded-xl border transition-all cursor-pointer ${
-                      theme === 'dark'
-                        ? 'bg-slate-800 border-slate-700 text-amber-300 hover:bg-slate-700'
-                        : 'bg-white border-sky-300 text-slate-700 hover:bg-slate-50'
-                    }`}
-                    title={theme === 'dark' ? 'Cambiar a Modo Claro' : 'Cambiar a Modo Oscuro'}
-                  >
-                    {theme === 'dark' ? <Sun className="w-4 h-4 text-amber-400" /> : <Moon className="w-4 h-4 text-indigo-600" />}
-                  </button>
+                  <div className={`flex items-center p-1 rounded-xl border text-xs font-bold ${
+                    theme === 'dark' ? 'bg-slate-900 border-slate-700' : 'bg-white border-sky-300 shadow-xs'
+                  }`}>
+                    <button
+                      type="button"
+                      onClick={() => theme === 'dark' && onToggleTheme()}
+                      className={`flex items-center gap-1.5 px-2.5 py-1 rounded-lg transition-all cursor-pointer ${
+                        theme === 'light'
+                          ? 'bg-amber-400 text-slate-950 font-black shadow-xs'
+                          : 'text-slate-400 hover:text-white'
+                      }`}
+                      title="Activar Modo Claro"
+                    >
+                      <Sun className="w-3.5 h-3.5 text-amber-600" />
+                      <span>Modo Claro</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => theme === 'light' && onToggleTheme()}
+                      className={`flex items-center gap-1.5 px-2.5 py-1 rounded-lg transition-all cursor-pointer ${
+                        theme === 'dark'
+                          ? 'bg-[#0057d9] text-white font-black shadow-xs'
+                          : 'text-slate-600 hover:text-slate-950'
+                      }`}
+                      title="Activar Modo Oscuro"
+                    >
+                      <Moon className="w-3.5 h-3.5 text-indigo-300" />
+                      <span>Modo Oscuro</span>
+                    </button>
+                  </div>
                 )}
-                <div className={`flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold ${
+                <div className={`hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold ${
                   theme === 'dark'
                     ? 'bg-blue-950/70 border border-blue-800 text-blue-300'
                     : 'bg-blue-100 border border-sky-300 text-blue-900'

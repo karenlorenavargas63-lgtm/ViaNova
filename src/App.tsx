@@ -12,6 +12,7 @@ import { ProfileScreen } from './components/ProfileScreen';
 import { ContactScreen } from './components/ContactScreen';
 import { LoginScreen } from './components/LoginScreen';
 import { Footer } from './components/Footer';
+import { Sun, Moon } from 'lucide-react';
 import {
   getInitialSession,
   saveActiveSession,
@@ -137,6 +138,8 @@ export default function App() {
         {currentTab === 'inicio' && (
           <HomeScreen
             setCurrentTab={setCurrentTab}
+            theme={theme}
+            onToggleTheme={toggleTheme}
           />
         )}
 
@@ -180,6 +183,33 @@ export default function App() {
           <ContactScreen />
         )}
       </main>
+
+      {/* Floating Quick Switcher: Modo Claro / Modo Oscuro (Always Visible) */}
+      <div className="fixed bottom-6 right-6 z-40">
+        <button
+          type="button"
+          onClick={toggleTheme}
+          id="floating-theme-toggle-btn"
+          className={`flex items-center gap-2.5 px-4 py-2.5 rounded-2xl shadow-2xl border-2 transition-all duration-300 hover:scale-105 cursor-pointer backdrop-blur-md ${
+            theme === 'dark'
+              ? 'bg-slate-900/95 border-amber-400 text-amber-300 hover:bg-slate-800 shadow-amber-500/10'
+              : 'bg-white/95 border-[#0057d9] text-[#0057d9] hover:bg-slate-50 shadow-blue-500/15'
+          }`}
+          title={theme === 'dark' ? 'Cambiar a Modo Claro' : 'Cambiar a Modo Oscuro'}
+        >
+          {theme === 'dark' ? (
+            <>
+              <Sun className="w-4 h-4 text-amber-400" />
+              <span className="text-xs font-black tracking-wide">☀️ Modo Claro</span>
+            </>
+          ) : (
+            <>
+              <Moon className="w-4 h-4 text-indigo-600" />
+              <span className="text-xs font-black tracking-wide">🌙 Modo Oscuro</span>
+            </>
+          )}
+        </button>
+      </div>
 
       {/* Persistent Footer */}
       <Footer setCurrentTab={setCurrentTab} />
