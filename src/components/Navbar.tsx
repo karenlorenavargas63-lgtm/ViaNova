@@ -8,7 +8,9 @@ import {
   Edit3,
   LogOut,
   Trash2,
-  AlertTriangle
+  AlertTriangle,
+  Sun,
+  Moon
 } from 'lucide-react';
 import { Logo } from './Logo';
 import { UserProfileDropdown } from './UserProfileDropdown';
@@ -22,6 +24,8 @@ interface NavbarProps {
   onLogout: () => void;
   onUpdateUser?: (updated: UserProfile) => void;
   onDeleteAccount?: () => void;
+  theme?: 'light' | 'dark';
+  onToggleTheme?: () => void;
 }
 
 export const Navbar: React.FC<NavbarProps> = ({
@@ -33,6 +37,8 @@ export const Navbar: React.FC<NavbarProps> = ({
   onLogout,
   onUpdateUser,
   onDeleteAccount,
+  theme = 'light',
+  onToggleTheme,
 }) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = React.useState(false);
   const [isMobileProfileExpanded, setIsMobileProfileExpanded] = useState(false);
@@ -48,7 +54,11 @@ export const Navbar: React.FC<NavbarProps> = ({
   ];
 
   return (
-    <header className="sticky top-2 sm:top-3 z-40 w-[96%] max-w-7xl mx-auto rounded-2xl sm:rounded-3xl bg-[#caeafc]/95 backdrop-blur-xl border border-sky-300 shadow-[0_12px_36px_-6px_rgba(0,87,217,0.2)] transition-all duration-300 hover:shadow-[0_16px_44px_-4px_rgba(0,87,217,0.28)] mb-3">
+    <header className={`sticky top-2 sm:top-3 z-40 w-[96%] max-w-7xl mx-auto rounded-2xl sm:rounded-3xl backdrop-blur-xl border transition-all duration-300 mb-3 ${
+      theme === 'dark'
+        ? 'bg-[#0d1733]/95 border-slate-700/80 shadow-[0_12px_36px_-6px_rgba(0,0,0,0.7)] text-slate-100 hover:shadow-[0_16px_44px_-4px_rgba(0,0,0,0.9)]'
+        : 'bg-[#caeafc]/95 border-sky-300 shadow-[0_12px_36px_-6px_rgba(0,87,217,0.2)] text-slate-900 hover:shadow-[0_16px_44px_-4px_rgba(0,87,217,0.28)]'
+    }`}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-20">
           
@@ -72,13 +82,15 @@ export const Navbar: React.FC<NavbarProps> = ({
                   onClick={() => setCurrentTab(item.id)}
                   className={`relative py-2 text-[15px] sm:text-base font-semibold transition-all duration-200 ${
                     isActive
-                      ? 'text-[#0057d9]'
-                      : 'text-slate-700 hover:text-[#0057d9]'
+                      ? theme === 'dark' ? 'text-sky-400 font-bold' : 'text-[#0057d9]'
+                      : theme === 'dark' ? 'text-slate-300 hover:text-white' : 'text-slate-700 hover:text-[#0057d9]'
                   }`}
                 >
                   <span>{item.label}</span>
                   {isActive && (
-                    <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#0057d9] rounded-full"></span>
+                    <span className={`absolute bottom-0 left-0 right-0 h-0.5 rounded-full ${
+                      theme === 'dark' ? 'bg-sky-400' : 'bg-[#0057d9]'
+                    }`}></span>
                   )}
                 </button>
               );
@@ -87,6 +99,33 @@ export const Navbar: React.FC<NavbarProps> = ({
 
           {/* Right Action / Profile Button with Unfolded Full User Info Dropdown */}
           <div className="hidden md:flex items-center gap-3">
+            {/* Theme Toggle Button: Modo Claro / Modo Oscuro */}
+            {onToggleTheme && (
+              <button
+                type="button"
+                onClick={onToggleTheme}
+                id="theme-toggle-btn"
+                title={theme === 'dark' ? 'Cambiar a Modo Claro' : 'Cambiar a Modo Oscuro'}
+                className={`flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-bold transition-all duration-200 border cursor-pointer ${
+                  theme === 'dark'
+                    ? 'bg-slate-800/90 border-slate-700 text-amber-300 hover:bg-slate-700 shadow-sm'
+                    : 'bg-white/80 border-sky-300 text-slate-800 hover:bg-white shadow-xs'
+                }`}
+              >
+                {theme === 'dark' ? (
+                  <>
+                    <Sun className="w-4 h-4 text-amber-400" />
+                    <span className="font-bold text-amber-200">Modo Claro</span>
+                  </>
+                ) : (
+                  <>
+                    <Moon className="w-4 h-4 text-indigo-600" />
+                    <span className="font-bold text-slate-700">Modo Oscuro</span>
+                  </>
+                )}
+              </button>
+            )}
+
             {user ? (
               <UserProfileDropdown
                 user={user}
@@ -108,11 +147,28 @@ export const Navbar: React.FC<NavbarProps> = ({
             )}
           </div>
 
-          {/* Mobile Hamburger Button */}
+          {/* Mobile Actions: Theme Toggle + Hamburger Button */}
           <div className="flex md:hidden items-center gap-2">
+            {onToggleTheme && (
+              <button
+                type="button"
+                onClick={onToggleTheme}
+                className={`p-2.5 rounded-xl border transition-all cursor-pointer ${
+                  theme === 'dark'
+                    ? 'bg-slate-800 border-slate-700 text-amber-300'
+                    : 'bg-white border-sky-300 text-slate-700'
+                }`}
+                title={theme === 'dark' ? 'Modo Claro' : 'Modo Oscuro'}
+              >
+                {theme === 'dark' ? <Sun className="w-4 h-4 text-amber-400" /> : <Moon className="w-4 h-4 text-indigo-600" />}
+              </button>
+            )}
+
             <button
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="p-2.5 rounded-xl bg-slate-100 text-slate-700 hover:bg-slate-200"
+              className={`p-2.5 rounded-xl transition-colors ${
+                theme === 'dark' ? 'bg-slate-800 text-slate-200 hover:bg-slate-700' : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+              }`}
               id="mobile-menu-toggle"
               aria-label="Menu"
             >
@@ -124,7 +180,38 @@ export const Navbar: React.FC<NavbarProps> = ({
 
       {/* Mobile Drawer */}
       {isMobileMenuOpen && (
-        <div className="md:hidden bg-[#b9e3fc] border-b border-sky-300 px-4 pt-3 pb-6 space-y-2 shadow-lg max-h-[85vh] overflow-y-auto">
+        <div className={`md:hidden border-b px-4 pt-3 pb-6 space-y-2 shadow-lg max-h-[85vh] overflow-y-auto ${
+          theme === 'dark'
+            ? 'bg-[#0a1228] border-slate-800 text-slate-100'
+            : 'bg-[#b9e3fc] border-sky-300 text-slate-800'
+        }`}>
+          {/* Mobile Theme Toggle Banner */}
+          {onToggleTheme && (
+            <div className="pb-2">
+              <button
+                type="button"
+                onClick={onToggleTheme}
+                className={`w-full flex items-center justify-between p-3 rounded-xl border transition-all cursor-pointer ${
+                  theme === 'dark'
+                    ? 'bg-slate-800 border-slate-700 text-amber-300'
+                    : 'bg-white border-sky-300 text-slate-800'
+                }`}
+              >
+                <div className="flex items-center gap-2">
+                  {theme === 'dark' ? <Sun className="w-5 h-5 text-amber-400" /> : <Moon className="w-5 h-5 text-indigo-600" />}
+                  <span className="text-sm font-bold">
+                    {theme === 'dark' ? 'Modo Oscuro Activo' : 'Modo Claro Activo'}
+                  </span>
+                </div>
+                <span className={`text-xs px-2.5 py-1 rounded-lg font-bold ${
+                  theme === 'dark' ? 'bg-amber-400/20 text-amber-300' : 'bg-blue-100 text-blue-800'
+                }`}>
+                  {theme === 'dark' ? 'Cambiar a Claro ☀️' : 'Cambiar a Oscuro 🌙'}
+                </span>
+              </button>
+            </div>
+          )}
+
           {navItems.map((item) => {
             const isActive = currentTab === item.id;
             return (
@@ -136,7 +223,11 @@ export const Navbar: React.FC<NavbarProps> = ({
                 }}
                 className={`w-full flex items-center justify-between px-4 py-3 rounded-xl text-base font-semibold transition-all ${
                   isActive
-                    ? 'bg-blue-100 text-[#0057d9] border border-sky-300'
+                    ? theme === 'dark'
+                      ? 'bg-blue-950/70 text-sky-400 border border-blue-800'
+                      : 'bg-blue-100 text-[#0057d9] border border-sky-300'
+                    : theme === 'dark'
+                    ? 'text-slate-300 hover:bg-slate-800'
                     : 'text-slate-700 hover:bg-[#a8d8fc]'
                 }`}
               >
@@ -145,7 +236,30 @@ export const Navbar: React.FC<NavbarProps> = ({
             );
           })}
 
-          <div className="pt-3 border-t border-slate-100">
+          <div className="pt-3 border-t border-slate-100 space-y-3">
+            {/* Theme Toggle Button Mobile */}
+            {onToggleTheme && (
+              <button
+                type="button"
+                onClick={onToggleTheme}
+                className={`w-full flex items-center justify-between p-3 rounded-2xl border font-bold text-sm transition-all ${
+                  theme === 'dark'
+                    ? 'bg-slate-800 border-slate-700 text-amber-300'
+                    : 'bg-white border-sky-300 text-slate-800'
+                }`}
+              >
+                <div className="flex items-center gap-2.5">
+                  {theme === 'dark' ? <Sun className="w-5 h-5 text-amber-400" /> : <Moon className="w-5 h-5 text-indigo-600" />}
+                  <span>{theme === 'dark' ? 'Cambiar a Modo Claro' : 'Cambiar a Modo Oscuro'}</span>
+                </div>
+                <span className={`text-xs px-2.5 py-1 rounded-full ${
+                  theme === 'dark' ? 'bg-amber-400/20 text-amber-200' : 'bg-indigo-50 text-indigo-700'
+                }`}>
+                  {theme === 'dark' ? 'Oscuro activo' : 'Claro activo'}
+                </span>
+              </button>
+            )}
+
             {user ? (
               <div className="space-y-2">
                 {/* Mobile Button containing User Name */}

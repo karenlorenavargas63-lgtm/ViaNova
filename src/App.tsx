@@ -27,6 +27,35 @@ export default function App() {
   const [user, setUser] = useState<UserProfile>(initialSession.user);
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(initialSession.isAuthenticated);
 
+  // App-wide Theme: Modo Claro / Modo Oscuro
+  const [theme, setTheme] = useState<'light' | 'dark'>(() => {
+    try {
+      const saved = localStorage.getItem('vianova_theme');
+      if (saved === 'dark' || saved === 'light') return saved;
+      return 'light';
+    } catch {
+      return 'light';
+    }
+  });
+
+  const toggleTheme = () => {
+    setTheme((prev) => {
+      const next = prev === 'light' ? 'dark' : 'light';
+      try {
+        localStorage.setItem('vianova_theme', next);
+      } catch {}
+      return next;
+    });
+  };
+
+  React.useEffect(() => {
+    if (theme === 'dark') {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+  }, [theme]);
+
   const setCurrentTab = (tab: NavigationTab) => {
     setCurrentTabState(tab);
     saveCurrentTab(tab);
@@ -63,18 +92,33 @@ export default function App() {
     return (
       <LoginScreen
         onLoginSuccess={handleLoginSuccess}
+        theme={theme}
+        onToggleTheme={toggleTheme}
       />
     );
   }
 
   return (
-    <div className="min-h-screen bg-[#b9e3fc] text-slate-900 font-sans flex flex-col relative overflow-x-hidden selection:bg-blue-600 selection:text-white">
+    <div className={`min-h-screen font-sans flex flex-col relative overflow-x-hidden transition-colors duration-300 ${
+      theme === 'dark'
+        ? 'bg-[#070e20] text-slate-100 selection:bg-blue-500 selection:text-white dark'
+        : 'bg-[#b9e3fc] text-slate-900 selection:bg-blue-600 selection:text-white'
+    }`}>
       
-      {/* Soft Ambient Accents */}
-      <div className="fixed top-[-10%] left-[-5%] w-[450px] sm:w-[600px] h-[450px] sm:h-[600px] bg-blue-400/5 rounded-full blur-[140px] pointer-events-none z-0"></div>
-      <div className="fixed bottom-[-10%] right-[-5%] w-[500px] sm:w-[700px] h-[500px] sm:h-[700px] bg-indigo-400/5 rounded-full blur-[160px] pointer-events-none z-0"></div>
+      {/* Ambient Accents */}
+      {theme === 'dark' ? (
+        <>
+          <div className="fixed top-[-10%] left-[-5%] w-[450px] sm:w-[600px] h-[450px] sm:h-[600px] bg-blue-600/10 rounded-full blur-[140px] pointer-events-none z-0"></div>
+          <div className="fixed bottom-[-10%] right-[-5%] w-[500px] sm:w-[700px] h-[500px] sm:h-[700px] bg-indigo-600/10 rounded-full blur-[160px] pointer-events-none z-0"></div>
+        </>
+      ) : (
+        <>
+          <div className="fixed top-[-10%] left-[-5%] w-[450px] sm:w-[600px] h-[450px] sm:h-[600px] bg-blue-400/5 rounded-full blur-[140px] pointer-events-none z-0"></div>
+          <div className="fixed bottom-[-10%] right-[-5%] w-[500px] sm:w-[700px] h-[500px] sm:h-[700px] bg-indigo-400/5 rounded-full blur-[160px] pointer-events-none z-0"></div>
+        </>
+      )}
 
-      {/* Main Top Navigation */}
+      {/* Main Top Navigation with Modo Claro / Oscuro */}
       <Navbar
         currentTab={currentTab}
         setCurrentTab={setCurrentTab}
@@ -84,6 +128,8 @@ export default function App() {
         onLogout={handleLogout}
         onUpdateUser={handleUpdateUser}
         onDeleteAccount={handleDeleteAccount}
+        theme={theme}
+        onToggleTheme={toggleTheme}
       />
 
       {/* Primary Dynamic Main Content View */}
@@ -125,6 +171,8 @@ export default function App() {
             onLogout={handleLogout}
             onDeleteAccount={handleDeleteAccount}
             setCurrentTab={setCurrentTab}
+            theme={theme}
+            onToggleTheme={toggleTheme}
           />
         )}
 

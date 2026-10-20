@@ -24,7 +24,9 @@ import {
   CheckCircle2,
   AlertCircle,
   Loader2,
-  Mail
+  Mail,
+  Sun,
+  Moon
 } from 'lucide-react';
 import defaultAvatarImg from '../assets/images/profile_user_portrait_1788443574080.jpg';
 
@@ -34,6 +36,8 @@ interface ProfileScreenProps {
   onLogout?: () => void;
   onDeleteAccount?: () => void;
   setCurrentTab?: (tab: NavigationTab) => void;
+  theme?: 'light' | 'dark';
+  onToggleTheme?: () => void;
 }
 
 export const ProfileScreen: React.FC<ProfileScreenProps> = ({ 
@@ -41,7 +45,9 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
   onUpdateUser, 
   onLogout, 
   onDeleteAccount,
-  setCurrentTab 
+  setCurrentTab,
+  theme = 'light',
+  onToggleTheme
 }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
@@ -259,13 +265,44 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
       {/* Header bar with title */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8 pb-4 border-b border-slate-200/80">
         <div>
-          <h1 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-[#0a193b] tracking-tight">
+          <h1 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-[#0a193b] dark:text-white tracking-tight">
             Perfil de Usuario
           </h1>
-          <p className="text-sm sm:text-base text-slate-600 mt-1.5">
+          <p className="text-sm sm:text-base text-slate-600 dark:text-slate-300 mt-1.5">
             Gestiona tu información personal, certificaciones viales y estado de movilidad
           </p>
         </div>
+
+        {/* Theme Selector: Modo Claro / Modo Oscuro */}
+        {onToggleTheme && (
+          <div className="flex items-center gap-1.5 p-1.5 rounded-2xl bg-white dark:bg-slate-800 border border-slate-200/90 dark:border-slate-700 shadow-xs">
+            <span className="text-xs font-bold text-slate-500 dark:text-slate-400 pl-2 pr-1">Tema:</span>
+            <button
+              type="button"
+              onClick={onToggleTheme}
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+                theme === 'light'
+                  ? 'bg-[#caeafc] text-[#0057d9] font-black shadow-xs'
+                  : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+              }`}
+            >
+              <Sun className="w-3.5 h-3.5" />
+              <span>Modo Claro</span>
+            </button>
+            <button
+              type="button"
+              onClick={onToggleTheme}
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+                theme === 'dark'
+                  ? 'bg-slate-900 text-amber-300 font-black shadow-xs border border-slate-700'
+                  : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+              }`}
+            >
+              <Moon className="w-3.5 h-3.5" />
+              <span>Modo Oscuro</span>
+            </button>
+          </div>
+        )}
       </div>
 
       {/* 3-Column Layout Matching the Uploaded Design */}

@@ -12,7 +12,9 @@ import {
   User,
   MapPin,
   Bike,
-  UserPlus
+  UserPlus,
+  Sun,
+  Moon
 } from 'lucide-react';
 import { CrashHeroAnimation } from './CrashHeroAnimation';
 import { UserProfile } from '../types';
@@ -20,24 +22,27 @@ import { Logo } from './Logo';
 import { 
   validateCredentials, 
   registerNewUser,
-  getRegisteredUsers,
-  DEMO_CREDENTIALS
+  getRegisteredUsers
 } from '../utils/session';
 
 interface LoginScreenProps {
   onLoginSuccess: (user: UserProfile) => void;
   onRegisterSuccess?: (user: UserProfile) => void;
+  theme?: 'light' | 'dark';
+  onToggleTheme?: () => void;
 }
 
 export const LoginScreen: React.FC<LoginScreenProps> = ({ 
-  onLoginSuccess 
+  onLoginSuccess,
+  theme = 'light',
+  onToggleTheme
 }) => {
   // Mode: 'login' for registered users, 'register' for first-time users
   const [isFirstTime, setIsFirstTime] = useState<boolean>(false);
 
-  // Login form fields
-  const [email, setEmail] = useState<string>(DEMO_CREDENTIALS.email);
-  const [password, setPassword] = useState<string>(DEMO_CREDENTIALS.password);
+  // Login form fields (completely empty by default as requested)
+  const [email, setEmail] = useState<string>('');
+  const [password, setPassword] = useState<string>('');
   const [showPassword, setShowPassword] = useState<boolean>(false);
 
   // First-time registration form fields
@@ -227,24 +232,46 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({
       </div>
 
       {/* Right Column: Dynamic Form (Login vs First-Time Registration) */}
-      <div className="w-full lg:w-1/2 min-h-screen flex flex-col justify-center items-center px-4 sm:px-8 lg:px-14 py-8 bg-[#b9e3fc]">
+      <div className={`w-full lg:w-1/2 min-h-screen flex flex-col justify-center items-center px-4 sm:px-8 lg:px-14 py-8 transition-colors duration-300 ${
+        theme === 'dark' ? 'bg-[#0a1228] text-slate-100' : 'bg-[#b9e3fc] text-slate-800'
+      }`}>
         <div className="w-full max-w-md space-y-6">
           
           {/* Top Brand Header */}
           <div className="space-y-3">
             <div className="flex items-center justify-between">
               <Logo size="lg" showSubtitle={true} />
-              <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-100 border border-sky-300 text-blue-900 text-xs font-bold">
-                <ShieldCheck className="w-4 h-4 text-blue-600" />
-                <span>{isFirstTime ? 'Nuevo Registro' : 'Acceso Seguro'}</span>
+              <div className="flex items-center gap-2">
+                {onToggleTheme && (
+                  <button
+                    type="button"
+                    onClick={onToggleTheme}
+                    className={`p-2 rounded-xl border transition-all cursor-pointer ${
+                      theme === 'dark'
+                        ? 'bg-slate-800 border-slate-700 text-amber-300 hover:bg-slate-700'
+                        : 'bg-white border-sky-300 text-slate-700 hover:bg-slate-50'
+                    }`}
+                    title={theme === 'dark' ? 'Cambiar a Modo Claro' : 'Cambiar a Modo Oscuro'}
+                  >
+                    {theme === 'dark' ? <Sun className="w-4 h-4 text-amber-400" /> : <Moon className="w-4 h-4 text-indigo-600" />}
+                  </button>
+                )}
+                <div className={`flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold ${
+                  theme === 'dark'
+                    ? 'bg-blue-950/70 border border-blue-800 text-blue-300'
+                    : 'bg-blue-100 border border-sky-300 text-blue-900'
+                }`}>
+                  <ShieldCheck className="w-4 h-4 text-blue-500" />
+                  <span>{isFirstTime ? 'Nuevo Registro' : 'Acceso Seguro'}</span>
+                </div>
               </div>
             </div>
 
             <div className="pt-2">
-              <h1 className="text-2xl sm:text-3xl font-black text-slate-950 tracking-tight">
+              <h1 className={`text-2xl sm:text-3xl font-black tracking-tight ${theme === 'dark' ? 'text-white' : 'text-slate-950'}`}>
                 {isFirstTime ? 'Registro por Primera Vez' : 'Acceso a la Plataforma'}
               </h1>
-              <p className="text-xs sm:text-sm text-slate-700 font-medium leading-relaxed mt-1">
+              <p className={`text-xs sm:text-sm font-medium leading-relaxed mt-1 ${theme === 'dark' ? 'text-slate-300' : 'text-slate-700'}`}>
                 {isFirstTime
                   ? 'Si vas a ingresar por primera vez, completa tu registro para acceder a VIANOVA.'
                   : 'Ingresa con tu correo registrado y tu contraseña.'}
@@ -253,17 +280,23 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({
           </div>
 
           {/* Segmented Mode Selector: First time vs Registered user */}
-          <div className="grid grid-cols-2 gap-1.5 p-1 bg-sky-200/90 rounded-2xl border border-sky-300 shadow-xs">
+          <div className={`grid grid-cols-2 gap-1.5 p-1 rounded-2xl border shadow-xs ${
+            theme === 'dark' ? 'bg-slate-800/80 border-slate-700' : 'bg-sky-200/90 border-sky-300'
+          }`}>
             <button
               type="button"
               onClick={handleSwitchToRegister}
               className={`py-2.5 px-3 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center justify-center gap-1.5 ${
                 isFirstTime
-                  ? 'bg-white text-blue-900 shadow-md font-black border border-sky-300'
+                  ? theme === 'dark'
+                    ? 'bg-slate-900 text-sky-300 shadow-md font-black border border-blue-500'
+                    : 'bg-white text-blue-900 shadow-md font-black border border-sky-300'
+                  : theme === 'dark'
+                  ? 'text-slate-400 hover:text-white'
                   : 'text-slate-700 hover:text-slate-950'
               }`}
             >
-              <UserPlus className="w-4 h-4 text-blue-600" />
+              <UserPlus className="w-4 h-4 text-blue-500" />
               <span>Primer Ingreso (Registro)</span>
             </button>
             <button
@@ -271,11 +304,15 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({
               onClick={handleSwitchToLogin}
               className={`py-2.5 px-3 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center justify-center gap-1.5 ${
                 !isFirstTime
-                  ? 'bg-white text-blue-900 shadow-md font-black border border-sky-300'
+                  ? theme === 'dark'
+                    ? 'bg-slate-900 text-sky-300 shadow-md font-black border border-blue-500'
+                    : 'bg-white text-blue-900 shadow-md font-black border border-sky-300'
+                  : theme === 'dark'
+                  ? 'text-slate-400 hover:text-white'
                   : 'text-slate-700 hover:text-slate-950'
               }`}
             >
-              <KeyRound className="w-4 h-4 text-blue-600" />
+              <KeyRound className="w-4 h-4 text-blue-500" />
               <span>Ya Registrado (Ingreso)</span>
             </button>
           </div>
@@ -316,7 +353,7 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({
               
               {/* Email Field */}
               <div className="space-y-1.5">
-                <label className="block text-xs font-bold text-slate-800">
+                <label className={`block text-xs font-bold ${theme === 'dark' ? 'text-slate-200' : 'text-slate-800'}`}>
                   Correo Electrónico *
                 </label>
                 <div className="relative">
@@ -330,14 +367,18 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="ejemplo@correo.com"
-                    className="w-full pl-10 pr-4 py-3 rounded-xl bg-[#caeafc] border border-sky-400 focus:border-blue-600 focus:bg-[#d8effe] focus:outline-none text-slate-900 text-sm placeholder:text-slate-500 transition-colors font-semibold"
+                    className={`w-full pl-10 pr-4 py-3 rounded-xl border focus:outline-none text-sm transition-colors font-semibold ${
+                      theme === 'dark'
+                        ? 'bg-[#0f1d3e] border-slate-700 focus:border-blue-500 focus:bg-[#152752] text-white placeholder:text-slate-500'
+                        : 'bg-[#caeafc] border-sky-400 focus:border-blue-600 focus:bg-[#d8effe] text-slate-900 placeholder:text-slate-500'
+                    }`}
                   />
                 </div>
               </div>
 
               {/* Password Field */}
               <div className="space-y-1.5">
-                <label className="block text-xs font-bold text-slate-800">
+                <label className={`block text-xs font-bold ${theme === 'dark' ? 'text-slate-200' : 'text-slate-800'}`}>
                   Contraseña *
                 </label>
                 <div className="relative">
@@ -351,12 +392,16 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     placeholder="Ingresa tu contraseña"
-                    className="w-full pl-10 pr-10 py-3 rounded-xl bg-[#caeafc] border border-sky-400 focus:border-blue-600 focus:bg-[#d8effe] focus:outline-none text-slate-900 text-sm placeholder:text-slate-500 transition-colors font-semibold tracking-wider"
+                    className={`w-full pl-10 pr-10 py-3 rounded-xl border focus:outline-none text-sm transition-colors font-semibold tracking-wider ${
+                      theme === 'dark'
+                        ? 'bg-[#0f1d3e] border-slate-700 focus:border-blue-500 focus:bg-[#152752] text-white placeholder:text-slate-500'
+                        : 'bg-[#caeafc] border-sky-400 focus:border-blue-600 focus:bg-[#d8effe] text-slate-900 placeholder:text-slate-500'
+                    }`}
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-500 hover:text-slate-800 cursor-pointer"
+                    className="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-slate-200 cursor-pointer"
                     title={showPassword ? 'Ocultar contraseña' : 'Ver contraseña'}
                   >
                     {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
@@ -377,14 +422,16 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({
               </button>
 
               {/* First Time Link */}
-              <div className="pt-3 border-t border-sky-300 text-center space-y-1.5">
-                <p className="text-xs text-slate-700">
+              <div className={`pt-3 border-t text-center space-y-1.5 ${theme === 'dark' ? 'border-slate-800' : 'border-sky-300'}`}>
+                <p className={`text-xs ${theme === 'dark' ? 'text-slate-400' : 'text-slate-700'}`}>
                   ¿Vas a ingresar por primera vez a la plataforma?
                 </p>
                 <button
                   type="button"
                   onClick={handleSwitchToRegister}
-                  className="text-xs sm:text-sm font-extrabold text-[#0047b3] hover:text-[#002f80] underline cursor-pointer inline-flex items-center gap-1"
+                  className={`text-xs sm:text-sm font-extrabold underline cursor-pointer inline-flex items-center gap-1 ${
+                    theme === 'dark' ? 'text-sky-400 hover:text-sky-300' : 'text-[#0047b3] hover:text-[#002f80]'
+                  }`}
                 >
                   <UserPlus className="w-3.5 h-3.5" />
                   <span>Haz tu registro aquí por primera vez</span>
@@ -411,7 +458,7 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({
                     id="register-name-input"
                     value={regName}
                     onChange={(e) => setRegName(e.target.value)}
-                    placeholder="Ej. Karen Lorena Vargas"
+                    placeholder="Ingresa tu nombre y apellido"
                     className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-[#caeafc] border border-sky-400 focus:border-blue-600 focus:bg-[#d8effe] focus:outline-none text-slate-900 text-sm font-semibold"
                   />
                 </div>
@@ -432,7 +479,7 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({
                     id="register-email-input"
                     value={regEmail}
                     onChange={(e) => setRegEmail(e.target.value)}
-                    placeholder="karenlorenavargas63@gmail.com"
+                    placeholder="Ingresa tu correo electrónico"
                     className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-[#caeafc] border border-sky-400 focus:border-blue-600 focus:bg-[#d8effe] focus:outline-none text-slate-900 text-sm font-semibold"
                   />
                 </div>
