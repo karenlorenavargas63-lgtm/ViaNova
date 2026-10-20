@@ -436,8 +436,8 @@ export function getInitialSession(): { user: UserProfile; isAuthenticated: boole
     }
   } catch (e) {}
 
-  // Active citizen session is immediately ready with Karen Lorena Vargas profile
-  return { user: mockUserProfile, isAuthenticated: true };
+  // If user has not logged in and is entering for the first time, require registration/login
+  return { user: mockUserProfile, isAuthenticated: false };
 }
 
 /**

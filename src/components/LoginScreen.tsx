@@ -246,10 +246,38 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({
               </h1>
               <p className="text-xs sm:text-sm text-slate-700 font-medium leading-relaxed mt-1">
                 {isFirstTime
-                  ? 'Completa tus datos por primera vez para unirte a la red inteligente de movilidad VIANOVA.'
-                  : 'Ingresa con tu correo y contraseña para acceder a la plataforma.'}
+                  ? 'Si vas a ingresar por primera vez, completa tu registro para acceder a VIANOVA.'
+                  : 'Ingresa con tu correo registrado y tu contraseña.'}
               </p>
             </div>
+          </div>
+
+          {/* Segmented Mode Selector: First time vs Registered user */}
+          <div className="grid grid-cols-2 gap-1.5 p-1 bg-sky-200/90 rounded-2xl border border-sky-300 shadow-xs">
+            <button
+              type="button"
+              onClick={handleSwitchToRegister}
+              className={`py-2.5 px-3 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center justify-center gap-1.5 ${
+                isFirstTime
+                  ? 'bg-white text-blue-900 shadow-md font-black border border-sky-300'
+                  : 'text-slate-700 hover:text-slate-950'
+              }`}
+            >
+              <UserPlus className="w-4 h-4 text-blue-600" />
+              <span>Primer Ingreso (Registro)</span>
+            </button>
+            <button
+              type="button"
+              onClick={handleSwitchToLogin}
+              className={`py-2.5 px-3 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center justify-center gap-1.5 ${
+                !isFirstTime
+                  ? 'bg-white text-blue-900 shadow-md font-black border border-sky-300'
+                  : 'text-slate-700 hover:text-slate-950'
+              }`}
+            >
+              <KeyRound className="w-4 h-4 text-blue-600" />
+              <span>Ya Registrado (Ingreso)</span>
+            </button>
           </div>
 
           {/* Error Message */}

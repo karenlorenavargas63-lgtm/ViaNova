@@ -21,7 +21,13 @@ import {
   Maximize2,
   Gamepad2,
   PlayCircle,
-  Sparkles
+  Sparkles,
+  Video,
+  Play,
+  Clock,
+  Lightbulb,
+  Award,
+  Volume2
 } from 'lucide-react';
 import obrasMonitorImg from '../assets/images/obras_asfalto_monitor_1788438254687.jpg';
 import redAlertImg from '../assets/images/red_alert_gradient_1788438272797.jpg';
@@ -36,6 +42,7 @@ import pedestrianImg from '../assets/images/pedestrian_signs_four_grid_179007916
 import { TOPIC_RECOMMENDATIONS, KeyRecommendation, getRecommendationsForTopic } from '../data/safetyRecommendations';
 import { RecommendationLogo } from './RecommendationLogo';
 import { ImageLightboxModal } from './ImageLightboxModal';
+import { DIDACTIC_VIDEOS, DidacticVideo } from '../data/didacticSafetyData';
 
 interface SafetyScreenProps {
   onNavigateToMapWithAlert?: (alert: any) => void;
@@ -54,6 +61,46 @@ export const SafetyScreen: React.FC<SafetyScreenProps> = ({
   const [selectedAlertForMap, setSelectedAlertForMap] = useState<any | null>(null);
   const [isReportModalOpen, setIsReportModalOpen] = useState(false);
   const [lightboxImage, setLightboxImage] = useState<{ src: string; title: string; category?: string } | null>(null);
+
+  // Active playing video ID for inline playback "ahí mismo"
+  const [activePlayingVideoId, setActivePlayingVideoId] = useState<string | null>(null);
+  const [videoQuizAnswers, setVideoQuizAnswers] = useState<{ [videoId: string]: number }>({});
+  const [videoQuizSubmitted, setVideoQuizSubmitted] = useState<{ [videoId: string]: boolean }>({});
+
+  const handleAnswerVideoQuiz = (videoId: string, selectedIdx: number) => {
+    setVideoQuizAnswers(prev => ({ ...prev, [videoId]: selectedIdx }));
+    setVideoQuizSubmitted(prev => ({ ...prev, [videoId]: true }));
+  };
+
+  const getVideoColors = (topic: string) => {
+    switch (topic) {
+      case 'Tráfico':
+        return {
+          gradient: 'from-amber-500 via-orange-500 to-amber-600',
+          badgeBg: 'bg-amber-500 text-slate-950 font-black',
+          goldenBox: 'bg-gradient-to-r from-amber-500 via-amber-400 to-orange-500 text-slate-950 font-black border border-amber-300 shadow-md',
+          stepBadge: 'bg-amber-500 text-slate-950 font-black',
+          btnGradient: 'bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 text-slate-950 font-black shadow-md shadow-amber-500/30'
+        };
+      case 'Prevención':
+        return {
+          gradient: 'from-rose-600 via-red-600 to-pink-600',
+          badgeBg: 'bg-rose-600 text-white font-black',
+          goldenBox: 'bg-gradient-to-r from-rose-600 via-red-600 to-rose-700 text-white font-black border border-rose-400 shadow-md',
+          stepBadge: 'bg-rose-600 text-white font-black',
+          btnGradient: 'bg-gradient-to-r from-rose-600 to-red-600 hover:from-rose-500 hover:to-red-500 text-white font-black shadow-md shadow-rose-500/30'
+        };
+      case 'Movilidad':
+      default:
+        return {
+          gradient: 'from-emerald-600 via-teal-600 to-green-600',
+          badgeBg: 'bg-emerald-600 text-white font-black',
+          goldenBox: 'bg-gradient-to-r from-emerald-600 via-teal-600 to-emerald-700 text-white font-black border border-emerald-400 shadow-md',
+          stepBadge: 'bg-emerald-600 text-white font-black',
+          btnGradient: 'bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-black shadow-md shadow-emerald-500/30'
+        };
+    }
+  };
 
   const handleOpenGuide = (card: any, symbolIdx: number = 0) => {
     setSelectedGuide(card);
@@ -466,6 +513,280 @@ export const SafetyScreen: React.FC<SafetyScreenProps> = ({
         </div>
       </section>
  
+      {/* ========================================================================= */}
+      {/* 🎬 SECCIÓN OFICIAL DE VIDEOS DE SEGURIDAD VIAL (REPRODUCCIÓN INMEDIATA)    */}
+      {/* Exactamente 3 videos con reproducción directa ahí mismo al hacer clic      */}
+      {/* ========================================================================= */}
+      <section className="max-w-6xl mx-auto space-y-6 pt-4">
+        
+        {/* Header de la sección de Videos */}
+        <div className="bg-gradient-to-r from-[#0a193b] via-[#0f2b66] to-[#0057d9] rounded-3xl p-6 sm:p-8 text-white shadow-xl relative overflow-hidden border border-white/10">
+          <div className="absolute -right-10 -bottom-10 w-52 h-52 bg-rose-500/10 rounded-full blur-2xl pointer-events-none" />
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 relative z-10">
+            <div className="space-y-2 max-w-2xl">
+              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/10 backdrop-blur-md text-amber-300 text-xs font-black tracking-wide border border-white/15">
+                <Video className="w-4 h-4 text-rose-400" />
+                <span>CÁPSULAS OFICIALES • REPRODUCCIÓN EN VIVO AHÍ MISMO</span>
+              </div>
+              <h2 className="text-2xl sm:text-3xl lg:text-4xl font-black text-white tracking-tight">
+                Videos de Seguridad Vial y Prevención Activa
+              </h2>
+              <p className="text-blue-100 text-xs sm:text-sm leading-relaxed">
+                Selecciona cualquiera de las 3 cápsulas oficiales de VIANOVA. <strong>El video se reproduce ahí mismo al instante</strong> para que aprendas la física del tráfico, el respeto vial y las distancias salvavidas.
+              </p>
+            </div>
+
+            <div className="shrink-0 flex items-center gap-3">
+              <div className="px-4 py-3 rounded-2xl bg-white/10 backdrop-blur-md border border-white/15 text-white flex items-center gap-3">
+                <PlayCircle className="w-6 h-6 text-rose-400 shrink-0" />
+                <div>
+                  <span className="text-[10px] uppercase font-bold text-blue-200 block">Catálogo Oficial</span>
+                  <span className="text-base font-black">{DIDACTIC_VIDEOS.length} Videos Verificados</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Rejilla de los 3 Videos con Reproducción Ahí Mismo */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {DIDACTIC_VIDEOS.map((video) => {
+            const colors = getVideoColors(video.topic);
+            const isPlaying = activePlayingVideoId === video.id;
+            const quizSelected = videoQuizAnswers[video.id];
+            const isQuizSubmitted = videoQuizSubmitted[video.id];
+
+            return (
+              <div
+                key={video.id}
+                id={`video-card-${video.id}`}
+                className="bg-white rounded-3xl border-2 border-slate-200/90 hover:border-blue-400 overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 flex flex-col justify-between"
+              >
+                <div>
+                  {/* Accent Top Strip with Topic Gradient */}
+                  <div className={`h-2.5 w-full bg-gradient-to-r ${colors.gradient}`} />
+
+                  {/* Reproductor de Video 16:9 - Se reproduce ahí mismo */}
+                  <div className="p-3">
+                    {isPlaying ? (
+                      <div className="space-y-2">
+                        <div className="relative w-full aspect-video bg-black rounded-2xl overflow-hidden shadow-2xl border-2 border-rose-500 animate-fade-in">
+                          <iframe
+                            src={`https://www.youtube-nocookie.com/embed/${video.youtubeId}?autoplay=1&rel=0&playsinline=1`}
+                            title={video.title}
+                            className="w-full h-full border-0"
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                            allowFullScreen
+                          />
+                        </div>
+                        {/* Control bar below active video */}
+                        <div className="flex items-center justify-between px-1 text-xs">
+                          <span className="inline-flex items-center gap-1.5 text-rose-600 font-extrabold text-[11px] animate-pulse">
+                            <span className="w-2 h-2 rounded-full bg-rose-600" />
+                            Reproduciendo video ahí mismo
+                          </span>
+                          <button
+                            type="button"
+                            onClick={() => setActivePlayingVideoId(null)}
+                            className="px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-[11px] transition-colors cursor-pointer"
+                          >
+                            Cerrar reproductor
+                          </button>
+                        </div>
+                      </div>
+                    ) : (
+                      <div
+                        onClick={() => setActivePlayingVideoId(video.id)}
+                        className="relative w-full aspect-video bg-slate-950 rounded-2xl overflow-hidden cursor-pointer group shadow-md"
+                        title="Haz clic para reproducir este video aquí mismo"
+                      >
+                        <img
+                          src={video.thumbnail}
+                          alt={video.title}
+                          className="w-full h-full object-cover opacity-90 group-hover:scale-105 transition-transform duration-500"
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-slate-950/85 via-black/35 to-transparent" />
+
+                        {/* Floating Glow Play Button */}
+                        <div className="absolute inset-0 flex items-center justify-center">
+                          <div className="w-16 h-16 rounded-full bg-rose-600 text-white flex items-center justify-center shadow-2xl group-hover:scale-115 group-hover:bg-rose-500 transition-all duration-300">
+                            <Play className="w-7 h-7 fill-white text-white ml-1" />
+                          </div>
+                        </div>
+
+                        {/* Floating Topic & Tags */}
+                        <div className="absolute top-3 left-3 flex items-center gap-1.5 flex-wrap">
+                          <span className={`px-3 py-1 rounded-full text-[11px] font-black shadow-md ${colors.badgeBg}`}>
+                            {video.topic}
+                          </span>
+                          <span className="px-2.5 py-1 rounded-full bg-black/75 backdrop-blur-md text-amber-300 text-[10px] font-black border border-white/10">
+                            {video.highlightTag}
+                          </span>
+                        </div>
+
+                        <div className="absolute top-3 right-3 px-2.5 py-1 rounded-lg bg-black/75 backdrop-blur-md text-white text-xs font-semibold flex items-center gap-1 border border-white/10">
+                          <Clock className="w-3.5 h-3.5 text-amber-300" />
+                          <span>{video.duration}</span>
+                        </div>
+
+                        <div className="absolute bottom-3 left-3 right-3 flex items-center justify-between text-xs font-bold text-white/90">
+                          <span className="truncate">{video.sourceBadge}</span>
+                          <span className="px-2 py-0.5 rounded-md bg-rose-600 text-white text-[10px] font-black shrink-0">
+                            {video.impactMetric}
+                          </span>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Contenido Didáctico y Explicativo de la Cápsula */}
+                  <div className="p-5 space-y-4">
+                    
+                    {/* Botón de Reproducción Inmediata */}
+                    {!isPlaying ? (
+                      <button
+                        type="button"
+                        onClick={() => setActivePlayingVideoId(video.id)}
+                        className={`w-full py-3 px-4 rounded-xl text-xs font-black transition-all flex items-center justify-center gap-2 cursor-pointer shadow-md ${colors.btnGradient}`}
+                      >
+                        <Play className="w-4 h-4 fill-current" />
+                        <span>Ver y Reproducir Video Aquí Mismo</span>
+                      </button>
+                    ) : (
+                      <button
+                        type="button"
+                        onClick={() => setActivePlayingVideoId(null)}
+                        className="w-full py-2.5 px-4 rounded-xl text-xs font-bold bg-slate-100 hover:bg-slate-200 text-slate-800 transition-colors flex items-center justify-center gap-1.5 cursor-pointer"
+                      >
+                        <span>Detener Reproducción</span>
+                      </button>
+                    )}
+
+                    {/* Título y Resumen */}
+                    <div className="space-y-1.5">
+                      <h3 className="text-base font-black text-slate-900 leading-snug">
+                        {video.title}
+                      </h3>
+                      <p className="text-xs text-slate-600 leading-relaxed">
+                        {video.summary}
+                      </p>
+                    </div>
+
+                    {/* Regla de Oro en Color Vivo */}
+                    <div className={`p-3 rounded-xl ${colors.goldenBox}`}>
+                      <div className="flex items-start gap-2">
+                        <Lightbulb className="w-4 h-4 shrink-0 mt-0.5" />
+                        <div className="space-y-0.5">
+                          <span className="text-[9px] uppercase font-black tracking-wider block opacity-90">
+                            Regla de Oro Salvavidas:
+                          </span>
+                          <p className="text-xs font-bold leading-tight">
+                            {video.goldenRule}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* 3 Pasos Clave de la Maniobra */}
+                    <div className="space-y-1.5">
+                      <span className="text-[10px] font-black text-slate-400 uppercase tracking-wider block">
+                        3 Pasos Clave de Seguridad:
+                      </span>
+                      <div className="space-y-1.5">
+                        {video.solutionSteps.slice(0, 3).map((step, sIdx) => (
+                          <div key={sIdx} className="flex items-start gap-2 p-2 rounded-xl bg-slate-50 border border-slate-200/80 text-xs">
+                            <span className={`w-4 h-4 rounded-full flex items-center justify-center text-[10px] font-black shrink-0 mt-0.5 ${colors.stepBadge}`}>
+                              {step.stepNumber}
+                            </span>
+                            <div className="min-w-0">
+                              <strong className="text-slate-900 block text-[11px]">{step.title}</strong>
+                              <span className="text-slate-600 text-[10px] leading-tight block line-clamp-2">{step.desc}</span>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Do's & Don'ts */}
+                    <div className="pt-2 border-t border-slate-100 flex flex-col gap-1.5 text-[11px]">
+                      <div className="flex items-center gap-1.5 text-emerald-800 font-bold bg-emerald-50 px-2.5 py-1 rounded-lg border border-emerald-200">
+                        <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
+                        <span className="truncate">SÍ: {video.doAndDont.dos[0]}</span>
+                      </div>
+                      <div className="flex items-center gap-1.5 text-rose-800 font-bold bg-rose-50 px-2.5 py-1 rounded-lg border border-rose-200">
+                        <X className="w-3.5 h-3.5 text-rose-600 shrink-0" />
+                        <span className="truncate">NUNCA: {video.doAndDont.donts[0]}</span>
+                      </div>
+                    </div>
+
+                    {/* Mini-Quiz Interactivo Integrado en la Tarjeta */}
+                    <div className="pt-3 border-t border-slate-200 space-y-2">
+                      <div className="flex items-center gap-1.5 text-xs font-black text-slate-800">
+                        <Award className="w-4 h-4 text-amber-500" />
+                        <span>Mini-Quiz del Video:</span>
+                      </div>
+                      <p className="text-xs font-semibold text-slate-700">
+                        {video.quizQuestion.question}
+                      </p>
+
+                      <div className="space-y-1.5 pt-1">
+                        {video.quizQuestion.options.map((option, optIdx) => {
+                          const isSelected = quizSelected === optIdx;
+                          const isCorrect = optIdx === video.quizQuestion.correctIndex;
+
+                          let btnClasses = 'border-slate-200 bg-slate-50 text-slate-800 hover:bg-slate-100';
+                          if (isQuizSubmitted) {
+                            if (isCorrect) {
+                              btnClasses = 'border-emerald-500 bg-emerald-50 text-emerald-900 font-black';
+                            } else if (isSelected) {
+                              btnClasses = 'border-rose-400 bg-rose-50 text-rose-900';
+                            } else {
+                              btnClasses = 'border-slate-100 bg-slate-50 text-slate-400 opacity-60';
+                            }
+                          } else if (isSelected) {
+                            btnClasses = 'border-blue-500 bg-blue-50 text-blue-900 font-bold';
+                          }
+
+                          return (
+                            <button
+                              key={optIdx}
+                              type="button"
+                              disabled={isQuizSubmitted}
+                              onClick={() => handleAnswerVideoQuiz(video.id, optIdx)}
+                              className={`w-full p-2 rounded-xl border text-left text-[11px] transition-all flex items-center justify-between gap-2 cursor-pointer ${btnClasses}`}
+                            >
+                              <span>{option}</span>
+                              {isQuizSubmitted && isCorrect && (
+                                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
+                              )}
+                              {isQuizSubmitted && isSelected && !isCorrect && (
+                                <X className="w-3.5 h-3.5 text-rose-600 shrink-0" />
+                              )}
+                            </button>
+                          );
+                        })}
+                      </div>
+
+                      {/* Explicación tras responder */}
+                      {isQuizSubmitted && (
+                        <div className="p-2.5 rounded-xl bg-blue-50 border border-blue-200 text-blue-950 text-[11px] leading-tight space-y-1 animate-fade-in">
+                          <strong className="block text-blue-900 font-bold">
+                            {quizSelected === video.quizQuestion.correctIndex ? '¡Correcto! Excelente respuesta.' : 'Explicación oficial:'}
+                          </strong>
+                          <p>{video.quizQuestion.explanation}</p>
+                        </div>
+                      )}
+                    </div>
+
+                  </div>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+
+      </section>
+
       {/* ========================================================================= */}
       {/* BANNER INTERACTIVO: RETOS Y VIDEOS DE TRÁFICO, TRÁNSITO Y PREVENCIÓN       */}
       {/* ========================================================================= */}

@@ -15,6 +15,7 @@ import {
   X,
   Award,
   PlayCircle,
+  Play,
   Video,
   Compass,
   AlertTriangle,
@@ -340,6 +341,7 @@ export const EducationScreen: React.FC = () => {
   // Modals for Interactive Content
   const [activeCourseModal, setActiveCourseModal] = useState<CourseItem | null>(null);
   const [selectedVideoModal, setSelectedVideoModal] = useState<DidacticVideo | null>(null);
+  const [inlinePlayingVideoId, setInlinePlayingVideoId] = useState<string | null>(null);
 
   // Video mini-quiz state
   const [videoQuizSelectedOpt, setVideoQuizSelectedOpt] = useState<number | null>(null);
@@ -900,51 +902,73 @@ export const EducationScreen: React.FC = () => {
                 <div className={`h-3 w-full bg-gradient-to-r ${heroColors.gradient}`} />
                 
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-0">
-                  {/* Left: Big Media Thumbnail with Play Trigger */}
-                  <div 
-                    onClick={() => {
-                      setSelectedVideoModal(heroVideo);
-                      setVideoQuizSelectedOpt(null);
-                      setVideoQuizAnswered(false);
-                    }}
-                    className="lg:col-span-6 relative h-64 sm:h-80 lg:h-full min-h-[280px] bg-slate-950 overflow-hidden cursor-pointer group"
-                  >
-                    <img
-                      src={heroVideo.thumbnail}
-                      alt={heroVideo.title}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 opacity-90"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-black/40 to-transparent" />
-
-                    {/* Floating Glow Play Button */}
-                    <div className="absolute inset-0 flex items-center justify-center">
-                      <div className="w-20 h-20 rounded-full bg-white text-slate-950 flex items-center justify-center shadow-2xl group-hover:scale-110 transition-all duration-300">
-                        <PlayCircle className="w-12 h-12 fill-rose-600 text-white" />
+                  {/* Left: Big Media Thumbnail or Active Inline Player */}
+                  {inlinePlayingVideoId === heroVideo.id ? (
+                    <div className="lg:col-span-6 relative h-64 sm:h-80 lg:h-full min-h-[300px] bg-black overflow-hidden flex flex-col justify-between">
+                      <iframe
+                        src={`https://www.youtube-nocookie.com/embed/${heroVideo.youtubeId}?autoplay=1&rel=0&playsinline=1`}
+                        title={heroVideo.title}
+                        className="w-full h-full border-0 min-h-[280px]"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                        allowFullScreen
+                      />
+                      <div className="p-2.5 bg-slate-900/95 text-white flex items-center justify-between text-xs border-t border-slate-800">
+                        <span className="text-amber-300 font-bold text-[11px] flex items-center gap-1.5 animate-pulse">
+                          <span className="w-2 h-2 rounded-full bg-emerald-400" />
+                          Reproduciendo video en vivo ahí mismo
+                        </span>
+                        <button
+                          type="button"
+                          onClick={() => setInlinePlayingVideoId(null)}
+                          className="px-2.5 py-1 rounded bg-white/10 hover:bg-white/20 text-white text-[11px] font-bold cursor-pointer"
+                        >
+                          Cerrar reproductor
+                        </button>
                       </div>
                     </div>
+                  ) : (
+                    <div 
+                      onClick={() => setInlinePlayingVideoId(heroVideo.id)}
+                      className="lg:col-span-6 relative h-64 sm:h-80 lg:h-full min-h-[280px] bg-slate-950 overflow-hidden cursor-pointer group"
+                      title="Clic para reproducir aquí mismo"
+                    >
+                      <img
+                        src={heroVideo.thumbnail}
+                        alt={heroVideo.title}
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 opacity-90"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-black/40 to-transparent" />
 
-                    {/* Floating Badges */}
-                    <div className="absolute top-4 left-4 flex flex-wrap items-center gap-2">
-                      <span className={`px-3.5 py-1 rounded-full text-xs font-black shadow-lg ${heroColors.badgeBg}`}>
-                        {heroVideo.topic}
-                      </span>
-                      <span className="px-3 py-1 rounded-full bg-black/75 backdrop-blur-md text-amber-300 text-xs font-black shadow-md border border-white/10">
-                        {heroVideo.highlightTag}
-                      </span>
-                    </div>
+                      {/* Floating Glow Play Button */}
+                      <div className="absolute inset-0 flex items-center justify-center">
+                        <div className="w-20 h-20 rounded-full bg-white text-slate-950 flex items-center justify-center shadow-2xl group-hover:scale-110 transition-all duration-300">
+                          <PlayCircle className="w-12 h-12 fill-rose-600 text-white" />
+                        </div>
+                      </div>
 
-                    <div className="absolute top-4 right-4 px-3 py-1 rounded-xl bg-black/80 backdrop-blur-md text-white text-xs font-bold flex items-center gap-1.5 border border-white/10">
-                      <Clock className="w-3.5 h-3.5 text-amber-300" />
-                      <span>{heroVideo.duration}</span>
-                    </div>
+                      {/* Floating Badges */}
+                      <div className="absolute top-4 left-4 flex flex-wrap items-center gap-2">
+                        <span className={`px-3.5 py-1 rounded-full text-xs font-black shadow-lg ${heroColors.badgeBg}`}>
+                          {heroVideo.topic}
+                        </span>
+                        <span className="px-3 py-1 rounded-full bg-black/75 backdrop-blur-md text-amber-300 text-xs font-black shadow-md border border-white/10">
+                          {heroVideo.highlightTag}
+                        </span>
+                      </div>
 
-                    <div className="absolute bottom-4 left-4 right-4 flex items-center justify-between text-xs font-bold text-white/90">
-                      <span className="truncate">{heroVideo.sourceBadge} • {heroVideo.sourceName}</span>
-                      <span className="px-2.5 py-1 rounded-lg bg-rose-600 text-white font-black text-[10px] shrink-0">
-                        {heroVideo.impactMetric}
-                      </span>
+                      <div className="absolute top-4 right-4 px-3 py-1 rounded-xl bg-black/80 backdrop-blur-md text-white text-xs font-bold flex items-center gap-1.5 border border-white/10">
+                        <Clock className="w-3.5 h-3.5 text-amber-300" />
+                        <span>{heroVideo.duration}</span>
+                      </div>
+
+                      <div className="absolute bottom-4 left-4 right-4 flex items-center justify-between text-xs font-bold text-white/90">
+                        <span className="truncate">{heroVideo.sourceBadge} • {heroVideo.sourceName}</span>
+                        <span className="px-2.5 py-1 rounded-lg bg-rose-600 text-white font-black text-[10px] shrink-0">
+                          {heroVideo.impactMetric}
+                        </span>
+                      </div>
                     </div>
-                  </div>
+                  )}
 
                   {/* Right: Rich Pedagogical Breakdown in Strong Colors */}
                   <div className="lg:col-span-6 p-6 sm:p-8 flex flex-col justify-between space-y-5 bg-gradient-to-br from-white via-slate-50/50 to-slate-100/50">
@@ -1049,53 +1073,75 @@ export const EducationScreen: React.FC = () => {
                       <div className={`h-2.5 w-full bg-gradient-to-r ${colors.gradient}`} />
 
                       <div>
-                        {/* Thumbnail with Video Play Overlay */}
-                        <div
-                          onClick={() => {
-                            setSelectedVideoModal(video);
-                            setVideoQuizSelectedOpt(null);
-                            setVideoQuizAnswered(false);
-                          }}
-                          className="relative h-52 sm:h-60 w-full overflow-hidden bg-slate-900 cursor-pointer"
-                        >
-                          <img
-                            src={video.thumbnail}
-                            alt={video.title}
-                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 opacity-90"
-                          />
-                          <div className="absolute inset-0 bg-gradient-to-t from-slate-950/85 via-black/35 to-transparent" />
-                          
-                          {/* Floating Play Button */}
-                          <div className="absolute inset-0 flex items-center justify-center">
-                            <div className="w-16 h-16 rounded-full bg-white text-slate-950 flex items-center justify-center shadow-2xl group-hover:scale-110 transition-all">
-                              <PlayCircle className="w-10 h-10 fill-rose-600 text-white" />
+                        {/* Media Container: Inline Video Player OR Thumbnail */}
+                        {inlinePlayingVideoId === video.id ? (
+                          <div className="relative w-full aspect-video bg-black overflow-hidden flex flex-col justify-between">
+                            <iframe
+                              src={`https://www.youtube-nocookie.com/embed/${video.youtubeId}?autoplay=1&rel=0&playsinline=1`}
+                              title={video.title}
+                              className="w-full h-full border-0"
+                              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                              allowFullScreen
+                            />
+                            <div className="p-2 bg-slate-900/95 text-white flex items-center justify-between text-xs border-t border-slate-800">
+                              <span className="text-amber-300 font-bold text-[10px] flex items-center gap-1.5 animate-pulse">
+                                <span className="w-2 h-2 rounded-full bg-emerald-400" />
+                                Reproduciendo video en vivo ahí mismo
+                              </span>
+                              <button
+                                type="button"
+                                onClick={() => setInlinePlayingVideoId(null)}
+                                className="px-2 py-0.5 rounded bg-white/10 hover:bg-white/20 text-white text-[10px] font-bold cursor-pointer"
+                              >
+                                Cerrar reproductor
+                              </button>
                             </div>
                           </div>
+                        ) : (
+                          <div
+                            onClick={() => setInlinePlayingVideoId(video.id)}
+                            className="relative h-52 sm:h-60 w-full overflow-hidden bg-slate-900 cursor-pointer group"
+                            title="Haz clic para reproducir este video aquí mismo"
+                          >
+                            <img
+                              src={video.thumbnail}
+                              alt={video.title}
+                              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 opacity-90"
+                            />
+                            <div className="absolute inset-0 bg-gradient-to-t from-slate-950/85 via-black/35 to-transparent" />
+                            
+                            {/* Floating Play Button */}
+                            <div className="absolute inset-0 flex items-center justify-center">
+                              <div className="w-16 h-16 rounded-full bg-rose-600 text-white flex items-center justify-center shadow-2xl group-hover:scale-115 group-hover:bg-rose-500 transition-all">
+                                <Play className="w-7 h-7 fill-white text-white ml-0.5" />
+                              </div>
+                            </div>
 
-                          {/* Topic Pill & Highlight Tag */}
-                          <div className="absolute top-3 left-3 flex items-center gap-1.5 flex-wrap">
-                            <span className={`px-3 py-1 rounded-full text-[11px] font-black shadow-md ${colors.badgeBg}`}>
-                              {video.topic}
-                            </span>
-                            <span className="px-2.5 py-1 rounded-full bg-black/75 backdrop-blur-md text-amber-300 text-[10px] font-black border border-white/10">
-                              {video.highlightTag}
-                            </span>
-                          </div>
+                            {/* Topic Pill & Highlight Tag */}
+                            <div className="absolute top-3 left-3 flex items-center gap-1.5 flex-wrap">
+                              <span className={`px-3 py-1 rounded-full text-[11px] font-black shadow-md ${colors.badgeBg}`}>
+                                {video.topic}
+                              </span>
+                              <span className="px-2.5 py-1 rounded-full bg-black/75 backdrop-blur-md text-amber-300 text-[10px] font-black border border-white/10">
+                                {video.highlightTag}
+                              </span>
+                            </div>
 
-                          {/* Duration */}
-                          <div className="absolute top-3 right-3 px-2.5 py-1 rounded-lg bg-black/75 backdrop-blur-md text-white text-xs font-semibold flex items-center gap-1 border border-white/10">
-                            <Clock className="w-3.5 h-3.5 text-amber-300" />
-                            <span>{video.duration}</span>
-                          </div>
+                            {/* Duration */}
+                            <div className="absolute top-3 right-3 px-2.5 py-1 rounded-lg bg-black/75 backdrop-blur-md text-white text-xs font-semibold flex items-center gap-1 border border-white/10">
+                              <Clock className="w-3.5 h-3.5 text-amber-300" />
+                              <span>{video.duration}</span>
+                            </div>
 
-                          {/* Source & Impact Metric */}
-                          <div className="absolute bottom-3 left-3 right-3 flex items-center justify-between text-xs font-bold text-white/90">
-                            <span className="truncate">{video.sourceBadge} • {video.sourceName}</span>
-                            <span className="px-2 py-0.5 rounded-md bg-rose-600 text-white text-[10px] font-black shrink-0">
-                              {video.impactMetric}
-                            </span>
+                            {/* Source & Impact Metric */}
+                            <div className="absolute bottom-3 left-3 right-3 flex items-center justify-between text-xs font-bold text-white/90">
+                              <span className="truncate">{video.sourceBadge} • {video.sourceName}</span>
+                              <span className="px-2 py-0.5 rounded-md bg-rose-600 text-white text-[10px] font-black shrink-0">
+                                {video.impactMetric}
+                              </span>
+                            </div>
                           </div>
-                        </div>
+                        )}
 
                         {/* Card Body - Thoroughly Explained */}
                         <div className="p-6 space-y-4">
@@ -1157,7 +1203,25 @@ export const EducationScreen: React.FC = () => {
                       </div>
 
                       {/* Footer Action Button */}
-                      <div className="p-6 pt-0">
+                      <div className="p-6 pt-0 space-y-2">
+                        {inlinePlayingVideoId !== video.id ? (
+                          <button
+                            type="button"
+                            onClick={() => setInlinePlayingVideoId(video.id)}
+                            className={`w-full py-3.5 px-4 rounded-xl text-xs font-black transition-all flex items-center justify-center gap-2 cursor-pointer shadow-md ${colors.btnGradient}`}
+                          >
+                            <Play className="w-4 h-4 fill-current" />
+                            <span>Reproducir Video Aquí Mismo</span>
+                          </button>
+                        ) : (
+                          <button
+                            type="button"
+                            onClick={() => setInlinePlayingVideoId(null)}
+                            className="w-full py-3 px-4 rounded-xl text-xs font-bold bg-slate-100 hover:bg-slate-200 text-slate-800 transition-colors flex items-center justify-center gap-1.5 cursor-pointer"
+                          >
+                            <span>Detener Reproducción</span>
+                          </button>
+                        )}
                         <button
                           type="button"
                           onClick={() => {
@@ -1165,10 +1229,10 @@ export const EducationScreen: React.FC = () => {
                             setVideoQuizSelectedOpt(null);
                             setVideoQuizAnswered(false);
                           }}
-                          className={`w-full py-3.5 px-4 rounded-xl text-xs font-black transition-all flex items-center justify-center gap-2 cursor-pointer ${colors.btnGradient}`}
+                          className="w-full py-2 px-3 rounded-lg text-[11px] font-bold text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-colors flex items-center justify-center gap-1.5 cursor-pointer"
                         >
-                          <PlayCircle className="w-4 h-4" />
-                          <span>Ver Video & Resolver Quiz con Explicación</span>
+                          <Award className="w-3.5 h-3.5 text-amber-500" />
+                          <span>Pantalla Ampliada & Quiz Didáctico</span>
                         </button>
                       </div>
                     </div>
@@ -1639,10 +1703,10 @@ export const EducationScreen: React.FC = () => {
               {/* Video Player 16:9 (Embedded YouTube No-Cookie) */}
               <div className="relative w-full aspect-video bg-black shrink-0">
                 <iframe
-                  src={selectedVideoModal.embedUrl}
+                  src={`${selectedVideoModal.embedUrl}${selectedVideoModal.embedUrl.includes('?') ? '&' : '?'}autoplay=1&playsinline=1`}
                   title={selectedVideoModal.title}
                   className="w-full h-full border-0"
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                   allowFullScreen
                 />
               </div>
