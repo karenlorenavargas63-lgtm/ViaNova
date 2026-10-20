@@ -572,10 +572,11 @@ export const SafetyScreen: React.FC<SafetyScreenProps> = ({
                       <div className="space-y-2">
                         <div className="relative w-full aspect-video bg-black rounded-2xl overflow-hidden shadow-2xl border-2 border-rose-500 animate-fade-in">
                           <iframe
-                            src={`https://www.youtube-nocookie.com/embed/${video.youtubeId}?autoplay=1&rel=0&playsinline=1`}
+                            src={`https://www.youtube.com/embed/${video.youtubeId}?autoplay=1&rel=0&playsinline=1`}
                             title={video.title}
                             className="w-full h-full border-0"
                             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                            referrerPolicy="strict-origin-when-cross-origin"
                             allowFullScreen
                           />
                         </div>
@@ -585,13 +586,25 @@ export const SafetyScreen: React.FC<SafetyScreenProps> = ({
                             <span className="w-2 h-2 rounded-full bg-rose-600" />
                             Reproduciendo video ahí mismo
                           </span>
-                          <button
-                            type="button"
-                            onClick={() => setActivePlayingVideoId(null)}
-                            className="px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-[11px] transition-colors cursor-pointer"
-                          >
-                            Cerrar reproductor
-                          </button>
+                          <div className="flex items-center gap-2">
+                            <a
+                              href={`https://www.youtube.com/watch?v=${video.youtubeId}`}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="px-2.5 py-1 rounded-lg bg-blue-50 hover:bg-blue-100 text-blue-700 font-bold text-[11px] transition-colors inline-flex items-center gap-1"
+                              title="Abrir directamente en YouTube"
+                            >
+                              <span>Ver en YouTube</span>
+                              <span>↗</span>
+                            </a>
+                            <button
+                              type="button"
+                              onClick={() => setActivePlayingVideoId(null)}
+                              className="px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-[11px] transition-colors cursor-pointer"
+                            >
+                              Cerrar reproductor
+                            </button>
+                          </div>
                         </div>
                       </div>
                     ) : (

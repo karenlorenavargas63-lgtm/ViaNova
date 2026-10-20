@@ -906,10 +906,11 @@ export const EducationScreen: React.FC = () => {
                   {inlinePlayingVideoId === heroVideo.id ? (
                     <div className="lg:col-span-6 relative h-64 sm:h-80 lg:h-full min-h-[300px] bg-black overflow-hidden flex flex-col justify-between">
                       <iframe
-                        src={`https://www.youtube-nocookie.com/embed/${heroVideo.youtubeId}?autoplay=1&rel=0&playsinline=1`}
+                        src={`https://www.youtube.com/embed/${heroVideo.youtubeId}?autoplay=1&rel=0&playsinline=1`}
                         title={heroVideo.title}
                         className="w-full h-full border-0 min-h-[280px]"
                         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                        referrerPolicy="strict-origin-when-cross-origin"
                         allowFullScreen
                       />
                       <div className="p-2.5 bg-slate-900/95 text-white flex items-center justify-between text-xs border-t border-slate-800">
@@ -917,13 +918,24 @@ export const EducationScreen: React.FC = () => {
                           <span className="w-2 h-2 rounded-full bg-emerald-400" />
                           Reproduciendo video en vivo ahí mismo
                         </span>
-                        <button
-                          type="button"
-                          onClick={() => setInlinePlayingVideoId(null)}
-                          className="px-2.5 py-1 rounded bg-white/10 hover:bg-white/20 text-white text-[11px] font-bold cursor-pointer"
-                        >
-                          Cerrar reproductor
-                        </button>
+                        <div className="flex items-center gap-2">
+                          <a
+                            href={`https://www.youtube.com/watch?v=${heroVideo.youtubeId}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="px-2 py-0.5 rounded bg-blue-600/80 hover:bg-blue-600 text-white text-[10px] font-bold inline-flex items-center gap-1"
+                          >
+                            <span>Ver en YouTube</span>
+                            <span>↗</span>
+                          </a>
+                          <button
+                            type="button"
+                            onClick={() => setInlinePlayingVideoId(null)}
+                            className="px-2.5 py-1 rounded bg-white/10 hover:bg-white/20 text-white text-[11px] font-bold cursor-pointer"
+                          >
+                            Cerrar reproductor
+                          </button>
+                        </div>
                       </div>
                     </div>
                   ) : (
