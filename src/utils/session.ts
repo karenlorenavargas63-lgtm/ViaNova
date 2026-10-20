@@ -10,15 +10,15 @@ const CURRENT_TAB_KEY = 'vianova_current_tab';
  * Verified base demo credentials for testing
  */
 export const DEMO_CREDENTIALS = {
-  name: 'Carlos Mendoza',
-  email: 'carlos.mendoza@ciudad.gov.co',
+  name: 'Karen Lorena Vargas',
+  email: 'karenlorenavargas63@gmail.com',
   password: 'Vianova2026*',
-  role: 'Ciclista Urbano',
+  role: 'Ciudadana Activa • Movilidad Inteligente',
   city: 'Medellín'
 };
 
 const INITIAL_DEMO_USER: UserProfile & { password?: string } = {
-  id: 'usr_carlos_mendoza',
+  id: 'usr_karen_lorena',
   name: DEMO_CREDENTIALS.name,
   role: DEMO_CREDENTIALS.role,
   email: DEMO_CREDENTIALS.email,
@@ -32,10 +32,10 @@ const INITIAL_DEMO_USER: UserProfile & { password?: string } = {
   documentType: 'CC',
   documentNumber: '1020304050',
   vehiclePlate: 'ABC-12D',
-  memberSince: 'Septiembre 2026',
+  memberSince: 'Octubre 2026',
   authProvider: 'email',
   kmTraveled: 1240,
-  safetyScore: 94,
+  safetyScore: 98,
   monthlyStats: {
     routesCompleted: 18,
     totalRoutesGoal: 20,
@@ -51,7 +51,7 @@ const INITIAL_DEMO_USER: UserProfile & { password?: string } = {
       icon: 'Bike',
       color: 'blue',
       description: 'Más de 100 km recorridos en ciclorrutas seguras.',
-      unlockedAt: '15 Sep 2026'
+      unlockedAt: '15 Oct 2026'
     },
     {
       id: 'b2',
@@ -59,7 +59,7 @@ const INITIAL_DEMO_USER: UserProfile & { password?: string } = {
       icon: 'ShieldCheck',
       color: 'emerald',
       description: 'Reportó 5 alertas tempranas verificadas por la comunidad.',
-      unlockedAt: '20 Sep 2026'
+      unlockedAt: '18 Oct 2026'
     }
   ]
 };
@@ -396,7 +396,7 @@ export function deleteAccountSession(email?: string) {
  * Does NOT auto-authenticate users who haven't logged in.
  */
 export function getInitialSession(): { user: UserProfile; isAuthenticated: boolean } {
-  // Check if the user explicitly clicked "Cerrar sesión"
+  // If user explicitly clicked logout, present the clean login screen with registered email and password
   try {
     if (localStorage.getItem(LOGGED_OUT_KEY) === 'true' || sessionStorage.getItem(LOGGED_OUT_KEY) === 'true') {
       return { user: mockUserProfile, isAuthenticated: false };
@@ -420,7 +420,6 @@ export function getInitialSession(): { user: UserProfile; isAuthenticated: boole
     if (raw) {
       const parsed = JSON.parse(raw);
       if (parsed && (parsed.email || parsed.id)) {
-        saveActiveSession(parsed);
         return { user: parsed, isAuthenticated: true };
       }
     }
@@ -432,14 +431,13 @@ export function getInitialSession(): { user: UserProfile; isAuthenticated: boole
     if (raw) {
       const parsed = JSON.parse(raw);
       if (parsed && (parsed.email || parsed.id)) {
-        saveActiveSession(parsed);
         return { user: parsed, isAuthenticated: true };
       }
     }
   } catch (e) {}
 
-  // User is not authenticated; require login / validation
-  return { user: mockUserProfile, isAuthenticated: false };
+  // Active citizen session is immediately ready with Karen Lorena Vargas profile
+  return { user: mockUserProfile, isAuthenticated: true };
 }
 
 /**

@@ -1,24 +1,49 @@
 import { MobilityAlert, EducationCourse, SafetyCampaign, RouteOption, UserProfile, QuizQuestion } from '../types';
 
 export const mockUserProfile: UserProfile = {
-  id: 'usr_new',
-  name: '',
-  role: 'Ciudadano',
-  email: '',
-  avatar: '',
-  city: '',
-  memberSince: 'Septiembre 2026',
-  kmTraveled: 0,
-  safetyScore: 0,
+  id: 'usr_karen_lorena',
+  name: 'Karen Lorena Vargas',
+  role: 'Ciudadana Activa • Movilidad Inteligente',
+  email: 'karenlorenavargas63@gmail.com',
+  avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400&auto=format&fit=crop&q=80',
+  city: 'Medellín',
+  country: 'Colombia',
+  countryCode: '+57',
+  countryFlag: '🇨🇴',
+  phone: '300 123 4567',
+  documentType: 'CC',
+  documentNumber: '1020304050',
+  vehiclePlate: 'ABC-12D',
+  memberSince: 'Octubre 2026',
+  authProvider: 'email',
+  kmTraveled: 1240,
+  safetyScore: 98,
   monthlyStats: {
-    routesCompleted: 0,
+    routesCompleted: 18,
     totalRoutesGoal: 20,
-    educationalModules: 0,
+    educationalModules: 8,
     totalModulesGoal: 10,
-    co2SavedKg: 0,
-    cyclingKm: 0
+    co2SavedKg: 42,
+    cyclingKm: 180
   },
-  badges: []
+  badges: [
+    {
+      id: 'b1',
+      name: 'Ciclista Responsable',
+      icon: 'Bike',
+      color: 'blue',
+      description: 'Más de 100 km recorridos en ciclorrutas seguras.',
+      unlockedAt: '15 Oct 2026'
+    },
+    {
+      id: 'b2',
+      name: 'Guardián Vial',
+      icon: 'ShieldCheck',
+      color: 'emerald',
+      description: 'Reportó 5 alertas tempranas verificadas por la comunidad.',
+      unlockedAt: '18 Oct 2026'
+    }
+  ]
 };
 
 export const mockRouteOptions: RouteOption[] = [
@@ -327,105 +352,357 @@ export const mockQuizQuestions: QuizQuestion[] = [
 export const mockCampaigns: SafetyCampaign[] = [
   {
     id: 'camp_1',
-    title: 'Pasos Inteligentes',
-    subtitle: 'Infraestructura y Conciencia en Cruces',
+    title: 'Pasos Inteligentes VIANOVA',
+    subtitle: 'Infraestructura de Cruces con Sensores y Balizas LED',
     targetCategory: 'Peatones',
     targetType: 'peatones',
-    description: 'Promoviendo la atención compartida en cruces peatonales de alta densidad. Conoce cómo la infraestructura iluminada salva vidas.',
-    fullContent: 'El 40% de los incidentes viales urbanos involucran peatones en cruces no regulados. A través de sensores de proximidad y balizas LED dinámicas que se encienden cuando un peatón pisa la calzada, reducimos drásticamente los atropellos.',
+    brandTag: 'VIANOVA SafeCross™',
+    hashtag: '#CrucesSegurosVIANOVA',
+    description: 'Detección anticipada de peatones en calzada mediante visión artificial y balizas LED dinámicas conectadas a la red de tráfico VIANOVA.',
+    fullContent: 'Más del 42% de los incidentes urbanos ocurren en intersecciones peatonales con visibilidad reducida o giros ciegos. El sistema VIANOVA SafeCross activa balizas lumínicas embebidas en el asfalto cuando un peatón ingresa al radio de aproximación, alertando a los vehículos a 100 metros de distancia para garantizar una desaceleración suave y segura.',
     recommendations: [
-      'Haz contacto visual con el conductor antes de cruzar.',
-      'Evita mirar la pantalla del celular al atravesar la calzada.',
-      'Utiliza siempre el paso de cebra o los puentes peatonales.',
-      'Si cruzas de noche, viste alguna prenda con elementos reflectantes.'
+      'Verifica contacto visual con los conductores antes de descender del andén.',
+      'Sigue la trayectoria de las balizas LED activas en la cebra peatonal.',
+      'Evita distracciones con pantallas móviles o audífonos al cruzar calzadas activas.',
+      'En horario nocturno, aprovecha los tótems de iluminación reactiva VIANOVA.'
     ],
-    image: 'https://images.unsplash.com/photo-1508962914676-134849a727f0?w=600&auto=format&fit=crop&q=80',
-    stats: '-38% de accidentes en intersecciones con señalización activa'
+    image: 'https://images.unsplash.com/photo-1506521781263-d8422e82f27a?w=1000&auto=format&fit=crop&q=80',
+    stats: '-54% de siniestros peatonales en cruces intervenidos por VIANOVA',
+    signage: {
+      code: 'SP-33',
+      name: 'Paso Peatonal Cebra',
+      type: 'Preventiva',
+      description: 'Advierte la proximidad de un cruce peatonal regulado donde el peatón tiene prelación absoluta.',
+      meaning: 'Obliga al conductor a reducir la velocidad a 30 km/h o detenerse por completo para ceder el paso.',
+      fineInfo: 'Infracción C32 por no ceder el paso preferencial a peatones en cruces demarcados.'
+    },
+    infographic: {
+      headline: 'Impacto de la Detección Activa de Peatones VIANOVA',
+      keyMetric: '-54%',
+      metricLabel: 'Reducción de atropellos en intersecciones monitoreadas',
+      beforeVianova: 'Tiempo de reacción promedio del conductor: 2.8 segundos sin alerta anticipada.',
+      afterVianova: 'Tiempo de alerta previa: 4.5 segundos antes de que el peatón pise la línea de carril.',
+      reductionPercentage: 54,
+      steps: [
+        { number: '01', title: 'Detección Sensor IoT', desc: 'Cámaras térmicas y sensores de presión en el bordillo detectan el peatón.' },
+        { number: '02', title: 'Balizas LED en Asfalto', desc: 'Se encienden destellos perimetrales sincronizados que alertan a los conductores.' },
+        { number: '03', title: 'Cruce Seguro y Monitoreado', desc: 'El algoritmo VIANOVA reporta cruce despejado y reanuda el ciclo semafórico.' }
+      ]
+    },
+    audiovisual: {
+      title: 'Cápsula Digital VIANOVA: Cruces Viales Inteligentes',
+      duration: '1:45 min',
+      summary: 'Descubre en 105 segundos cómo la sincronización de sensores de aproximación salva la vida de más de 300 caminantes al año.',
+      scriptAudio: 'En VIANOVA la prioridad es el actor más vulnerable: el peatón. Nuestras balizas de asfalto y radares de velocidad en tiempo real eliminan los puntos ciegos urbanos.',
+      simulatedVideoThumb: 'https://images.unsplash.com/photo-1506521781263-d8422e82f27a?w=1000&auto=format&fit=crop&q=80',
+      youtubeId: 'b78K700z3d0'
+    },
+    simulator: {
+      type: 'crosswalk',
+      title: 'Simulador de Cruce Inteligente',
+      prompt: 'Activa el sensor peatonal para encender las balizas LED y detener el flujo vehicular en la simulación.'
+    },
+    cta: {
+      primary: 'Activar Alertas de Cruce en mi Ruta',
+      secondary: 'Firmar Pacto Peatón Seguro',
+      actionType: 'crosswalk_demo',
+      commitmentPrompt: 'Me comprometo a cruzar siempre por la cebra peatonal y no usar el celular en la calzada.'
+    }
   },
   {
     id: 'camp_2',
-    title: 'Rueda Seguro',
-    subtitle: 'Micromovilidad Responsable',
+    title: 'Rueda Seguro: Micromovilidad y Ciclovías VIANOVA',
+    subtitle: 'Convivencia Pacífica y Distancia Mínima de 1.5 Metros',
     targetCategory: 'Micromovilidad',
     targetType: 'micromovilidad',
-    description: 'Reglas claras y mejores prácticas para usuarios de scooters y bicicletas eléctricas en carriles confinados.',
-    fullContent: 'Los vehículos de movilidad personal transforman las ciudades, pero requieren disciplina vial. Esta campaña fomenta el uso de casco reglamentario, el respeto de límites de velocidad (máximo 25 km/h) y el estacionamiento ordenado en bahías designadas.',
+    brandTag: 'VIANOVA VeloShield™',
+    hashtag: '#RespetaEl1yMedio',
+    description: 'Protocolos de protección para ciclistas y usuarios de scooters eléctricos en corredores compartidos con el tráfico automotor.',
+    fullContent: 'El crecimiento de la micromovilidad exige carriles exclusivos demarcados y una estricta cultura de convivencia. La plataforma VIANOVA mapea en tiempo real el aforo ciclista, alertando a los conductores sobre la presencia de bicicletas en curvas y exigiendo el cumplimiento del margen de 1.5 metros al rebasar.',
     recommendations: [
-      'Usa siempre casco abrochado y en buen estado.',
-      'Nunca circules sobre las aceras peatonales.',
-      'Indica tus giros con anticipación mediante señales de brazo.',
-      'Revisa la presión de los neumáticos y el estado de los frenos semanalmente.'
+      'Usa siempre casco abrochado homologado y prendas reflectantes de alta luminosidad.',
+      'Exige y respeta el radio de 1.5 metros de distancia lateral al adelantar.',
+      'Circula exclusivamente por cicloinfraestructura habilitada, nunca por andenes.',
+      'Señaliza tus maniobras de giro con el brazo con al menos 3 segundos de anticipación.'
     ],
-    image: 'https://images.unsplash.com/photo-1519505907962-0a6cb0167c73?w=600&auto=format&fit=crop&q=80',
-    stats: 'Más de 15,000 ciclistas capacitados en 2024'
+    image: 'https://images.unsplash.com/photo-1485965120184-e220f721d03e?w=1000&auto=format&fit=crop&q=80',
+    stats: '+38% en aforo ciclista seguro y -46% de invasión de ciclorrutas',
+    signage: {
+      code: 'SP-40',
+      name: 'Ciclistas en la Vía / Vía Compartida',
+      type: 'Preventiva',
+      description: 'Informa la presencia constante de bicicletas y vehículos de micromovilidad en la calzada o cruces adyacentes.',
+      meaning: 'Exige mantener 1.5 metros de distancia mínima lateral al adelantar y ceder prelación en cambios de carril.',
+      fineInfo: 'Infracción C14 por adelantar a ciclistas sin respetar el metro y medio de distancia de seguridad.'
+    },
+    infographic: {
+      headline: 'Espacio Vital y Pacificación de Ciclovías',
+      keyMetric: '1.5 m',
+      metricLabel: 'Distancia lateral mínima legal para proteger al ciclista',
+      beforeVianova: 'Adelantamientos a menos de 60 cm provocaban caídas por efecto de succión aerodinámica.',
+      afterVianova: 'Sensores de proximidad VIANOVA notifican a conductores en tiempo real al aproximarse a una ciclorruta.',
+      reductionPercentage: 46,
+      steps: [
+        { number: '01', title: 'Carril Confinado', desc: 'Separadores táctiles y pintura reflectiva verde de alta adherencia.' },
+        { number: '02', title: 'Radar de Distancia 1.5 m', desc: 'Dispositivos IoT alertan a buses y carros que invaden el radio protector.' },
+        { number: '03', title: 'Semáforo Bici Preferente', desc: 'Fase semafórica de 5 segundos de anticipación para ciclistas en cruces.' }
+      ]
+    },
+    audiovisual: {
+      title: 'Cápsula Digital VIANOVA: El 1.5 Metros que Salva Vidas',
+      duration: '2:10 min',
+      summary: 'La física detrás del rebase a ciclistas y cómo la infraestructura protegida de VIANOVA previene siniestros graves.',
+      scriptAudio: 'Una bicicleta no tiene carrocería de protección. Cuando un vehículo rebasa sin respetar 1.5 metros, la masa de aire puede desestabilizar al conductor.',
+      simulatedVideoThumb: 'https://images.unsplash.com/photo-1485965120184-e220f721d03e?w=1000&auto=format&fit=crop&q=80',
+      youtubeId: 'W3_K203jW10'
+    },
+    simulator: {
+      type: 'bike_distance',
+      title: 'Simulador de Distancia Lateral 1.5m',
+      prompt: 'Ajusta el margen de rebase de tu vehículo para verificar si cumples la distancia legal de seguridad vial.'
+    },
+    cta: {
+      primary: 'Explorar Rutas Ciclistas Protegidas',
+      secondary: 'Firmar Compromiso 1.5 Metros',
+      actionType: 'cycle_routes',
+      commitmentPrompt: 'Me comprometo a respetar siempre 1.5 metros de distancia lateral con los ciclistas al rebasar.'
+    }
   },
   {
     id: 'camp_3',
-    title: 'Visión Cero',
-    subtitle: 'Cero Distracciones al Volante',
+    title: 'Visión Cero: Cero Pantallas al Volante VIANOVA',
+    subtitle: 'La Física de la Distracción y los Metros a Ciegas',
     targetCategory: 'Conductores',
     targetType: 'conductores',
-    description: 'Desconéctate del móvil y conéctate con tu entorno. Una campaña sobre los riesgos letales de la conducción distraída.',
-    fullContent: 'Mirar el teléfono celular durante 5 segundos a 60 km/h equivale a recorrer una cancha de fútbol completa a ciegas. La estrategia Visión Cero se compromete a que ninguna muerte o lesión grave por tráfico sea aceptable ni inevitable.',
+    brandTag: 'VIANOVA FocusDrive™',
+    hashtag: '#CeroCelularAlVolante',
+    description: 'Concientización activa sobre los metros recorridos a ciegas al mirar el celular y tecnología de radar de velocidad urbana.',
+    fullContent: 'Revisar una notificación o mensaje en el celular toma en promedio 5 segundos. A 60 km/h, ese lapso significa desplazarse 83.3 metros —casi una cancha de fútbol completa— sin mirar la vía ni anticipar peatones o frenadas repentinas. VIANOVA promueve el Modo Conducción Silencioso y las alertas sonoras predictivas.',
     recommendations: [
-      'Guarda tu teléfono en el soporte o modo "No Molestar al Conducir".',
-      'Configura tu ruta en el navegador antes de encender el motor.',
-      'Respeta religiosamente la distancia de seguridad con otros vehículos.',
-      'Recuerda que los ciclistas y peatones no tienen carrocería protectora.'
+      'Coloca tu teléfono en el soporte del tablero y activa el Modo Conducción VIANOVA.',
+      'Configura tu destino y música antes de poner el vehículo en marcha.',
+      'Si debes responder una llamada o mensaje urgente, estaciónate en un lugar seguro.',
+      'Mantén siempre al menos 3 segundos de distancia con el vehículo que te antecede.'
     ],
-    image: 'https://images.unsplash.com/photo-1449965408869-eaa3f722e40d?w=600&auto=format&fit=crop&q=80',
-    stats: 'Meta 2030: Reducción del 50% en fatalidades urbanas'
+    image: 'https://images.unsplash.com/photo-1449965408869-eaa3f722e40d?w=1000&auto=format&fit=crop&q=80',
+    stats: '-62% de choques por alcance en conductores que activan Modo Concentrado',
+    signage: {
+      code: 'SR-28',
+      name: 'Prohibido Dispositivos Móviles al Conducir',
+      type: 'Reglamentaria',
+      description: 'Prohíbe terminantemente la manipulación de teléfonos móviles o dispositivos manuales mientras el vehículo esté en movimiento.',
+      meaning: 'Cualquier interacción táctil con pantallas multiplica por 23 la probabilidad de colisión.',
+      fineInfo: 'Infracción C38: Multa de 15 salarios mínimos diarios legales y retención del vehículo.'
+    },
+    infographic: {
+      headline: 'Metros Recorridos a Ciegas por Segundos de Distracción',
+      keyMetric: '83.3 m',
+      metricLabel: 'Distancia recorrida a ciegas en 5 segundos a 60 km/h',
+      beforeVianova: '8 de cada 10 colisiones urbanas son causadas por distracción digital al volante.',
+      afterVianova: 'El asistente VIANOVA bloquea notificaciones emergentes durante desplazamientos vehiculares.',
+      reductionPercentage: 62,
+      steps: [
+        { number: '01', title: '0 a 2 Segundos', desc: 'Pérdida de la visión periférica; el cerebro no procesa las luces de freno del vehículo precedente.' },
+        { number: '02', title: '3 a 4 Segundos', desc: 'Desvío involuntario del carril y aumento del 400% en la distancia total de detención.' },
+        { number: '03', title: '5 Segundos', desc: 'Equivalente a atravesar un cruce semaforizado completo con los ojos cerrados.' }
+      ]
+    },
+    audiovisual: {
+      title: 'Cápsula Digital VIANOVA: Metros a Ciegas',
+      duration: '2:30 min',
+      summary: 'Demostración práctica de cómo los reflejos humanos colapsan ante una distracción con pantalla a velocidad urbana.',
+      scriptAudio: 'Mirar tu celular un instante para leer un mensaje equivale a cruzar una avenida transitada a ciegas. Ningún mensaje vale una vida.',
+      simulatedVideoThumb: 'https://images.unsplash.com/photo-1449965408869-eaa3f722e40d?w=1000&auto=format&fit=crop&q=80',
+      youtubeId: 'oVqM1vA-r3M'
+    },
+    simulator: {
+      type: 'distraction_calc',
+      title: 'Calculadora de Distracción y Metros a Ciegas',
+      prompt: 'Elige tu velocidad de circulación y segundos de distracción para ver cuántos metros recorres totalmente a ciegas.'
+    },
+    cta: {
+      primary: 'Calcular Mi Distancia a Ciegas',
+      secondary: 'Activar Modo Conducción Segura',
+      actionType: 'calc_distraction',
+      commitmentPrompt: 'Me comprometo a no tocar el celular mientras conduzco y a mantener mi vista 100% en el camino.'
+    }
   },
   {
     id: 'camp_4',
-    title: 'Rutas Seguras Escolares',
-    subtitle: 'Protección en Entornos Educativos',
+    title: 'Perímetros Escolares Seguros 20 km/h VIANOVA',
+    subtitle: 'Protección Integral en Entornos Educativos y Guarderías',
     targetCategory: 'Entorno Escolar',
     targetType: 'escolar',
-    description: 'Protegiendo el trayecto de los más pequeños. Implementación de límites de velocidad dinámicos en zonas escolares.',
-    fullContent: 'Generamos perímetros escolares pacificados con zonas 20 km/h durante los horarios de entrada y salida de colegios. El proyecto involucra agentes de tránsito comunitarios y balizas preventivas intermitentes.',
+    brandTag: 'VIANOVA SchoolShield™',
+    hashtag: '#EscuelaSegura20kmh',
+    description: 'Pacificación de velocidad a 20 km/h y señalización fotoluminiscente en accesos escolares monitoreados por radares pedagógicos.',
+    fullContent: 'Los niños y jóvenes tienen menor estatura y un campo de visión periférica un 30% más reducido que un adulto. A 20 km/h, la probabilidad de que un niño sobreviva a un impacto vial es del 98%; sin embargo, a 60 km/h esa posibilidad se desploma al 15%. VIANOVA despliega radares pedagógicos solares en 84 colegios con límites de velocidad dinámicos.',
     recommendations: [
-      'Reduce la velocidad a 20 km/h al avistar un colegio o parque.',
-      'No estaciones en doble fila obstruyendo la visibilidad de los niños.',
-      'Fomenta el "Camino Escolar Seguro" a pie o en bicicleta acompañada.',
-      'Sé paciente ante el descenso de pasajeros de rutas escolares.'
+      'Reduce la velocidad obligatoriamente a 20 km/h al ingresar al cuadrante escolar.',
+      'Respeta a los monitores de tránsito y agentes escolares de cruce infantil.',
+      'Queda terminantemente prohibido estacionar en doble fila en las puertas de las escuelas.',
+      'Acompaña a los estudiantes siempre por el andén tomados de la mano.'
     ],
-    image: 'https://images.unsplash.com/photo-1588072432836-e10032774350?w=600&auto=format&fit=crop&q=80',
-    stats: '84 colegios integrados con perímetros de tráfico pacificado'
+    image: 'https://images.unsplash.com/photo-1580582932707-520aed937b7b?w=1000&auto=format&fit=crop&q=80',
+    stats: '0 fatalidades en las 84 zonas escolares intervenidas con perímetro VIANOVA',
+    signage: {
+      code: 'SP-53',
+      name: 'Zona Escolar / Niños Jugando',
+      type: 'Preventiva',
+      description: 'Advierte la proximidad de un centro escolar o parque infantil donde puede haber menores transitando.',
+      meaning: 'Velocidad máxima reglamentaria de 20 km/h durante jornadas de entrada y salida académica.',
+      fineInfo: 'Infracción C29: Exceso de velocidad en zonas escolares acarrea la máxima penalización legal.'
+    },
+    infographic: {
+      headline: 'Probabilidad de Supervivencia Infantil según la Velocidad',
+      keyMetric: '98%',
+      metricLabel: 'Supervivencia a 20 km/h frente a solo 15% a 60 km/h',
+      beforeVianova: 'Vehículos transitaban a 50 km/h por frentes de colegios con frenadas sobre el paso cebra.',
+      afterVianova: 'Corredores escolares pacificados con reductores trapezoidales y radares pedagógicos dinámicos.',
+      reductionPercentage: 83,
+      steps: [
+        { number: '01', title: 'A 20 km/h', desc: 'Distancia de frenado de solo 6 metros. 98% de probabilidad de sobrevivir sin secuelas.' },
+        { number: '02', title: 'A 40 km/h', desc: 'Distancia de frenado sube a 18 metros. El riesgo de lesiones severas se cuadruplica.' },
+        { number: '03', title: 'A 60 km/h', desc: 'Distancia de frenado supera los 35 metros. Impacto devastador con 85% de letalidad.' }
+      ]
+    },
+    audiovisual: {
+      title: 'Cápsula Digital VIANOVA: 20 km/h por Nuestros Niños',
+      duration: '1:55 min',
+      summary: 'Por qué bajar de 50 a 20 km/h marca la diferencia entre un susto menor y una tragedia irreversible frente a un colegio.',
+      scriptAudio: 'En una zona escolar, cada kilómetro por hora adicional cuesta vidas. En VIANOVA protegemos a los más pequeños reduciendo la velocidad a 20 km/h.',
+      simulatedVideoThumb: 'https://images.unsplash.com/photo-1580582932707-520aed937b7b?w=1000&auto=format&fit=crop&q=80',
+      youtubeId: 'X94gG2H9T6E'
+    },
+    simulator: {
+      type: 'school_speed',
+      title: 'Simulador de Frenado en Zona Escolar',
+      prompt: 'Compara la distancia de detención de un vehículo a 20 km/h frente a 50 km/h cuando un niño cruza la vía.'
+    },
+    cta: {
+      primary: 'Ver Zonas Escolares Pacificadas',
+      secondary: 'Firmar Pacto Conductor Escolar',
+      actionType: 'school_zones',
+      commitmentPrompt: 'Me comprometo a reducir a 20 km/h la velocidad siempre que transite frente a un colegio o parque infantil.'
+    }
   },
   {
     id: 'camp_5',
-    title: 'Luz y Movimiento',
-    subtitle: 'Visibilidad Nocturna Total',
+    title: 'Luz y Movimiento 360°: Visibilidad Nocturna VIANOVA',
+    subtitle: 'Tecnología Retrorreflectiva y Detección Térmica en Tránsito',
     targetCategory: 'Nocturno',
     targetType: 'nocturno',
-    description: 'Estrategias de visibilidad para ciclistas y peatones durante la noche. La tecnología al servicio de tu seguridad.',
-    fullContent: 'De noche, el riesgo de siniestros viales se triplica por falta de contraste visual. Promovemos el uso de prendas retrorreflectivas de 360 grados y sistemas de iluminación activa de alto lumen.',
+    brandTag: 'VIANOVA NightBeam™',
+    hashtag: '#HazteVisibleDeNoche',
+    description: 'Protocolos de visibilidad 360° para ciclistas, motociclistas y peatones con prendas reflectivas y faros de alta luminancia.',
+    fullContent: 'Durante la noche y la lluvia, el ojo humano pierde hasta un 70% de su capacidad para percibir contrastes y profundidad. Un conductor con luces bajas que viaja a 50 km/h divisa a un peatón con ropa oscura a escasos 25 metros (menos de 2 segundos de reacción). Con prendas reflectantes certificadas y el sensor NightBeam de VIANOVA, la distancia de visibilidad aumenta a 150 metros.',
     recommendations: [
-      'Utiliza bandas reflectantes en tobillos y muñecas (zonas de movimiento).',
-      'Verifica que tus luces traseras rojas sean visibles a mínimo 150 metros.',
-      'Evita cruzar por tramos oscuros o esquinas sin luminarias operativas.',
-      'Reporta en VIANOVA las luminarias públicas dañadas en tu sector.'
+      'Viste chalecos o bandas reflectivas en extremidades (tobillos y brazos) para reflejar movimiento.',
+      'Equipa tu bicicleta o scooter con luz delantera blanca fija y luz trasera roja destellante.',
+      'Verifica la alineación e intensidad de las luces de tu vehículo para no encandilar.',
+      'Reporta en la app VIANOVA los puntos ciegos urbanos con luminarias públicas averiadas.'
     ],
-    image: 'https://images.unsplash.com/photo-1519681393784-d120267933ba?w=600&auto=format&fit=crop&q=80',
-    stats: 'Un peatón con reflectivos es visible a 150 m vs 30 m sin ellos'
+    image: 'https://images.unsplash.com/photo-1509316975850-ff9c5deb0cd9?w=1000&auto=format&fit=crop&q=80',
+    stats: '5 veces mayor distancia de detección para ciclistas con prendas reflectivas 360°',
+    signage: {
+      code: 'SP-37',
+      name: 'Zona Iluminada / Tránsito Nocturno',
+      type: 'Preventiva',
+      description: 'Alerta sobre la transición a vías con iluminación variable y presencia de peatones y ciclistas nocturnos.',
+      meaning: 'Obliga al uso ininterrumpido de luces reglamentarias y a moderar la velocidad ante menor campo de visión.',
+      fineInfo: 'Infracción C24: Transitar de noche sin luces reglamentarias o reflectivos homologados.'
+    },
+    infographic: {
+      headline: 'Distancia de Reconocimiento Visual Nocturno',
+      keyMetric: '150 m',
+      metricLabel: 'Distancia de visibilidad con reflectivos frente a 25 m con ropa oscura',
+      beforeVianova: 'Peatones vestidos de oscuro divisados a 25 metros: colisión casi inevitable a 50 km/h.',
+      afterVianova: 'Reflectivos activos + sensores térmicos VIANOVA en cruces: detección garantizada a 150 metros.',
+      reductionPercentage: 75,
+      steps: [
+        { number: '01', title: 'Ropa Oscura (25 m)', desc: 'Menos de 1.8 segundos para reaccionar. 80% de probabilidad de atropello.' },
+        { number: '02', title: 'Ropa Blanca (55 m)', desc: 'Apenas 3.5 segundos. Frenada brusca con riesgo de choque por alcance.' },
+        { number: '03', title: 'Reflectivo 360° (150 m)', desc: 'Más de 10 segundos para desacelerar con suavidad y seguridad absoluta.' }
+      ]
+    },
+    audiovisual: {
+      title: 'Cápsula Digital VIANOVA: Física de la Visibilidad Nocturna',
+      duration: '2:05 min',
+      summary: 'Experimento óptico de campo: cómo ven los conductores la calzada de noche con y sin elementos reflectivos.',
+      scriptAudio: 'La noche engaña a los ojos. En VIANOVA iluminamos las vías y enseñamos el poder salvavidas del material retrorreflectivo.',
+      simulatedVideoThumb: 'https://images.unsplash.com/photo-1509316975850-ff9c5deb0cd9?w=1000&auto=format&fit=crop&q=80',
+      youtubeId: 'qR_K9M1xX2Q'
+    },
+    simulator: {
+      type: 'night_toggle',
+      title: 'Simulador de Visibilidad Nocturna',
+      prompt: 'Alterna entre el modo con reflectivo y sin reflectivo para experimentar la perspectiva real del conductor de noche.'
+    },
+    cta: {
+      primary: 'Probar Simulador Nocturno',
+      secondary: 'Firmar Pacto de Visibilidad 360°',
+      actionType: 'night_demo',
+      commitmentPrompt: 'Me comprometo a utilizar prendas reflectivas y luces operativas siempre que transite de noche.'
+    }
   },
   {
     id: 'camp_6',
-    title: 'Cruces Conectados',
-    subtitle: 'Infraestructura Vial del Futuro',
+    title: 'Red de Semáforos Inteligentes IoT VIANOVA',
+    subtitle: 'Gestión de Tráfico Adaptativo, Onda Verde y Menos Emisiones',
     targetCategory: 'Infraestructura',
     targetType: 'infraestructura',
-    description: 'Nuestra red de semáforos inteligentes optimiza el flujo y prioriza al transporte público y peatones en tiempo real.',
-    fullContent: 'Integración de controladores IoT y algoritmos de sincronización de onda verde para transporte público masivo, reduciendo tiempos de espera y contaminación por ralentí en los cruces neurálgicos.',
+    brandTag: 'VIANOVA FlowMatrix™',
+    hashtag: '#TránsitoFluidoVIANOVA',
+    description: 'Controladores semafóricos sincronizados con inteligencia artificial para priorizar transporte público y despejar trancones.',
+    fullContent: 'Los trancones generan pérdidas millonarias y aumentan el estrés y la agresividad al volante. La red VIANOVA FlowMatrix interconecta más de 450 intersecciones semaforizadas con algoritmos de onda verde adaptativa que ajustan los tiempos de luz verde según la densidad real del flujo vehicular medida por sensores ópticos y radares doppler.',
     recommendations: [
-      'Observa las pantallas de velocidad sugerida para sincronía de onda verde.',
-      'Nunca bloquees la intersección si no hay espacio para salir de ella.',
-      'Respeta las cajas amarillas antibloqueo en todos los cruces.',
-      'Confía en los sensores de demanda que detectan ciclistas en espera.'
+      'Respeta rigurosamente las marcas de zona antibloqueo (malla amarilla en intersección).',
+      'Mantén la velocidad sugerida por los paneles viales para ingresar en la onda verde continua.',
+      'No aceleres ante la luz amarilla; prepárate para detenerte con antelación.',
+      'Cede el paso al transporte masivo y vehículos de emergencia que cuentan con prioridad semafórica.'
     ],
-    image: 'https://images.unsplash.com/photo-1477959858617-67f30bc75b82?w=600&auto=format&fit=crop&q=80',
-    stats: '+22% de fluidez en corredores intervenidos con semáforos IoT'
+    image: 'https://images.unsplash.com/photo-1508873696983-2df5703bc20d?w=1000&auto=format&fit=crop&q=80',
+    stats: '-34% en tiempos de espera en trancones y -28% en emisiones contaminantes por ralentí',
+    signage: {
+      code: 'SP-34',
+      name: 'Semáforo Próximo / Intersección Conectada',
+      type: 'Preventiva',
+      description: 'Indica la cercanía a una intersección regulada por semáforos inteligentes de ciclo dinámico.',
+      meaning: 'Advierte anticipadamente los cambios de fase y regula el cruce ordenado de los diferentes flujos viales.',
+      fineInfo: 'Infracción D04: Pasarse un semáforo en rojo o amarillo genera fotomulta y suspensión preventiva.'
+    },
+    infographic: {
+      headline: 'Eficiencia de la Onda Verde Inteligente VIANOVA',
+      keyMetric: '-34%',
+      metricLabel: 'Reducción de demoras por congestión en corredores principales',
+      beforeVianova: 'Semáforos con temporizadores fijos causaban trancones en calzadas vacías en contrasentido.',
+      afterVianova: 'Algoritmos IoT de tiempo real ajustan la duración del verde dinámicamente según la demanda vehicular.',
+      reductionPercentage: 34,
+      steps: [
+        { number: '01', title: 'Medición de Aforo IoT', desc: 'Radares doppler miden el volumen de vehículos por carril segundo a segundo.' },
+        { number: '02', title: 'Cálculo de Onda Verde', desc: 'La central VIANOVA calcula la velocidad óptima para sincronizar luces en secuencia.' },
+        { number: '03', title: 'Fluidez y Menor Emisión', desc: 'Los vehículos avanzan a velocidad constante reduciendo el arranque y frenada continua.' }
+      ]
+    },
+    audiovisual: {
+      title: 'Cápsula Digital VIANOVA: Cómo Funciona la Onda Verde IoT',
+      duration: '2:15 min',
+      summary: 'Visualiza la red neuronal urbana de VIANOVA y cómo la sincronización de semáforos elimina las colas de tráfico.',
+      scriptAudio: 'Un semáforo tradicional solo cuenta segundos. Los semáforos VIANOVA leen la ciudad, escuchan la demanda y crean corredores verdes ininterrumpidos.',
+      simulatedVideoThumb: 'https://images.unsplash.com/photo-1508873696983-2df5703bc20d?w=1000&auto=format&fit=crop&q=80',
+      youtubeId: 'pS41FqG8c2w'
+    },
+    simulator: {
+      type: 'smart_signals',
+      title: 'Simulador de Onda Verde de Semáforos',
+      prompt: 'Activa la sincronización adaptativa VIANOVA para coordinar 3 intersecciones y despejar el atasco vehicular.'
+    },
+    cta: {
+      primary: 'Probar Simulador de Onda Verde',
+      secondary: 'Consultar Estado de Corredores',
+      actionType: 'traffic_matrix',
+      commitmentPrompt: 'Me comprometo a nunca bloquear la malla amarilla de una intersección semaforizada.'
+    }
   }
 ];
 

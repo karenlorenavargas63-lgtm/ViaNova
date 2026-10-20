@@ -103,6 +103,41 @@ export interface QuizQuestion {
   explanation: string;
 }
 
+export interface CampaignSignage {
+  code: string;
+  name: string;
+  type: 'Reglamentaria' | 'Preventiva' | 'Informativa';
+  description: string;
+  meaning: string;
+  fineInfo?: string;
+  iconName?: string;
+}
+
+export interface CampaignInfographic {
+  headline: string;
+  keyMetric: string;
+  metricLabel: string;
+  beforeVianova: string;
+  afterVianova: string;
+  reductionPercentage: number;
+  steps: { number: string; title: string; desc: string }[];
+}
+
+export interface CampaignAudiovisual {
+  title: string;
+  duration: string;
+  summary: string;
+  scriptAudio: string;
+  simulatedVideoThumb: string;
+  youtubeId?: string;
+}
+
+export interface CampaignSimulatorConfig {
+  type: 'crosswalk' | 'bike_distance' | 'distraction_calc' | 'school_speed' | 'night_toggle' | 'smart_signals';
+  title: string;
+  prompt: string;
+}
+
 export interface SafetyCampaign {
   id: string;
   title: string;
@@ -114,6 +149,19 @@ export interface SafetyCampaign {
   recommendations: string[];
   image: string;
   stats: string;
+  // Content Integration Campaign elements
+  brandTag?: string;
+  hashtag?: string;
+  signage?: CampaignSignage;
+  infographic?: CampaignInfographic;
+  audiovisual?: CampaignAudiovisual;
+  simulator?: CampaignSimulatorConfig;
+  cta?: {
+    primary: string;
+    secondary: string;
+    actionType?: string;
+    commitmentPrompt?: string;
+  };
 }
 
 export interface SafetyPillar {

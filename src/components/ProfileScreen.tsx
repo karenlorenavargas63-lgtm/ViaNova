@@ -23,7 +23,8 @@ import {
   Trash2,
   CheckCircle2,
   AlertCircle,
-  Loader2
+  Loader2,
+  Mail
 } from 'lucide-react';
 import defaultAvatarImg from '../assets/images/profile_user_portrait_1788443574080.jpg';
 
@@ -375,8 +376,12 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
             {/* Meta Info List */}
             <div className="space-y-3.5 w-full text-left text-sm sm:text-base text-slate-600">
               <div className="flex items-center gap-3">
+                <Mail className="w-4 h-4 text-blue-500 shrink-0" />
+                <span className="truncate font-medium text-slate-800">{user.email || 'karenlorenavargas63@gmail.com'}</span>
+              </div>
+              <div className="flex items-center gap-3">
                 <MapPin className="w-4 h-4 text-slate-400 shrink-0" />
-                <span className="truncate">{user.city || 'No especificada'}</span>
+                <span className="truncate">{user.city || 'Medellín'}</span>
               </div>
               <div className="flex items-center gap-3">
                 <Calendar className="w-4 h-4 text-slate-400 shrink-0" />

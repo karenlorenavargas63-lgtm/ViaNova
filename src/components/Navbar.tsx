@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { NavigationTab, UserProfile } from '../types';
 import { 
   User as UserIcon,
-  LogIn,
   Menu,
   X,
   ChevronDown,
@@ -18,8 +17,8 @@ interface NavbarProps {
   currentTab: NavigationTab;
   setCurrentTab: (tab: NavigationTab) => void;
   user: UserProfile | null;
-  isAuthenticated: boolean;
-  onOpenAuthModal: () => void;
+  isAuthenticated?: boolean;
+  onOpenAuthModal?: () => void;
   onLogout: () => void;
   onUpdateUser?: (updated: UserProfile) => void;
   onDeleteAccount?: () => void;
@@ -88,7 +87,7 @@ export const Navbar: React.FC<NavbarProps> = ({
 
           {/* Right Action / Profile Button with Unfolded Full User Info Dropdown */}
           <div className="hidden md:flex items-center gap-3">
-            {isAuthenticated && user ? (
+            {user ? (
               <UserProfileDropdown
                 user={user}
                 onUpdateUser={onUpdateUser}
@@ -99,12 +98,12 @@ export const Navbar: React.FC<NavbarProps> = ({
               />
             ) : (
               <button
-                id="nav-login-btn"
-                onClick={onOpenAuthModal}
-                className="flex items-center gap-2 px-6 py-2.5 rounded-full bg-[#0057d9] text-white font-bold text-base hover:bg-[#0047b3] transition-all duration-200 shadow-md shadow-blue-500/20 hover:scale-[1.02]"
+                id="nav-profile-btn"
+                onClick={() => setCurrentTab('perfil')}
+                className="flex items-center gap-2 px-5 py-2.5 rounded-full bg-[#0057d9] text-white font-bold text-sm hover:bg-[#0047b3] transition-all duration-200 shadow-md shadow-blue-500/20 hover:scale-[1.02]"
               >
-                <LogIn className="w-4 h-4" />
-                <span>Iniciar Sesión</span>
+                <UserIcon className="w-4 h-4" />
+                <span>Mi Perfil VIANOVA</span>
               </button>
             )}
           </div>
@@ -147,7 +146,7 @@ export const Navbar: React.FC<NavbarProps> = ({
           })}
 
           <div className="pt-3 border-t border-slate-100">
-            {isAuthenticated && user ? (
+            {user ? (
               <div className="space-y-2">
                 {/* Mobile Button containing User Name */}
                 <button
@@ -219,7 +218,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                       </div>
                     </button>
 
-                    {/* 3. Cerrar sesión */}
+                    {/* 3. Cerrar sesión / Reiniciar */}
                     <button
                       type="button"
                       onClick={() => {
@@ -232,8 +231,8 @@ export const Navbar: React.FC<NavbarProps> = ({
                         <LogOut className="w-4 h-4" />
                       </div>
                       <div className="text-left min-w-0 flex-1">
-                        <p className="text-xs font-bold text-slate-800 leading-tight">Cerrar sesión</p>
-                        <p className="text-[10px] text-slate-500 font-normal">Finalizar sesión en este dispositivo</p>
+                        <p className="text-xs font-bold text-slate-800 leading-tight">Restablecer datos</p>
+                        <p className="text-[10px] text-slate-500 font-normal">Reiniciar sesión ciudadana</p>
                       </div>
                     </button>
 
@@ -257,12 +256,13 @@ export const Navbar: React.FC<NavbarProps> = ({
             ) : (
               <button
                 onClick={() => {
-                  onOpenAuthModal();
+                  setCurrentTab('perfil');
                   setIsMobileMenuOpen(false);
                 }}
-                className="w-full py-3 px-4 rounded-xl bg-[#0057d9] text-white font-bold text-sm shadow-md"
+                className="w-full py-3 px-4 rounded-xl bg-[#0057d9] text-white font-bold text-sm shadow-md flex items-center justify-center gap-2"
               >
-                Iniciar Sesión
+                <UserIcon className="w-4 h-4" />
+                <span>Mi Perfil VIANOVA</span>
               </button>
             )}
           </div>

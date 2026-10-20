@@ -2,23 +2,26 @@ import React, { useState } from 'react';
 import { 
   Mail, 
   Lock, 
-  User, 
   ArrowRight, 
   Eye, 
   EyeOff, 
   ShieldCheck, 
   CheckCircle2, 
   AlertCircle, 
-  KeyRound, 
-  X
+  KeyRound,
+  User,
+  MapPin,
+  Bike,
+  UserPlus
 } from 'lucide-react';
 import { CrashHeroAnimation } from './CrashHeroAnimation';
 import { UserProfile } from '../types';
 import { Logo } from './Logo';
 import { 
   validateCredentials, 
-  registerNewUser, 
-  loginOrRegisterWithGoogle
+  registerNewUser,
+  getRegisteredUsers,
+  DEMO_CREDENTIALS
 } from '../utils/session';
 
 interface LoginScreenProps {
@@ -27,169 +30,182 @@ interface LoginScreenProps {
 }
 
 export const LoginScreen: React.FC<LoginScreenProps> = ({ 
-  onLoginSuccess, 
-  onRegisterSuccess 
+  onLoginSuccess 
 }) => {
-  // Mode: default MUST BE LOGIN ('login'), not register
-  const [mode, setMode] = useState<'login' | 'register'>('login');
+  // Mode: 'login' for registered users, 'register' for first-time users
+  const [isFirstTime, setIsFirstTime] = useState<boolean>(false);
 
   // Login form fields
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [showPassword, setShowPassword] = useState(false);
+  const [email, setEmail] = useState<string>(DEMO_CREDENTIALS.email);
+  const [password, setPassword] = useState<string>(DEMO_CREDENTIALS.password);
+  const [showPassword, setShowPassword] = useState<boolean>(false);
 
-  // Register form fields
-  const [name, setName] = useState('');
-  const [city, setCity] = useState('Medellín');
-  const [role, setRole] = useState('Ciclista Urbano');
-  const [confirmPassword, setConfirmPassword] = useState('');
-  const [acceptTerms, setAcceptTerms] = useState(true);
+  // First-time registration form fields
+  const [regName, setRegName] = useState<string>('');
+  const [regEmail, setRegEmail] = useState<string>('');
+  const [regPassword, setRegPassword] = useState<string>('');
+  const [regConfirmPassword, setRegConfirmPassword] = useState<string>('');
+  const [regRole, setRegRole] = useState<string>('Ciclista Urbano');
+  const [regCity, setRegCity] = useState<string>('Medellín');
+  const [acceptTerms, setAcceptTerms] = useState<boolean>(true);
 
-  // States
-  const [errorMessage, setErrorMessage] = useState('');
-  const [successMessage, setSuccessMessage] = useState('');
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [showGoogleModal, setShowGoogleModal] = useState(false);
-  const [customGoogleEmail, setCustomGoogleEmail] = useState('');
-  const [customGoogleName, setCustomGoogleName] = useState('');
-  const [isCustomGoogle, setIsCustomGoogle] = useState(false);
+  // Status messages
+  const [errorMessage, setErrorMessage] = useState<string>('');
+  const [successMessage, setSuccessMessage] = useState<string>('');
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+  const [unregisteredPrompt, setUnregisteredPrompt] = useState<boolean>(false);
 
-  // Pre-configured quick Google accounts for testing
-  const sampleGoogleAccounts = [
-    {
-      name: 'Carlos Mendoza',
-      email: 'carlos.mendoza@gmail.com',
-      avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400&auto=format&fit=crop&q=80'
-    },
-    {
-      name: 'Elena Ríos',
-      email: 'elena.rios.movilidad@gmail.com',
-      avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400&auto=format&fit=crop&q=80'
-    }
-  ];
-
-  // Login submit handler with STRICT VALIDATION
+  // Handle Login submission
   const handleLoginSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setErrorMessage('');
     setSuccessMessage('');
+    setUnregisteredPrompt(false);
 
-    if (!email.trim()) {
+    const cleanEmail = email.trim().toLowerCase();
+    const cleanPass = password.trim();
+
+    if (!cleanEmail) {
       setErrorMessage('Por favor ingresa tu correo electrónico.');
       return;
     }
 
-    if (!password.trim()) {
+    if (!cleanPass) {
       setErrorMessage('Por favor ingresa tu contraseña.');
       return;
     }
 
     setIsSubmitting(true);
 
-    // STRICT VALIDATION AGAINST REGISTERED USERS DATABASE
     setTimeout(() => {
-      const validation = validateCredentials(email, password);
+      // Check if user is registered in database
+      const registered = getRegisteredUsers();
+      const userExists = registered.some((u) => u.email?.trim().toLowerCase() === cleanEmail);
+
+      // If user has not registered yet and is entering for the first time, require registration
+      if (!userExists) {
+        setIsSubmitting(false);
+        setUnregisteredPrompt(true);
+        setErrorMessage('Este correo no se encuentra registrado en el sistema. Si vas a ingresar por primera vez, debes realizar tu registro.');
+        return;
+      }
+
+      // Validate credentials for registered user
+      const validation = validateCredentials(cleanEmail, cleanPass);
 
       if (!validation.success) {
         setIsSubmitting(false);
-        setErrorMessage(validation.error || 'Credenciales inválidas.');
+        setErrorMessage(validation.error || 'Contraseña incorrecta.');
         return;
       }
 
       setIsSubmitting(false);
-      if (validation.user) {
-        onLoginSuccess(validation.user);
-      }
+      setSuccessMessage('¡Ingreso exitoso! Bienvenido a VIANOVA.');
+      setTimeout(() => {
+        if (validation.user) {
+          onLoginSuccess(validation.user);
+        }
+      }, 300);
     }, 350);
   };
 
-  // Register submit handler
+  // Handle First-time Registration submission
   const handleRegisterSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setErrorMessage('');
     setSuccessMessage('');
 
-    if (!name.trim()) {
+    const cleanName = regName.trim();
+    const cleanEmail = regEmail.trim().toLowerCase();
+    const cleanPass = regPassword.trim();
+    const cleanConfirm = regConfirmPassword.trim();
+
+    if (!cleanName) {
       setErrorMessage('Por favor ingresa tu nombre completo.');
       return;
     }
 
-    if (!email.trim() || !email.includes('@')) {
+    if (!cleanEmail || !cleanEmail.includes('@')) {
       setErrorMessage('Por favor ingresa un correo electrónico válido.');
       return;
     }
 
-    if (!password.trim() || password.length < 6) {
+    if (!cleanPass || cleanPass.length < 6) {
       setErrorMessage('La contraseña debe tener mínimo 6 caracteres.');
       return;
     }
 
-    if (password !== confirmPassword) {
-      setErrorMessage('Las contraseñas no coinciden.');
+    if (cleanPass !== cleanConfirm) {
+      setErrorMessage('Las contraseñas no coinciden. Por favor verifícalas.');
       return;
     }
 
     if (!acceptTerms) {
-      setErrorMessage('Debes aceptar los términos y condiciones para continuar.');
+      setErrorMessage('Debes aceptar las normas de convivencia vial y términos de uso.');
       return;
     }
 
     setIsSubmitting(true);
 
     setTimeout(() => {
-      const result = registerNewUser(
+      const regResult = registerNewUser(
         {
-          name: name.trim(),
-          email: email.trim(),
-          city: city.trim() || 'Medellín',
-          role: role || 'Ciclista Urbano',
+          name: cleanName,
+          email: cleanEmail,
+          city: regCity.trim() || 'Medellín',
+          role: regRole || 'Ciclista Urbano',
         },
-        password
+        cleanPass
       );
 
-      setIsSubmitting(false);
-
-      if (!result.success) {
-        setErrorMessage(result.error || 'Error al registrar usuario.');
+      if (!regResult.success) {
+        setIsSubmitting(false);
+        setErrorMessage(regResult.error || 'Error al completar el registro.');
         return;
       }
 
-      if (result.user) {
-        if (onRegisterSuccess) {
-          onRegisterSuccess(result.user);
-        } else {
-          onLoginSuccess(result.user);
+      setIsSubmitting(false);
+      setSuccessMessage('¡Registro completado exitosamente! Ingresando a la plataforma...');
+      setTimeout(() => {
+        if (regResult.user) {
+          onLoginSuccess(regResult.user);
         }
-      }
+      }, 400);
     }, 400);
   };
 
-  // Google Login execution
-  const executeGoogleLogin = (googleAccount: { name: string; email: string; avatar?: string }) => {
-    setShowGoogleModal(false);
-    setIsSubmitting(true);
+  const handleSwitchToRegister = () => {
+    setRegEmail(email);
+    setErrorMessage('');
+    setSuccessMessage('');
+    setUnregisteredPrompt(false);
+    setIsFirstTime(true);
+  };
 
-    setTimeout(() => {
-      const loggedUser = loginOrRegisterWithGoogle(googleAccount);
-      setIsSubmitting(false);
-      onLoginSuccess(loggedUser);
-    }, 400);
+  const handleSwitchToLogin = () => {
+    if (regEmail) {
+      setEmail(regEmail);
+    }
+    setErrorMessage('');
+    setSuccessMessage('');
+    setUnregisteredPrompt(false);
+    setIsFirstTime(false);
   };
 
   return (
-    <div className="min-h-screen w-full bg-[#b9e3fc] flex flex-col lg:flex-row text-slate-800">
+    <div className="min-h-screen w-full bg-[#b9e3fc] flex flex-col lg:flex-row text-slate-800 font-sans">
       
-      {/* Left Visual Column: Cinematic Crash Animation & Futuristic ViaNova Reveal */}
-      <div className="relative w-full lg:w-1/2 min-h-[440px] lg:min-h-screen bg-slate-950 overflow-hidden flex flex-col justify-between p-4 sm:p-6 lg:p-8 border-b lg:border-b-0 lg:border-r border-slate-800">
+      {/* Left Visual Column: Cinematic Animation & Mobility Intelligence */}
+      <div className="relative w-full lg:w-1/2 min-h-[420px] lg:min-h-screen bg-slate-950 overflow-hidden flex flex-col justify-between p-4 sm:p-6 lg:p-8 border-b lg:border-b-0 lg:border-r border-slate-800">
         
         {/* Top Header inside Left Visual */}
         <div className="flex items-center justify-between z-10 mb-2">
           <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-slate-900/90 border border-sky-500/30 text-sky-300 text-xs font-bold tracking-wide">
             <span className="w-2 h-2 rounded-full bg-[#00ff88] animate-ping" />
-            <span>Plataforma de Movilidad Urbana Inteligente</span>
+            <span>VIANOVA • Movilidad Urbana Inteligente</span>
           </div>
           <span className="text-xs font-mono text-slate-400">
-            Full HD • 60 FPS
+            Seguridad Vial Activa
           </span>
         </div>
 
@@ -202,17 +218,17 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({
         <div className="relative z-10 p-4 rounded-2xl bg-slate-900/90 backdrop-blur-xl border border-sky-500/20 text-white shadow-xl">
           <div className="flex items-center gap-2 text-[#00ff88] text-xs font-bold uppercase tracking-wider mb-1">
             <span className="w-2 h-2 rounded-full bg-[#00ff88] animate-pulse"></span>
-            <span>Prevención Vial y Rutas Inteligentes VIANOVA</span>
+            <span>Rutas Seguras y Conectividad Ciudadana</span>
           </div>
           <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
-            Inicia sesión para acceder a la red en tiempo real de movilidad segura: alertas tempranas de incidentes, trazado de rutas para ciclistas y peatones, y módulos educativos interactivos.
+            Plataforma digital para la prevención de accidentes, monitoreo de cruces peatonales y navegación para ciclistas, peatones y conductores.
           </p>
         </div>
       </div>
 
-      {/* Right Form Column: Iniciar Sesión / Registrarse */}
+      {/* Right Column: Dynamic Form (Login vs First-Time Registration) */}
       <div className="w-full lg:w-1/2 min-h-screen flex flex-col justify-center items-center px-4 sm:px-8 lg:px-14 py-8 bg-[#b9e3fc]">
-        <div className="w-full max-w-md space-y-5">
+        <div className="w-full max-w-md space-y-6">
           
           {/* Top Brand Header */}
           <div className="space-y-3">
@@ -220,129 +236,60 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({
               <Logo size="lg" showSubtitle={true} />
               <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-100 border border-sky-300 text-blue-900 text-xs font-bold">
                 <ShieldCheck className="w-4 h-4 text-blue-600" />
-                <span>Acceso Seguro</span>
+                <span>{isFirstTime ? 'Nuevo Registro' : 'Acceso Seguro'}</span>
               </div>
             </div>
 
-            {/* TAB SELECTOR: Iniciar Sesión (Default) vs Registrarse */}
-            <div className="flex p-1 rounded-2xl bg-sky-200/70 border border-sky-300 mt-2">
-              <button
-                type="button"
-                id="tab-iniciar-sesion"
-                onClick={() => {
-                  setMode('login');
-                  setErrorMessage('');
-                  setSuccessMessage('');
-                }}
-                className={`flex-1 py-2.5 rounded-xl text-xs sm:text-sm font-extrabold transition-all duration-200 flex items-center justify-center gap-2 cursor-pointer ${
-                  mode === 'login'
-                    ? 'bg-[#0057d9] text-white shadow-md shadow-blue-600/30'
-                    : 'text-slate-700 hover:text-slate-900'
-                }`}
-              >
-                <KeyRound className="w-4 h-4" />
-                <span>Iniciar Sesión</span>
-              </button>
-
-              <button
-                type="button"
-                id="tab-registrarse"
-                onClick={() => {
-                  setMode('register');
-                  setErrorMessage('');
-                  setSuccessMessage('');
-                }}
-                className={`flex-1 py-2.5 rounded-xl text-xs sm:text-sm font-extrabold transition-all duration-200 flex items-center justify-center gap-2 cursor-pointer ${
-                  mode === 'register'
-                    ? 'bg-[#0057d9] text-white shadow-md shadow-blue-600/30'
-                    : 'text-slate-700 hover:text-slate-900'
-                }`}
-              >
-                <User className="w-4 h-4" />
-                <span>Registrarse</span>
-              </button>
-            </div>
-
-            <div className="pt-1">
-              <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
-                {mode === 'login' ? 'Bienvenido a VIANOVA' : 'Crear Cuenta en VIANOVA'}
+            <div className="pt-2">
+              <h1 className="text-2xl sm:text-3xl font-black text-slate-950 tracking-tight">
+                {isFirstTime ? 'Registro por Primera Vez' : 'Acceso a la Plataforma'}
               </h1>
               <p className="text-xs sm:text-sm text-slate-700 font-medium leading-relaxed mt-1">
-                {mode === 'login'
-                  ? 'Ingresa tus credenciales autorizadas para acceder a la plataforma de movilidad.'
-                  : 'Completa tus datos para unirte a la red inteligente de ciclistas, peatones y conductores.'}
+                {isFirstTime
+                  ? 'Completa tus datos por primera vez para unirte a la red inteligente de movilidad VIANOVA.'
+                  : 'Ingresa con tu correo y contraseña para acceder a la plataforma.'}
               </p>
             </div>
           </div>
 
-          {/* GOOGLE SIGN-IN BUTTON (Prominently featured) */}
-          <div className="space-y-3">
-            <button
-              type="button"
-              id="google-signin-btn"
-              onClick={() => setShowGoogleModal(true)}
-              style={{ backgroundColor: '#ffffff', color: '#1f2937' }}
-              className="w-full py-3.5 px-4 rounded-xl border border-slate-300 font-bold text-xs sm:text-sm shadow-sm transition-all duration-200 hover:shadow flex items-center justify-center gap-3 cursor-pointer group hover:bg-slate-50"
-            >
-              {/* Google Official G SVG */}
-              <svg className="w-5 h-5 group-hover:scale-105 transition-transform" viewBox="0 0 24 24">
-                <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
-                <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
-                <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z" />
-                <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z" />
-              </svg>
-              <span>{mode === 'login' ? 'Iniciar sesión con Google' : 'Registrarse con Google'}</span>
-            </button>
-
-            {/* Divider */}
-            <div className="relative flex items-center justify-center my-3">
-              <div className="border-t border-sky-300 w-full"></div>
-              <span className="bg-[#b9e3fc] px-3 text-[11px] font-bold text-slate-600 uppercase tracking-wider">
-                o con correo electrónico
-              </span>
-              <div className="border-t border-sky-300 w-full"></div>
-            </div>
-          </div>
-
-          {/* Feedback Messages */}
+          {/* Error Message */}
           {errorMessage && (
-            <div className="p-3.5 rounded-xl bg-red-100/90 border border-red-300 text-red-800 text-xs sm:text-sm font-semibold flex flex-col gap-2 animate-fade-in shadow-sm">
-              <div className="flex items-center gap-2">
-                <AlertCircle className="w-5 h-5 text-red-600 shrink-0" />
+            <div className="p-3.5 rounded-xl bg-rose-100 border border-rose-300 text-rose-800 text-xs sm:text-sm font-semibold space-y-2 animate-fade-in shadow-xs">
+              <div className="flex items-start gap-2">
+                <AlertCircle className="w-5 h-5 text-rose-600 shrink-0 mt-0.5" />
                 <span>{errorMessage}</span>
               </div>
-              {mode === 'login' && errorMessage.includes('no se encuentra registrado') && (
+
+              {/* Actionable button if unregistered user needs to register */}
+              {unregisteredPrompt && (
                 <button
                   type="button"
-                  onClick={() => {
-                    setMode('register');
-                    setErrorMessage('');
-                  }}
-                  className="self-start text-xs font-bold text-blue-800 underline hover:text-blue-950 pl-7 cursor-pointer"
+                  onClick={handleSwitchToRegister}
+                  className="w-full py-2 px-3 rounded-lg bg-rose-600 hover:bg-rose-700 text-white font-bold text-xs transition-colors flex items-center justify-center gap-1.5 cursor-pointer"
                 >
-                  → Crear una cuenta nueva ahora con este correo
+                  <UserPlus className="w-4 h-4" />
+                  <span>Realizar mi registro por primera vez</span>
                 </button>
               )}
             </div>
           )}
 
+          {/* Success Message */}
           {successMessage && (
-            <div className="p-3.5 rounded-xl bg-emerald-100/90 border border-emerald-300 text-emerald-800 text-xs sm:text-sm font-semibold flex items-center gap-2 animate-fade-in shadow-sm">
+            <div className="p-3.5 rounded-xl bg-emerald-100 border border-emerald-300 text-emerald-800 text-xs sm:text-sm font-semibold flex items-center gap-2 animate-fade-in shadow-xs">
               <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0" />
               <span>{successMessage}</span>
             </div>
           )}
 
-          {/* ========================================================================= */}
-          {/* 1. MODO INICIAR SESIÓN (DEFAULT)                                          */}
-          {/* ========================================================================= */}
-          {mode === 'login' && (
+          {/* VIEW 1: LOGIN FORM (For registered users) */}
+          {!isFirstTime ? (
             <form onSubmit={handleLoginSubmit} className="space-y-4">
               
               {/* Email Field */}
               <div className="space-y-1.5">
                 <label className="block text-xs font-bold text-slate-800">
-                  Correo Electrónico Registrado *
+                  Correo Electrónico *
                 </label>
                 <div className="relative">
                   <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-500">
@@ -354,7 +301,7 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({
                     id="login-email-input"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    placeholder="ejemplo@ciudad.gov.co"
+                    placeholder="ejemplo@correo.com"
                     className="w-full pl-10 pr-4 py-3 rounded-xl bg-[#caeafc] border border-sky-400 focus:border-blue-600 focus:bg-[#d8effe] focus:outline-none text-slate-900 text-sm placeholder:text-slate-500 transition-colors font-semibold"
                   />
                 </div>
@@ -362,20 +309,9 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({
 
               {/* Password Field */}
               <div className="space-y-1.5">
-                <div className="flex items-center justify-between">
-                  <label className="block text-xs font-bold text-slate-800">
-                    Contraseña *
-                  </label>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      alert('Para recuperar tu contraseña, utiliza las credenciales registradas o contacta al administrador.');
-                    }}
-                    className="text-xs font-bold text-[#0057d9] hover:underline"
-                  >
-                    ¿Olvidaste tu contraseña?
-                  </button>
-                </div>
+                <label className="block text-xs font-bold text-slate-800">
+                  Contraseña *
+                </label>
                 <div className="relative">
                   <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-500">
                     <Lock className="w-4 h-4" />
@@ -393,6 +329,7 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
                     className="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-500 hover:text-slate-800 cursor-pointer"
+                    title={showPassword ? 'Ocultar contraseña' : 'Ver contraseña'}
                   >
                     {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                   </button>
@@ -404,19 +341,31 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({
                 type="submit"
                 disabled={isSubmitting}
                 id="login-submit-btn"
-                className="w-full py-3.5 rounded-xl bg-[#0057d9] hover:bg-[#0047b3] disabled:bg-blue-400 text-white font-bold text-sm sm:text-base shadow-lg shadow-blue-500/25 transition-all duration-200 hover:scale-[1.01] flex items-center justify-center gap-2 mt-2 cursor-pointer"
+                className="w-full py-3.5 rounded-xl bg-[#0057d9] hover:bg-[#0047b3] disabled:bg-blue-400 text-white font-black text-sm sm:text-base shadow-lg shadow-blue-500/25 transition-all duration-200 hover:scale-[1.01] flex items-center justify-center gap-2 mt-2 cursor-pointer"
               >
-                <span>{isSubmitting ? 'Validando credenciales...' : 'Iniciar Sesión e Ingresar'}</span>
-                <ArrowRight className="w-4 h-4" />
+                <KeyRound className="w-4 h-4" />
+                <span>{isSubmitting ? 'Validando acceso...' : 'Ingresar a VIANOVA'}</span>
+                <ArrowRight className="w-4 h-4 ml-1" />
               </button>
 
-            </form>
-          )}
+              {/* First Time Link */}
+              <div className="pt-3 border-t border-sky-300 text-center space-y-1.5">
+                <p className="text-xs text-slate-700">
+                  ¿Vas a ingresar por primera vez a la plataforma?
+                </p>
+                <button
+                  type="button"
+                  onClick={handleSwitchToRegister}
+                  className="text-xs sm:text-sm font-extrabold text-[#0047b3] hover:text-[#002f80] underline cursor-pointer inline-flex items-center gap-1"
+                >
+                  <UserPlus className="w-3.5 h-3.5" />
+                  <span>Haz tu registro aquí por primera vez</span>
+                </button>
+              </div>
 
-          {/* ========================================================================= */}
-          {/* 2. MODO REGISTRARSE                                                       */}
-          {/* ========================================================================= */}
-          {mode === 'register' && (
+            </form>
+          ) : (
+            /* VIEW 2: FIRST-TIME REGISTRATION FORM */
             <form onSubmit={handleRegisterSubmit} className="space-y-3.5">
               
               {/* Full Name */}
@@ -432,15 +381,15 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({
                     type="text"
                     required
                     id="register-name-input"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    placeholder="Ej. Andrés Ramírez"
-                    className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-[#caeafc] border border-sky-400 focus:border-blue-600 focus:bg-[#d8effe] focus:outline-none text-slate-900 text-sm placeholder:text-slate-500 transition-colors font-semibold"
+                    value={regName}
+                    onChange={(e) => setRegName(e.target.value)}
+                    placeholder="Ej. Karen Lorena Vargas"
+                    className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-[#caeafc] border border-sky-400 focus:border-blue-600 focus:bg-[#d8effe] focus:outline-none text-slate-900 text-sm font-semibold"
                   />
                 </div>
               </div>
 
-              {/* Email Field */}
+              {/* Email */}
               <div className="space-y-1">
                 <label className="block text-xs font-bold text-slate-800">
                   Correo Electrónico *
@@ -453,268 +402,147 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({
                     type="email"
                     required
                     id="register-email-input"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    placeholder="andres.ramirez@correo.com"
-                    className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-[#caeafc] border border-sky-400 focus:border-blue-600 focus:bg-[#d8effe] focus:outline-none text-slate-900 text-sm placeholder:text-slate-500 transition-colors font-semibold"
+                    value={regEmail}
+                    onChange={(e) => setRegEmail(e.target.value)}
+                    placeholder="karenlorenavargas63@gmail.com"
+                    className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-[#caeafc] border border-sky-400 focus:border-blue-600 focus:bg-[#d8effe] focus:outline-none text-slate-900 text-sm font-semibold"
                   />
                 </div>
               </div>
 
-              {/* City & Role */}
-              <div className="grid grid-cols-2 gap-3">
+              {/* Password & Confirm */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
                 <div className="space-y-1">
                   <label className="block text-xs font-bold text-slate-800">
-                    Ciudad
+                    Contraseña *
                   </label>
-                  <input
-                    type="text"
-                    value={city}
-                    onChange={(e) => setCity(e.target.value)}
-                    placeholder="Medellín"
-                    className="w-full px-3 py-2.5 rounded-xl bg-[#caeafc] border border-sky-400 focus:border-blue-600 focus:bg-[#d8effe] focus:outline-none text-slate-900 text-xs font-semibold"
-                  />
+                  <div className="relative">
+                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-500">
+                      <Lock className="w-3.5 h-3.5" />
+                    </div>
+                    <input
+                      type={showPassword ? 'text' : 'password'}
+                      required
+                      value={regPassword}
+                      onChange={(e) => setRegPassword(e.target.value)}
+                      placeholder="Mínimo 6 carácteres"
+                      className="w-full pl-9 pr-3 py-2.5 rounded-xl bg-[#caeafc] border border-sky-400 focus:border-blue-600 focus:outline-none text-slate-900 text-xs sm:text-sm font-semibold"
+                    />
+                  </div>
                 </div>
 
                 <div className="space-y-1">
                   <label className="block text-xs font-bold text-slate-800">
-                    Tipo de Movilidad
+                    Confirmar Contraseña *
                   </label>
-                  <select
-                    value={role}
-                    onChange={(e) => setRole(e.target.value)}
-                    className="w-full px-2 py-2.5 rounded-xl bg-[#caeafc] border border-sky-400 focus:border-blue-600 focus:bg-[#d8effe] focus:outline-none text-slate-900 text-xs font-semibold"
-                  >
-                    <option value="Ciclista Urbano">🚲 Ciclista Urbano</option>
-                    <option value="Peatón / Caminante">🚶 Peatón</option>
-                    <option value="Motociclista">🏍️ Motociclista</option>
-                    <option value="Conductor de Automóvil">🚗 Conductor Auto</option>
-                    <option value="Pasajero de Transporte Público">🚌 Transporte Público</option>
-                    <option value="Scooter / Patineta Eléctrica">🛴 Patineta Eléctrica</option>
-                    <option value="Repartidor / Mensajería">📦 Repartidor / Delivery</option>
-                  </select>
+                  <div className="relative">
+                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-500">
+                      <Lock className="w-3.5 h-3.5" />
+                    </div>
+                    <input
+                      type={showPassword ? 'text' : 'password'}
+                      required
+                      value={regConfirmPassword}
+                      onChange={(e) => setRegConfirmPassword(e.target.value)}
+                      placeholder="Repite tu clave"
+                      className="w-full pl-9 pr-3 py-2.5 rounded-xl bg-[#caeafc] border border-sky-400 focus:border-blue-600 focus:outline-none text-slate-900 text-xs sm:text-sm font-semibold"
+                    />
+                  </div>
                 </div>
               </div>
 
-              {/* Password */}
-              <div className="space-y-1">
-                <label className="block text-xs font-bold text-slate-800">
-                  Contraseña (mínimo 6 caracteres) *
-                </label>
-                <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-500">
-                    <Lock className="w-4 h-4" />
+              {/* Role & City */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                <div className="space-y-1">
+                  <label className="block text-xs font-bold text-slate-800">
+                    Rol en la Vía *
+                  </label>
+                  <div className="relative">
+                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-500">
+                      <Bike className="w-3.5 h-3.5" />
+                    </div>
+                    <select
+                      value={regRole}
+                      onChange={(e) => setRegRole(e.target.value)}
+                      className="w-full pl-9 pr-2 py-2.5 rounded-xl bg-[#caeafc] border border-sky-400 focus:border-blue-600 text-slate-900 text-xs font-bold"
+                    >
+                      <option value="Ciclista Urbano">Ciclista Urbano</option>
+                      <option value="Peatón Consciente">Peatón Consciente</option>
+                      <option value="Conductor de Automóvil">Conductor de Automóvil</option>
+                      <option value="Motociclista">Motociclista</option>
+                      <option value="Usuario de Transporte Masivo">Transporte Masivo</option>
+                    </select>
                   </div>
-                  <input
-                    type={showPassword ? 'text' : 'password'}
-                    required
-                    id="register-password-input"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    placeholder="Mínimo 6 caracteres"
-                    className="w-full pl-10 pr-10 py-2.5 rounded-xl bg-[#caeafc] border border-sky-400 focus:border-blue-600 focus:bg-[#d8effe] focus:outline-none text-slate-900 text-sm placeholder:text-slate-500 transition-colors font-semibold tracking-wider"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowPassword(!showPassword)}
-                    className="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-500 hover:text-slate-800 cursor-pointer"
-                  >
-                    {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                  </button>
                 </div>
-              </div>
 
-              {/* Confirm Password */}
-              <div className="space-y-1">
-                <label className="block text-xs font-bold text-slate-800">
-                  Confirmar Contraseña *
-                </label>
-                <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-500">
-                    <Lock className="w-4 h-4" />
+                <div className="space-y-1">
+                  <label className="block text-xs font-bold text-slate-800">
+                    Ciudad *
+                  </label>
+                  <div className="relative">
+                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-500">
+                      <MapPin className="w-3.5 h-3.5" />
+                    </div>
+                    <input
+                      type="text"
+                      required
+                      value={regCity}
+                      onChange={(e) => setRegCity(e.target.value)}
+                      placeholder="Medellín"
+                      className="w-full pl-9 pr-3 py-2.5 rounded-xl bg-[#caeafc] border border-sky-400 focus:border-blue-600 focus:outline-none text-slate-900 text-xs font-semibold"
+                    />
                   </div>
-                  <input
-                    type={showPassword ? 'text' : 'password'}
-                    required
-                    id="register-confirm-password-input"
-                    value={confirmPassword}
-                    onChange={(e) => setConfirmPassword(e.target.value)}
-                    placeholder="Repite tu contraseña"
-                    className="w-full pl-10 pr-10 py-2.5 rounded-xl bg-[#caeafc] border border-sky-400 focus:border-blue-600 focus:bg-[#d8effe] focus:outline-none text-slate-900 text-sm placeholder:text-slate-500 transition-colors font-semibold tracking-wider"
-                  />
                 </div>
               </div>
 
               {/* Terms Checkbox */}
-              <label className="flex items-start gap-2 pt-1 cursor-pointer select-none">
+              <label className="flex items-start gap-2 pt-1 cursor-pointer">
                 <input
                   type="checkbox"
                   checked={acceptTerms}
                   onChange={(e) => setAcceptTerms(e.target.checked)}
-                  className="mt-1 w-4 h-4 rounded text-blue-600 border-slate-300 focus:ring-blue-500"
+                  className="w-4 h-4 mt-0.5 accent-blue-600 rounded"
                 />
-                <span className="text-xs text-slate-700 leading-snug font-medium">
-                  Acepto los términos de servicio, política de privacidad y compromiso de movilidad segura de VIANOVA.
+                <span className="text-xs text-slate-700 leading-tight">
+                  Acepto las normas de convivencia vial y términos de uso de VIANOVA.
                 </span>
               </label>
 
-              {/* Submit Register */}
+              {/* Submit Registration */}
               <button
                 type="submit"
                 disabled={isSubmitting}
                 id="register-submit-btn"
-                className="w-full py-3.5 rounded-xl bg-[#0057d9] hover:bg-[#0047b3] disabled:bg-blue-400 text-white font-bold text-sm sm:text-base shadow-lg shadow-blue-500/25 transition-all duration-200 hover:scale-[1.01] flex items-center justify-center gap-2 mt-2 cursor-pointer"
+                className="w-full py-3.5 rounded-xl bg-[#0057d9] hover:bg-[#0047b3] disabled:bg-blue-400 text-white font-black text-sm sm:text-base shadow-lg shadow-blue-500/25 transition-all duration-200 hover:scale-[1.01] flex items-center justify-center gap-2 mt-2 cursor-pointer"
               >
-                <span>{isSubmitting ? 'Registrando cuenta...' : 'Completar Registro e Ingresar'}</span>
-                <ArrowRight className="w-4 h-4" />
+                <UserPlus className="w-4 h-4" />
+                <span>{isSubmitting ? 'Registrando usuario...' : 'Completar Registro e Ingresar'}</span>
+                <ArrowRight className="w-4 h-4 ml-1" />
               </button>
+
+              {/* Back to Login Link */}
+              <div className="pt-2 text-center">
+                <button
+                  type="button"
+                  onClick={handleSwitchToLogin}
+                  className="text-xs font-bold text-[#0047b3] hover:underline cursor-pointer"
+                >
+                  ← ¿Ya te has registrado antes? Inicia sesión con tu correo
+                </button>
+              </div>
+
             </form>
           )}
 
-          {/* Bottom Switcher Note */}
-          <div className="text-center pt-2 border-t border-sky-300">
-            <p className="text-xs text-slate-700 font-medium">
-              {mode === 'login' ? '¿Aún no tienes una cuenta registrada?' : '¿Ya tienes una cuenta en VIANOVA?'}{' '}
-              <button
-                type="button"
-                onClick={() => {
-                  setMode(mode === 'login' ? 'register' : 'login');
-                  setErrorMessage('');
-                  setSuccessMessage('');
-                }}
-                className="font-bold text-[#0057d9] hover:underline ml-1 cursor-pointer"
-              >
-                {mode === 'login' ? 'Crear cuenta aquí' : 'Iniciar sesión aquí'}
-              </button>
-            </p>
-          </div>
-
-          {/* Platform Footer Note */}
-          <div className="pt-1 text-center">
+          {/* Bottom Security Note */}
+          <div className="pt-2 text-center">
             <p className="text-[11px] text-slate-600 font-medium">
-              VIANOVA • Plataforma Inteligente de Movilidad Urbana Segura y Sostenible
+              Conexión cifrada con protocolo de seguridad vial y protección de datos ciudadana.
             </p>
           </div>
 
         </div>
       </div>
-
-      {/* ========================================================================= */}
-      {/* GOOGLE ACCOUNT SELECTION MODAL                                            */}
-      {/* ========================================================================= */}
-      {showGoogleModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-fade-in">
-          <div 
-            style={{ backgroundColor: '#ffffff', color: '#1e293b' }}
-            className="rounded-3xl shadow-2xl border border-slate-200 max-w-md w-full overflow-hidden relative p-6 sm:p-7 space-y-5 animate-scale-in"
-          >
-            
-            {/* Close button */}
-            <button
-              onClick={() => setShowGoogleModal(false)}
-              className="absolute top-4 right-4 text-slate-400 hover:text-slate-700 p-1.5 rounded-full hover:bg-slate-100 transition-colors cursor-pointer"
-            >
-              <X className="w-5 h-5" />
-            </button>
-
-            {/* Google Header */}
-            <div className="text-center space-y-2">
-              <div className="w-12 h-12 rounded-2xl bg-white shadow-md border border-slate-100 flex items-center justify-center mx-auto">
-                <svg className="w-7 h-7" viewBox="0 0 24 24">
-                  <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
-                  <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
-                  <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z" />
-                  <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z" />
-                </svg>
-              </div>
-              <h2 className="text-xl font-black text-slate-900">
-                Iniciar sesión con Google
-              </h2>
-              <p className="text-xs text-slate-500">
-                Selecciona una cuenta para continuar en <strong className="text-blue-600">VIANOVA</strong>
-              </p>
-            </div>
-
-            {/* Account List */}
-            <div className="space-y-2 divide-y divide-slate-100">
-              {sampleGoogleAccounts.map((acc, index) => (
-                <button
-                  key={index}
-                  type="button"
-                  onClick={() => executeGoogleLogin(acc)}
-                  className="w-full pt-2 pb-2 px-3 rounded-xl hover:bg-slate-50 flex items-center justify-between text-left transition-colors cursor-pointer group"
-                >
-                  <div className="flex items-center gap-3">
-                    <img 
-                      src={acc.avatar} 
-                      alt={acc.name} 
-                      className="w-10 h-10 rounded-full object-cover border border-slate-200 group-hover:ring-2 group-hover:ring-blue-500 transition-all"
-                    />
-                    <div>
-                      <p className="text-sm font-bold text-slate-800">{acc.name}</p>
-                      <p className="text-xs text-slate-500">{acc.email}</p>
-                    </div>
-                  </div>
-                  <ArrowRight className="w-4 h-4 text-slate-400 group-hover:text-blue-600 group-hover:translate-x-1 transition-all" />
-                </button>
-              ))}
-
-              {/* Option to use custom Google account */}
-              {!isCustomGoogle ? (
-                <button
-                  type="button"
-                  onClick={() => setIsCustomGoogle(true)}
-                  className="w-full pt-3 pb-1 px-3 flex items-center gap-3 text-left hover:bg-slate-50 rounded-xl transition-colors cursor-pointer"
-                >
-                  <div className="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center text-slate-600">
-                    <User className="w-5 h-5" />
-                  </div>
-                  <span className="text-xs sm:text-sm font-bold text-blue-600 hover:underline">
-                    Usar otra cuenta de Google
-                  </span>
-                </button>
-              ) : (
-                <div className="pt-3 space-y-2">
-                  <p className="text-xs font-bold text-slate-700">Ingresa tus datos de Google:</p>
-                  <input
-                    type="text"
-                    placeholder="Tu Nombre en Google"
-                    value={customGoogleName}
-                    onChange={(e) => setCustomGoogleName(e.target.value)}
-                    className="w-full px-3 py-2 rounded-lg border border-slate-300 text-xs text-slate-800"
-                  />
-                  <input
-                    type="email"
-                    placeholder="tu.cuenta@gmail.com"
-                    value={customGoogleEmail}
-                    onChange={(e) => setCustomGoogleEmail(e.target.value)}
-                    className="w-full px-3 py-2 rounded-lg border border-slate-300 text-xs text-slate-800"
-                  />
-                  <button
-                    type="button"
-                    disabled={!customGoogleEmail.includes('@')}
-                    onClick={() => {
-                      executeGoogleLogin({
-                        name: customGoogleName.trim() || customGoogleEmail.split('@')[0],
-                        email: customGoogleEmail.trim().toLowerCase(),
-                      });
-                    }}
-                    className="w-full py-2.5 rounded-lg bg-blue-600 hover:bg-blue-700 disabled:bg-slate-300 text-white font-bold text-xs transition-colors cursor-pointer"
-                  >
-                    Continuar con esta cuenta
-                  </button>
-                </div>
-              )}
-            </div>
-
-            {/* Google privacy footer */}
-            <div className="pt-2 text-center text-[11px] text-slate-400 border-t border-slate-100">
-              Para continuar, Google compartirá tu nombre, dirección de correo electrónico y foto de perfil con VIANOVA.
-            </div>
-
-          </div>
-        </div>
-      )}
 
     </div>
   );

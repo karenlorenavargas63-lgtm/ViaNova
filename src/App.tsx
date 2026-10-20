@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { NavigationTab, UserProfile, MobilityAlert } from './types';
+import { NavigationTab, UserProfile } from './types';
 import { mockUserProfile } from './data/mockData';
 import { Navbar } from './components/Navbar';
 import { HomeScreen } from './components/HomeScreen';
@@ -11,7 +11,6 @@ import { AboutScreen } from './components/AboutScreen';
 import { ProfileScreen } from './components/ProfileScreen';
 import { ContactScreen } from './components/ContactScreen';
 import { LoginScreen } from './components/LoginScreen';
-import { AuthModal } from './components/AuthModal';
 import { Footer } from './components/Footer';
 import {
   getInitialSession,
@@ -27,25 +26,16 @@ export default function App() {
   const [currentTab, setCurrentTabState] = useState<NavigationTab>(() => getSavedTab() as NavigationTab);
   const [user, setUser] = useState<UserProfile>(initialSession.user);
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(initialSession.isAuthenticated);
-  const [isAuthModalOpen, setIsAuthModalOpen] = useState<boolean>(false);
 
   const setCurrentTab = (tab: NavigationTab) => {
     setCurrentTabState(tab);
     saveCurrentTab(tab);
   };
 
-  const handleRegisterSuccess = (newUser: UserProfile) => {
-    setUser(newUser);
-    saveActiveSession(newUser);
-    setIsAuthenticated(true);
-    setCurrentTab('inicio');
-  };
-
   const handleLoginSuccess = (loggedUser: UserProfile) => {
     setUser(loggedUser);
     saveActiveSession(loggedUser);
     setIsAuthenticated(true);
-    setIsAuthModalOpen(false);
     setCurrentTab('inicio');
   };
 
@@ -68,12 +58,11 @@ export default function App() {
     saveActiveSession(updated);
   };
 
-  // Require login / authentication before entering the app (Default mode: Iniciar Sesión)
+  // Direct login with registered email and password (without confusing tabs)
   if (!isAuthenticated) {
     return (
       <LoginScreen
         onLoginSuccess={handleLoginSuccess}
-        onRegisterSuccess={handleRegisterSuccess}
       />
     );
   }
@@ -91,7 +80,7 @@ export default function App() {
         setCurrentTab={setCurrentTab}
         user={user}
         isAuthenticated={isAuthenticated}
-        onOpenAuthModal={() => setIsAuthModalOpen(true)}
+        onOpenAuthModal={() => setCurrentTab('perfil')}
         onLogout={handleLogout}
         onUpdateUser={handleUpdateUser}
         onDeleteAccount={handleDeleteAccount}
@@ -120,7 +109,7 @@ export default function App() {
         )}
 
         {currentTab === 'campanas' && (
-          <CampaignsScreen />
+          <CampaignsScreen onNavigate={setCurrentTab} />
         )}
 
         {currentTab === 'nosotros' && (
@@ -143,13 +132,6 @@ export default function App() {
           <ContactScreen />
         )}
       </main>
-
-      {/* Auth / Login / Registration Modal */}
-      <AuthModal
-        isOpen={isAuthModalOpen}
-        onClose={() => setIsAuthModalOpen(false)}
-        onLoginSuccess={handleLoginSuccess}
-      />
 
       {/* Persistent Footer */}
       <Footer setCurrentTab={setCurrentTab} />
