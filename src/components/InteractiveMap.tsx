@@ -13,19 +13,21 @@ import {
   Compass
 } from 'lucide-react';
 import { REALTIME_COLOMBIA_INCIDENTS, RealtimeIncident, ColombiaCity } from '../data/colombiaPlaces';
-import { CalculatedRoute } from '../services/routingService';
+import { CalculatedRoute, CalculatedRouteSet } from '../services/routingService';
 import { reverseGeocode, searchAddress, GeocodedPlace } from '../services/geocodingService';
 
 export type MapLayerType = 'google-streets' | 'google-traffic' | 'google-hybrid' | 'google-terrain' | 'voyager' | 'osm';
 
 interface InteractiveMapProps {
   selectedRouteId: 'rapida' | 'segura' | 'alternativa';
+  onSelectRouteId?: (id: 'rapida' | 'segura' | 'alternativa') => void;
   isNavigating?: boolean;
   originCoords: [number, number] | null;
   destinationCoords: [number, number] | null;
   originName: string;
   destinationName: string;
   calculatedRoute: CalculatedRoute | null;
+  routeSet?: CalculatedRouteSet | null;
   currentCity: ColombiaCity;
   onSelectCity?: (city: ColombiaCity) => void;
   onMapClickSetCoords?: (type: 'origin' | 'destination', coords: [number, number], name: string) => void;
@@ -33,11 +35,13 @@ interface InteractiveMapProps {
 
 export const InteractiveMap: React.FC<InteractiveMapProps> = ({
   selectedRouteId,
+  onSelectRouteId,
   originCoords,
   destinationCoords,
   originName,
   destinationName,
   calculatedRoute,
+  routeSet,
   currentCity,
   onMapClickSetCoords
 }) => {
@@ -45,6 +49,8 @@ export const InteractiveMap: React.FC<InteractiveMapProps> = ({
   const mapInstanceRef = useRef<L.Map | null>(null);
   const tileLayerRef = useRef<L.TileLayer | null>(null);
   const routePolylineRef = useRef<L.Polyline | null>(null);
+  const alternativePolylinesRef = useRef<L.Polyline[]>([]);
+  const routePillsRef = useRef<L.Marker[]>([]);
   const originMarkerRef = useRef<L.Marker | null>(null);
   const destMarkerRef = useRef<L.Marker | null>(null);
   const incidentMarkersRef = useRef<L.Marker[]>([]);
@@ -97,7 +103,7 @@ export const InteractiveMap: React.FC<InteractiveMapProps> = ({
     return () => clearTimeout(timer);
   }, [mapSearchQuery, showMapSearchBar, currentCity]);
 
-  // 1. Initialize Leaflet Map with Google Maps by default
+  // 1. Initialize Leaflet Map with Google Maps
   useEffect(() => {
     if (!mapContainerRef.current) return;
 
@@ -195,12 +201,23 @@ export const InteractiveMap: React.FC<InteractiveMapProps> = ({
     map.flyTo(currentCity.center, currentCity.zoom, { duration: 1.2 });
   }, [currentCity]);
 
-  // 4. Update Route Polyline & Markers when route or coordinates change
+  // 4. Update Route Polylines (Multi-Route Google Maps Style) & Markers
   useEffect(() => {
     const map = mapInstanceRef.current;
     if (!map) return;
 
-    // A. Origin Marker
+    // A. Clean up previous route polylines and pills
+    if (routePolylineRef.current) {
+      map.removeLayer(routePolylineRef.current);
+      routePolylineRef.current = null;
+    }
+    alternativePolylinesRef.current.forEach(layer => map.removeLayer(layer));
+    alternativePolylinesRef.current = [];
+
+    routePillsRef.current.forEach(layer => map.removeLayer(layer));
+    routePillsRef.current = [];
+
+    // B. Origin Marker
     if (originMarkerRef.current) {
       map.removeLayer(originMarkerRef.current);
       originMarkerRef.current = null;
@@ -230,7 +247,7 @@ export const InteractiveMap: React.FC<InteractiveMapProps> = ({
       originMarkerRef.current = originMarker;
     }
 
-    // B. Destination Marker
+    // C. Destination Marker
     if (destMarkerRef.current) {
       map.removeLayer(destMarkerRef.current);
       destMarkerRef.current = null;
@@ -260,37 +277,145 @@ export const InteractiveMap: React.FC<InteractiveMapProps> = ({
       destMarkerRef.current = destMarker;
     }
 
-    // C. Route Polyline
-    if (routePolylineRef.current) {
-      map.removeLayer(routePolylineRef.current);
-      routePolylineRef.current = null;
-    }
-
+    // D. Multi-Route Drawing (Google Maps Style: Inactive routes grey, active route highlighted)
     if (originCoords && destinationCoords) {
-      const routeCoords = calculatedRoute?.coordinates || [originCoords, destinationCoords];
-      
-      const routeColor = 
-        selectedRouteId === 'segura' 
-          ? '#059669' 
-          : selectedRouteId === 'alternativa' 
-            ? '#6366f1' 
-            : '#1a73e8';
+      const allPointsForBounds: [number, number][] = [originCoords, destinationCoords];
 
-      const polyline = L.polyline(routeCoords, {
-        color: routeColor,
-        weight: 6,
-        opacity: 0.9,
-        lineJoin: 'round',
-        lineCap: 'round',
-        dashArray: selectedRouteId === 'alternativa' ? '8, 8' : undefined
-      }).addTo(map);
+      if (routeSet) {
+        const routeKeys: ('rapida' | 'segura' | 'alternativa')[] = ['rapida', 'segura', 'alternativa'];
 
-      routePolylineRef.current = polyline;
+        // 1. Draw inactive alternative routes first in subtle grey
+        routeKeys.filter(key => key !== selectedRouteId).forEach(key => {
+          const r = routeSet[key];
+          if (!r || r.coordinates.length === 0) return;
 
-      // Fit bounds smoothly to include both origin and destination
+          r.coordinates.forEach(c => allPointsForBounds.push(c));
+
+          // White border casing for contrast
+          const casing = L.polyline(r.coordinates, {
+            color: '#ffffff',
+            weight: 7,
+            opacity: 0.85,
+            lineJoin: 'round'
+          }).addTo(map);
+          alternativePolylinesRef.current.push(casing);
+
+          // Grey route polyline with interactive click
+          const altPoly = L.polyline(r.coordinates, {
+            color: '#78909c',
+            weight: 5,
+            opacity: 0.8,
+            lineJoin: 'round'
+          }).addTo(map);
+
+          altPoly.bindTooltip(`Ruta ${r.name}: ${r.durationMinutes} min (${r.distanceKm} km)<br/><span style="color:#1a73e8;font-weight:bold;">Clic para seleccionar</span>`, {
+            sticky: true,
+            direction: 'top'
+          });
+
+          altPoly.on('click', () => {
+            onSelectRouteId?.(key);
+          });
+
+          alternativePolylinesRef.current.push(altPoly);
+
+          // Route Midpoint Badge Pill (Google Maps style)
+          const midIdx = Math.floor(r.coordinates.length * 0.45);
+          const midCoord = r.coordinates[midIdx];
+          if (midCoord) {
+            const badgeIcon = L.divIcon({
+              className: 'gmap-alt-badge',
+              html: `
+                <div style="cursor: pointer; transform: translate(-50%, -50%); display: inline-flex; align-items: center; gap: 4px; padding: 3px 8px; border-radius: 9999px; background: rgba(255, 255, 255, 0.95); border: 1.5px solid #94a3b8; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.2); font-family: system-ui, sans-serif; font-size: 11px; font-weight: 700; color: #334155; white-space: nowrap;">
+                  <span>${r.durationMinutes} min</span>
+                  <span style="font-size: 9px; color: #64748b;">${r.name}</span>
+                </div>
+              `,
+              iconSize: [0, 0]
+            });
+            const marker = L.marker(midCoord, { icon: badgeIcon }).addTo(map);
+            marker.on('click', () => {
+              onSelectRouteId?.(key);
+            });
+            routePillsRef.current.push(marker);
+          }
+        });
+
+        // 2. Draw active selected route on top in vibrant Google Maps color
+        const activeData = routeSet[selectedRouteId];
+        if (activeData && activeData.coordinates.length > 0) {
+          activeData.coordinates.forEach(c => allPointsForBounds.push(c));
+
+          // Active Casing (bold white shadow)
+          const activeCasing = L.polyline(activeData.coordinates, {
+            color: '#ffffff',
+            weight: 9,
+            opacity: 0.95,
+            lineJoin: 'round'
+          }).addTo(map);
+          alternativePolylinesRef.current.push(activeCasing);
+
+          // Active Core Polyline
+          const activeColor = 
+            selectedRouteId === 'segura' 
+              ? '#059669' 
+              : selectedRouteId === 'alternativa' 
+                ? '#4f46e5' 
+                : '#1a73e8';
+
+          const activePoly = L.polyline(activeData.coordinates, {
+            color: activeColor,
+            weight: 6,
+            opacity: 1,
+            lineJoin: 'round',
+            lineCap: 'round'
+          }).addTo(map);
+
+          routePolylineRef.current = activePoly;
+
+          // Active Badge Pill
+          const activeMidIdx = Math.floor(activeData.coordinates.length * 0.52);
+          const activeMidCoord = activeData.coordinates[activeMidIdx];
+          if (activeMidCoord) {
+            const activeBadgeIcon = L.divIcon({
+              className: 'gmap-active-badge',
+              html: `
+                <div style="cursor: default; transform: translate(-50%, -50%); display: inline-flex; align-items: center; gap: 5px; padding: 4px 10px; border-radius: 9999px; background: ${activeColor}; border: 2px solid #ffffff; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.3); font-family: system-ui, sans-serif; font-size: 12px; font-weight: 800; color: #ffffff; white-space: nowrap;">
+                  <span>${activeData.durationMinutes} min</span>
+                  <span style="font-size: 10px; background: rgba(255,255,255,0.25); padding: 1px 5px; border-radius: 4px;">${activeData.name}</span>
+                </div>
+              `,
+              iconSize: [0, 0]
+            });
+            const activeMarker = L.marker(activeMidCoord, { icon: activeBadgeIcon }).addTo(map);
+            routePillsRef.current.push(activeMarker);
+          }
+        }
+      } else {
+        // Fallback single route
+        const routeCoords = calculatedRoute?.coordinates || [originCoords, destinationCoords];
+        const routeColor = 
+          selectedRouteId === 'segura' 
+            ? '#059669' 
+            : selectedRouteId === 'alternativa' 
+              ? '#4f46e5' 
+              : '#1a73e8';
+
+        const polyline = L.polyline(routeCoords, {
+          color: routeColor,
+          weight: 6,
+          opacity: 0.95,
+          lineJoin: 'round',
+          lineCap: 'round'
+        }).addTo(map);
+
+        routePolylineRef.current = polyline;
+      }
+
+      // Smoothly fit bounds to include all routes and markers
       try {
-        const bounds = L.latLngBounds([originCoords, destinationCoords]);
-        map.fitBounds(bounds, { padding: [80, 80], maxZoom: 15 });
+        const bounds = L.latLngBounds(allPointsForBounds);
+        map.fitBounds(bounds, { padding: [70, 70], maxZoom: 15 });
       } catch (e) {
         // ignore
       }
@@ -299,7 +424,7 @@ export const InteractiveMap: React.FC<InteractiveMapProps> = ({
     } else if (destinationCoords) {
       map.flyTo(destinationCoords, 14, { duration: 1.0 });
     }
-  }, [originCoords, destinationCoords, originName, destinationName, calculatedRoute, selectedRouteId]);
+  }, [originCoords, destinationCoords, originName, destinationName, calculatedRoute, routeSet, selectedRouteId]);
 
   // 5. Realtime Incidents in Colombia
   useEffect(() => {
@@ -415,6 +540,8 @@ export const InteractiveMap: React.FC<InteractiveMapProps> = ({
             <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-blue-600"></span>
           </span>
           <span className="font-extrabold text-slate-900 tracking-tight">Google Maps</span>
+          <span className="text-slate-300">•</span>
+          <span className="text-blue-600 font-bold">Rutas alternativas</span>
         </div>
 
         {/* Live Active Incident Pill (Clickable) */}
@@ -731,7 +858,7 @@ export const InteractiveMap: React.FC<InteractiveMapProps> = ({
           <span className="w-2 h-2 rounded-full bg-blue-600 animate-pulse"></span>
           <span className="font-bold text-slate-900">Google Maps</span>
           <span className="w-1 h-1 rounded-full bg-slate-300"></span>
-          <span className="text-slate-600 text-[11px] font-semibold">Trazado interactivo</span>
+          <span className="text-slate-600 text-[11px] font-semibold">Caminos reales</span>
         </div>
 
         <div className="hidden md:flex items-center gap-3 px-3 py-1.5 rounded-xl bg-white/90 backdrop-blur-md border border-slate-200/90 shadow-xs text-[11px] text-slate-600 font-medium">
@@ -744,8 +871,16 @@ export const InteractiveMap: React.FC<InteractiveMapProps> = ({
             <span>Destino (B)</span>
           </div>
           <div className="flex items-center gap-1.5">
-            <span className="w-2.5 h-2.5 rounded-full bg-blue-600"></span>
-            <span>Ruta</span>
+            <span className="w-2.5 h-2.5 rounded-full bg-[#1a73e8]"></span>
+            <span>Rápida</span>
+          </div>
+          <div className="flex items-center gap-1.5">
+            <span className="w-2.5 h-2.5 rounded-full bg-[#059669]"></span>
+            <span>Segura</span>
+          </div>
+          <div className="flex items-center gap-1.5">
+            <span className="w-2.5 h-2.5 rounded-full bg-[#78909c]"></span>
+            <span>Alterna</span>
           </div>
         </div>
       </div>

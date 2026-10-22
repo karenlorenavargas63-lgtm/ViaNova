@@ -5,20 +5,20 @@ import {
   GitFork, 
   MapPin, 
   ArrowUpDown,
-  Navigation,
-  Compass
+  CheckCircle2,
+  Clock
 } from 'lucide-react';
 import { InteractiveMap } from './InteractiveMap';
 import { AddressAutocompleteInput } from './AddressAutocompleteInput';
 import { COLOMBIA_CITIES, ColombiaCity } from '../data/colombiaPlaces';
-import { fetchRealtimeRoute, CalculatedRoute } from '../services/routingService';
+import { fetchAllRealtimeRoutes, CalculatedRouteSet } from '../services/routingService';
 import { reverseGeocode } from '../services/geocodingService';
 
 export const RoutesScreen: React.FC = () => {
   // Center default to Medellín
   const [currentCity] = useState<ColombiaCity>(COLOMBIA_CITIES[0]);
   
-  // Fields start completely clean without prefilled demo text so user can enter any address
+  // Clean inputs so user can enter any address
   const [originName, setOriginName] = useState('');
   const [originCoords, setOriginCoords] = useState<[number, number] | null>(null);
   
@@ -26,52 +26,57 @@ export const RoutesScreen: React.FC = () => {
   const [destinationCoords, setDestinationCoords] = useState<[number, number] | null>(null);
   
   const [selectedRouteId, setSelectedRouteId] = useState<'rapida' | 'segura' | 'alternativa'>('rapida');
-  const [calculatedRoute, setCalculatedRoute] = useState<CalculatedRoute | null>(null);
+  const [routeSet, setRouteSet] = useState<CalculatedRouteSet | null>(null);
   const [isCalculating, setIsCalculating] = useState(false);
 
-  // Dynamic route options with live calculated distances and durations
-  const baseDistance = calculatedRoute?.distanceKm || 0;
-  const baseTime = calculatedRoute?.durationMinutes || 0;
-
   const hasRoute = !!(originCoords && destinationCoords);
+  const currentRoute = routeSet ? routeSet[selectedRouteId] : null;
 
-  const routeOptions = [
+  // Real calculated distance and duration
+  const baseDistance = currentRoute?.distanceKm || 0;
+  const baseTime = currentRoute?.durationMinutes || 0;
+
+  // Real route options with distinct real streets and times
+  const routeOptions = routeSet ? [
     {
       id: 'rapida' as const,
       name: 'Rápida',
-      distance: `${baseDistance} km`,
-      traffic: '↘ Tráfico fluido',
-      time: `${baseTime} min`,
+      tag: 'Más rápida',
+      distance: `${routeSet.rapida.distanceKm} km`,
+      traffic: '↘ El camino más rápido',
+      time: `${routeSet.rapida.durationMinutes} min`,
       icon: Zap,
       description: 'Trayecto más rápido por vías principales',
-      badgeColor: 'border-blue-600'
+      accentColor: 'text-blue-600 bg-blue-50 border-blue-200'
     },
     {
       id: 'segura' as const,
       name: 'Segura',
-      distance: `${Math.round((baseDistance * 1.1) * 10) / 10} km`,
-      traffic: 'Corredor iluminado',
-      time: `${Math.round(baseTime * 1.2)} min`,
+      tag: 'Ciclorruta y cámaras',
+      distance: `${routeSet.segura.distanceKm} km`,
+      traffic: routeSet.segura.trafficStatus,
+      time: `${routeSet.segura.durationMinutes} min`,
       icon: Shield,
       description: 'Prioriza cicloinfraestructura, cámaras y vías monitoreadas',
-      badgeColor: 'border-emerald-600'
+      accentColor: 'text-emerald-600 bg-emerald-50 border-emerald-200'
     },
     {
       id: 'alternativa' as const,
       name: 'Alternativa',
-      distance: `${Math.round((baseDistance * 1.25) * 10) / 10} km`,
-      traffic: 'Evita congestión',
-      time: `${Math.round(baseTime * 1.35)} min`,
+      tag: 'Vía alterna',
+      distance: `${routeSet.alternativa.distanceKm} km`,
+      traffic: routeSet.alternativa.trafficStatus,
+      time: `${routeSet.alternativa.durationMinutes} min`,
       icon: GitFork,
-      description: 'Ruta secundaria con menor afluencia vehicular',
-      badgeColor: 'border-indigo-600'
+      description: 'Ruta secundaria que esquiva el tráfico central',
+      accentColor: 'text-indigo-600 bg-indigo-50 border-indigo-200'
     },
-  ];
+  ] : [];
 
-  // Fetch real-time route whenever both coordinates or route type change
+  // Fetch all 3 REAL distinct routes whenever coordinates change
   useEffect(() => {
     if (!originCoords || !destinationCoords) {
-      setCalculatedRoute(null);
+      setRouteSet(null);
       setIsCalculating(false);
       return;
     }
@@ -79,10 +84,10 @@ export const RoutesScreen: React.FC = () => {
     let isCancelled = false;
     setIsCalculating(true);
 
-    fetchRealtimeRoute(originCoords, destinationCoords, selectedRouteId)
-      .then((route) => {
+    fetchAllRealtimeRoutes(originCoords, destinationCoords)
+      .then((routes) => {
         if (!isCancelled) {
-          setCalculatedRoute(route);
+          setRouteSet(routes);
           setIsCalculating(false);
         }
       })
@@ -95,7 +100,7 @@ export const RoutesScreen: React.FC = () => {
     return () => {
       isCancelled = true;
     };
-  }, [originCoords, destinationCoords, selectedRouteId]);
+  }, [originCoords, destinationCoords]);
 
   // Handle setting point from map click
   const handleMapClickSetCoords = (type: 'origin' | 'destination', coords: [number, number], name: string) => {
@@ -149,15 +154,19 @@ export const RoutesScreen: React.FC = () => {
             
             {/* Header */}
             <div>
-              <h1 className="text-2xl sm:text-3xl font-extrabold text-[#0a193b] tracking-tight">
+              <div className="flex items-center gap-2">
+                <span className="w-2.5 h-2.5 rounded-full bg-blue-600"></span>
+                <span className="text-xs font-black uppercase tracking-wider text-blue-600">Google Maps Navigation</span>
+              </div>
+              <h1 className="text-2xl sm:text-3xl font-extrabold text-[#0a193b] tracking-tight mt-1">
                 Planificar Ruta
               </h1>
               <p className="text-sm text-slate-600 mt-1">
-                Ingresa cualquier dirección para calcular y visualizar el mejor trayecto
+                Compara 3 caminos reales con tiempos y trayectos diferenciados
               </p>
             </div>
 
-            {/* Inputs Section (Origin & Destination clean inputs with immediate search) */}
+            {/* Inputs Section */}
             <div className="space-y-3 relative">
               
               {/* Origin Autocomplete Input */}
@@ -214,20 +223,24 @@ export const RoutesScreen: React.FC = () => {
 
               {/* Helper note */}
               <p className="text-xs text-slate-500 px-1 pt-1">
-                💡 Puedes escribir cualquier dirección y presionar Enter, o hacer clic en cualquier lugar del mapa.
+                💡 Escribe cualquier dirección y presiona Enter, o haz clic directamente sobre el mapa de Google Maps.
               </p>
 
             </div>
 
-            {/* Suggested Options Section - Displays when route is active */}
+            {/* Suggested Options Section - Real Distinct Routes */}
             {hasRoute ? (
               <div className="space-y-3 pt-1">
                 <div className="flex items-center justify-between">
                   <h2 className="text-base font-bold text-slate-900 flex items-center gap-2">
-                    <span>Opciones calculadas</span>
-                    {isCalculating && (
+                    <span>Caminos disponibles</span>
+                    {isCalculating ? (
                       <span className="text-xs font-normal text-blue-600 animate-pulse">
-                        Calculando trayecto...
+                        Calculando trayectos reales...
+                      </span>
+                    ) : (
+                      <span className="text-xs font-medium text-slate-500">
+                        {routeOptions.length} rutas calculadas
                       </span>
                     )}
                   </h2>
@@ -245,16 +258,16 @@ export const RoutesScreen: React.FC = () => {
                         onClick={() => setSelectedRouteId(route.id)}
                         className={`cursor-pointer p-4 rounded-2xl border transition-all duration-200 flex items-center justify-between gap-3 ${
                           isSelected
-                            ? 'border-slate-800 bg-white shadow-md ring-1 ring-slate-800/10'
-                            : 'border-slate-200 hover:border-slate-300 bg-white'
+                            ? 'border-blue-600 bg-blue-50/40 shadow-md ring-2 ring-blue-600/20'
+                            : 'border-slate-200 hover:border-slate-300 bg-white hover:bg-slate-50/50'
                         }`}
                       >
                         {/* Left Icon Box */}
                         <div className="flex items-center gap-3.5">
-                          <div className={`w-12 h-12 rounded-xl flex items-center justify-center shrink-0 ${
+                          <div className={`w-12 h-12 rounded-xl flex items-center justify-center shrink-0 border ${
                             isSelected 
-                              ? 'bg-blue-50 text-blue-600 border border-blue-200' 
-                              : 'bg-slate-100 text-slate-600 border border-slate-200'
+                              ? 'bg-blue-600 text-white border-blue-600 shadow-sm' 
+                              : 'bg-slate-100 text-slate-600 border-slate-200'
                           }`}>
                             <Icon className="w-5 h-5" />
                           </div>
@@ -262,25 +275,30 @@ export const RoutesScreen: React.FC = () => {
                           {/* Middle Info */}
                           <div>
                             <div className="flex items-center gap-2">
-                              <h3 className="text-base sm:text-lg font-bold text-slate-900">
+                              <h3 className="text-base font-bold text-slate-900">
                                 {route.name}
                               </h3>
-                              {route.id === 'segura' && (
-                                <span className="px-2 py-0.5 rounded-md bg-emerald-100 text-emerald-800 text-xs font-bold">
-                                  Ciclorruta
-                                </span>
-                              )}
+                              <span className={`px-2 py-0.5 rounded-md text-[11px] font-bold ${
+                                isSelected ? 'bg-blue-100 text-blue-800' : 'bg-slate-100 text-slate-600'
+                              }`}>
+                                {route.tag}
+                              </span>
                             </div>
-                            <p className="text-sm text-slate-600 font-medium">
-                              {route.distance} • {route.traffic}
+                            <p className="text-xs text-slate-600 font-medium mt-0.5">
+                              {route.distance} • <span className={route.id === 'rapida' ? 'text-blue-700 font-semibold' : 'text-slate-600'}>{route.traffic}</span>
                             </p>
                           </div>
                         </div>
 
                         {/* Right Time */}
                         <div className="text-right shrink-0">
-                          <span className="text-base sm:text-lg font-bold text-slate-900">
+                          <span className={`text-lg font-black tracking-tight ${
+                            isSelected ? 'text-blue-600' : 'text-slate-900'
+                          }`}>
                             {route.time}
+                          </span>
+                          <span className="block text-[10px] text-slate-400 font-medium">
+                            {isSelected ? 'Seleccionada' : 'Ver camino'}
                           </span>
                         </div>
                       </div>
@@ -297,39 +315,37 @@ export const RoutesScreen: React.FC = () => {
                   Ingresa origen y destino
                 </h3>
                 <p className="text-xs text-slate-500 leading-relaxed max-w-xs mx-auto">
-                  Escribe las direcciones en los campos de arriba o haz clic en el mapa para trazar tu trayecto.
+                  Escribe las direcciones en los campos de arriba o haz clic en el mapa de Google Maps para trazar y comparar 3 rutas reales.
                 </p>
               </div>
             )}
 
           </div>
 
-          {/* Resumen del Trayecto */}
-          {hasRoute && (
+          {/* Resumen del Trayecto Seleccionado */}
+          {hasRoute && currentRoute && (
             <div className="pt-4 space-y-3">
               <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200/90 space-y-2.5">
                 <div className="flex items-center justify-between">
                   <span className="text-xs font-bold uppercase tracking-wider text-slate-500">
-                    Resumen del Trayecto
+                    Resumen de Ruta Seleccionada
                   </span>
-                  <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 text-xs font-bold">
-                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-600"></span>
-                    Ruta Calculada
+                  <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-blue-100 text-blue-800 text-xs font-bold">
+                    <CheckCircle2 className="w-3.5 h-3.5 text-blue-600" />
+                    <span>Ruta {currentRoute.name}</span>
                   </span>
                 </div>
                 <div className="flex items-center justify-between text-sm">
-                  <span className="text-slate-600 font-medium">Distancia estimada:</span>
+                  <span className="text-slate-600 font-medium">Distancia real:</span>
                   <span className="font-extrabold text-slate-900">{baseDistance} km</span>
                 </div>
                 <div className="flex items-center justify-between text-sm">
-                  <span className="text-slate-600 font-medium">Tiempo de recorrido:</span>
-                  <span className="font-extrabold text-slate-900">
-                    {selectedRouteId === 'rapida' ? `${baseTime} min` : selectedRouteId === 'segura' ? `${Math.round(baseTime * 1.2)} min` : `${Math.round(baseTime * 1.35)} min`}
-                  </span>
+                  <span className="text-slate-600 font-medium">Tiempo estimado de llegada:</span>
+                  <span className="font-extrabold text-blue-600 text-base">{baseTime} min</span>
                 </div>
                 <div className="pt-2 border-t border-slate-200/80 flex items-center justify-between text-xs text-slate-600">
-                  <span className="truncate">Hacia: <strong className="text-slate-800">{destinationName}</strong></span>
-                  <span className="text-blue-600 font-bold shrink-0">Tráfico monitoreado</span>
+                  <span className="truncate">Vía: <strong className="text-slate-800">{currentRoute.summary}</strong></span>
+                  <span className="text-blue-600 font-bold shrink-0">{currentRoute.tag}</span>
                 </div>
               </div>
             </div>
@@ -341,11 +357,13 @@ export const RoutesScreen: React.FC = () => {
         <div className="flex-1 w-full relative min-h-[500px]">
           <InteractiveMap
             selectedRouteId={selectedRouteId}
+            onSelectRouteId={setSelectedRouteId}
             originCoords={originCoords}
             destinationCoords={destinationCoords}
             originName={originName}
             destinationName={destinationName}
-            calculatedRoute={calculatedRoute}
+            calculatedRoute={currentRoute}
+            routeSet={routeSet}
             currentCity={currentCity}
             onMapClickSetCoords={handleMapClickSetCoords}
           />
