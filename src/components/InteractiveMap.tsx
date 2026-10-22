@@ -16,7 +16,7 @@ import { REALTIME_COLOMBIA_INCIDENTS, RealtimeIncident, ColombiaCity } from '../
 import { CalculatedRoute } from '../services/routingService';
 import { reverseGeocode, searchAddress, GeocodedPlace } from '../services/geocodingService';
 
-export type MapLayerType = 'voyager' | 'osm' | 'light' | 'dark';
+export type MapLayerType = 'google-streets' | 'google-traffic' | 'google-hybrid' | 'google-terrain' | 'voyager' | 'osm';
 
 interface InteractiveMapProps {
   selectedRouteId: 'rapida' | 'segura' | 'alternativa';
@@ -49,8 +49,8 @@ export const InteractiveMap: React.FC<InteractiveMapProps> = ({
   const destMarkerRef = useRef<L.Marker | null>(null);
   const incidentMarkersRef = useRef<L.Marker[]>([]);
 
-  // Default to CartoDB Voyager (Open-source modern cartography)
-  const [mapLayer, setMapLayer] = useState<MapLayerType>('voyager');
+  // Default to Google Maps Streets
+  const [mapLayer, setMapLayer] = useState<MapLayerType>('google-streets');
   const [showLayerMenu, setShowLayerMenu] = useState(false);
   const [showIncidents, setShowIncidents] = useState(true);
   const [selectedIncident, setSelectedIncident] = useState<RealtimeIncident | null>(null);
@@ -97,7 +97,7 @@ export const InteractiveMap: React.FC<InteractiveMapProps> = ({
     return () => clearTimeout(timer);
   }, [mapSearchQuery, showMapSearchBar, currentCity]);
 
-  // 1. Initialize Leaflet Map
+  // 1. Initialize Leaflet Map with Google Maps by default
   useEffect(() => {
     if (!mapContainerRef.current) return;
 
@@ -109,11 +109,11 @@ export const InteractiveMap: React.FC<InteractiveMapProps> = ({
         attributionControl: false
       });
 
-      // Default tile: CartoDB Voyager (Modern, detailed, OpenStreetMap based)
-      const tile = L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
-        maxZoom: 20,
-        subdomains: 'abcd',
-        attribution: '&copy; OpenStreetMap contributors &copy; CARTO'
+      // Default tile: Google Maps Streets (Standard)
+      const tile = L.tileLayer('https://mt{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}', {
+        maxZoom: 21,
+        subdomains: '0123',
+        attribution: '&copy; Google Maps'
       }).addTo(map);
 
       tileLayerRef.current = tile;
@@ -138,7 +138,7 @@ export const InteractiveMap: React.FC<InteractiveMapProps> = ({
     };
   }, []);
 
-  // 2. Switch Tile Layer dynamically (OpenStreetMap & Carto, zero Google Maps)
+  // 2. Switch Tile Layer dynamically (Google Maps Streets, Traffic, Satellite, Terrain, etc.)
   useEffect(() => {
     const map = mapInstanceRef.current;
     if (!map) return;
@@ -147,26 +147,36 @@ export const InteractiveMap: React.FC<InteractiveMapProps> = ({
       map.removeLayer(tileLayerRef.current);
     }
 
-    let url = 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png';
-    let subdomains = 'abcd';
-    let maxZoom = 20;
-    let attribution = '&copy; OpenStreetMap contributors &copy; CARTO';
+    let url = 'https://mt{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}';
+    let subdomains = '0123';
+    let maxZoom = 21;
+    let attribution = '&copy; Google Maps';
 
-    if (mapLayer === 'osm') {
+    if (mapLayer === 'google-traffic') {
+      url = 'https://mt{s}.google.com/vt/lyrs=m,traffic&x={x}&y={y}&z={z}';
+      subdomains = '0123';
+      maxZoom = 21;
+      attribution = '&copy; Google Maps Tráfico';
+    } else if (mapLayer === 'google-hybrid') {
+      url = 'https://mt{s}.google.com/vt/lyrs=y&x={x}&y={y}&z={z}';
+      subdomains = '0123';
+      maxZoom = 21;
+      attribution = '&copy; Google Maps Satelital';
+    } else if (mapLayer === 'google-terrain') {
+      url = 'https://mt{s}.google.com/vt/lyrs=p&x={x}&y={y}&z={z}';
+      subdomains = '0123';
+      maxZoom = 21;
+      attribution = '&copy; Google Maps Terreno';
+    } else if (mapLayer === 'voyager') {
+      url = 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png';
+      subdomains = 'abcd';
+      maxZoom = 20;
+      attribution = '&copy; OpenStreetMap &copy; CARTO';
+    } else if (mapLayer === 'osm') {
       url = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
       subdomains = 'abc';
       maxZoom = 19;
       attribution = '&copy; OpenStreetMap contributors';
-    } else if (mapLayer === 'light') {
-      url = 'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png';
-      subdomains = 'abcd';
-      maxZoom = 20;
-      attribution = '&copy; OpenStreetMap contributors &copy; CARTO';
-    } else if (mapLayer === 'dark') {
-      url = 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png';
-      subdomains = 'abcd';
-      maxZoom = 20;
-      attribution = '&copy; OpenStreetMap contributors &copy; CARTO';
     }
 
     const newTile = L.tileLayer(url, {
@@ -264,7 +274,7 @@ export const InteractiveMap: React.FC<InteractiveMapProps> = ({
           ? '#059669' 
           : selectedRouteId === 'alternativa' 
             ? '#6366f1' 
-            : '#0055d4';
+            : '#1a73e8';
 
       const polyline = L.polyline(routeCoords, {
         color: routeColor,
@@ -348,8 +358,8 @@ export const InteractiveMap: React.FC<InteractiveMapProps> = ({
               className: 'user-loc-pin',
               html: `
                 <div class="relative flex items-center justify-center">
-                  <span class="absolute w-10 h-10 rounded-full bg-indigo-500/30 animate-ping"></span>
-                  <div class="w-6 h-6 rounded-full bg-indigo-600 border-2 border-white shadow-md flex items-center justify-center text-white">
+                  <span class="absolute w-10 h-10 rounded-full bg-blue-500/30 animate-ping"></span>
+                  <div class="w-6 h-6 rounded-full bg-blue-600 border-2 border-white shadow-md flex items-center justify-center text-white">
                     <div class="w-2 h-2 rounded-full bg-white"></div>
                   </div>
                 </div>
@@ -359,7 +369,7 @@ export const InteractiveMap: React.FC<InteractiveMapProps> = ({
             });
             L.marker(coords, { icon: userIcon })
               .addTo(map)
-              .bindPopup('<strong style="color: #4f46e5;">Tu Ubicación Actual</strong>')
+              .bindPopup('<strong style="color: #1a73e8;">Tu Ubicación Actual</strong>')
               .openPopup();
           }
         },
@@ -388,23 +398,23 @@ export const InteractiveMap: React.FC<InteractiveMapProps> = ({
   return (
     <div className="relative w-full h-full min-h-[580px] lg:min-h-[640px] bg-slate-100 overflow-hidden font-sans select-none">
       
-      {/* 1. Leaflet Map Canvas */}
+      {/* 1. Leaflet Map Canvas (Google Maps) */}
       <div 
         ref={mapContainerRef} 
         id="colombia-leaflet-map-canvas" 
         className="w-full h-full min-h-[580px] lg:min-h-[640px] z-0"
       />
 
-      {/* 2. Top Left Controls: Red Vial Status & Search Address */}
+      {/* 2. Top Left Controls: Google Maps Status & Search Address */}
       <div className="absolute top-4 left-4 z-20 flex flex-wrap items-center gap-2">
         
-        {/* Status Pill */}
+        {/* Status Pill Google Maps */}
         <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/95 backdrop-blur-md border border-slate-200/90 shadow-md text-xs font-semibold text-slate-700">
           <span className="relative flex h-2.5 w-2.5">
-            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-            <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
+            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
+            <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-blue-600"></span>
           </span>
-          <span className="font-bold text-slate-800">Red Vial VIANOVA</span>
+          <span className="font-extrabold text-slate-900 tracking-tight">Google Maps</span>
         </div>
 
         {/* Live Active Incident Pill (Clickable) */}
@@ -510,67 +520,89 @@ export const InteractiveMap: React.FC<InteractiveMapProps> = ({
           <button
             onClick={() => setShowLayerMenu(!showLayerMenu)}
             className="w-10 h-10 rounded-xl bg-white hover:bg-slate-50 text-slate-700 flex items-center justify-center shadow-md border border-slate-200/90 transition-transform active:scale-95"
-            title="Cambiar capa de mapa"
+            title="Cambiar capa de Google Maps"
           >
             <Layers className="w-5 h-5 text-slate-700" />
           </button>
 
           {showLayerMenu && (
-            <div className="absolute right-0 mt-2 w-56 bg-white rounded-2xl shadow-2xl border border-slate-200 p-2 space-y-1 text-xs font-semibold z-30 animate-in fade-in zoom-in-95">
+            <div className="absolute right-0 mt-2 w-64 bg-white rounded-2xl shadow-2xl border border-slate-200 p-2 space-y-1 text-xs font-semibold z-30 animate-in fade-in zoom-in-95">
               <div className="px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-slate-500 flex items-center justify-between">
-                <span>Estilo del Mapa</span>
+                <span>Capas Google Maps</span>
               </div>
 
               <button
-                onClick={() => { setMapLayer('voyager'); setShowLayerMenu(false); }}
+                onClick={() => { setMapLayer('google-streets'); setShowLayerMenu(false); }}
                 className={`w-full text-left px-3 py-2 rounded-xl flex items-center justify-between transition-colors ${
-                  mapLayer === 'voyager' ? 'bg-blue-50 text-blue-600 font-bold' : 'text-slate-700 hover:bg-slate-50'
+                  mapLayer === 'google-streets' ? 'bg-blue-50 text-blue-600 font-bold' : 'text-slate-700 hover:bg-slate-50'
                 }`}
               >
                 <div className="flex items-center gap-2">
                   <span className="w-2.5 h-2.5 rounded-full bg-blue-600"></span>
-                  <span>CartoDB Voyager</span>
+                  <span>Google Maps Calles</span>
                 </div>
+                {mapLayer === 'google-streets' && <div className="w-2 h-2 rounded-full bg-blue-600"></div>}
+              </button>
+
+              <button
+                onClick={() => { setMapLayer('google-traffic'); setShowLayerMenu(false); }}
+                className={`w-full text-left px-3 py-2 rounded-xl flex items-center justify-between transition-colors ${
+                  mapLayer === 'google-traffic' ? 'bg-blue-50 text-blue-600 font-bold' : 'text-slate-700 hover:bg-slate-50'
+                }`}
+              >
+                <div className="flex items-center gap-2">
+                  <span className="w-2.5 h-2.5 rounded-full bg-rose-500"></span>
+                  <span>Google Maps Tráfico en Vivo</span>
+                </div>
+                {mapLayer === 'google-traffic' && <div className="w-2 h-2 rounded-full bg-blue-600"></div>}
+              </button>
+
+              <button
+                onClick={() => { setMapLayer('google-hybrid'); setShowLayerMenu(false); }}
+                className={`w-full text-left px-3 py-2 rounded-xl flex items-center justify-between transition-colors ${
+                  mapLayer === 'google-hybrid' ? 'bg-blue-50 text-blue-600 font-bold' : 'text-slate-700 hover:bg-slate-50'
+                }`}
+              >
+                <div className="flex items-center gap-2">
+                  <span className="w-2.5 h-2.5 rounded-full bg-emerald-600"></span>
+                  <span>Google Maps Satélite</span>
+                </div>
+                {mapLayer === 'google-hybrid' && <div className="w-2 h-2 rounded-full bg-blue-600"></div>}
+              </button>
+
+              <button
+                onClick={() => { setMapLayer('google-terrain'); setShowLayerMenu(false); }}
+                className={`w-full text-left px-3 py-2 rounded-xl flex items-center justify-between transition-colors ${
+                  mapLayer === 'google-terrain' ? 'bg-blue-50 text-blue-600 font-bold' : 'text-slate-700 hover:bg-slate-50'
+                }`}
+              >
+                <div className="flex items-center gap-2">
+                  <span className="w-2.5 h-2.5 rounded-full bg-amber-500"></span>
+                  <span>Google Maps Relieve</span>
+                </div>
+                {mapLayer === 'google-terrain' && <div className="w-2 h-2 rounded-full bg-blue-600"></div>}
+              </button>
+
+              <div className="my-1 border-t border-slate-100"></div>
+
+              <button
+                onClick={() => { setMapLayer('voyager'); setShowLayerMenu(false); }}
+                className={`w-full text-left px-3 py-1.5 rounded-xl flex items-center justify-between text-xs transition-colors ${
+                  mapLayer === 'voyager' ? 'bg-blue-50 text-blue-600 font-bold' : 'text-slate-600 hover:bg-slate-50'
+                }`}
+              >
+                <span>CartoDB Voyager</span>
                 {mapLayer === 'voyager' && <div className="w-2 h-2 rounded-full bg-blue-600"></div>}
               </button>
 
               <button
                 onClick={() => { setMapLayer('osm'); setShowLayerMenu(false); }}
-                className={`w-full text-left px-3 py-2 rounded-xl flex items-center justify-between transition-colors ${
-                  mapLayer === 'osm' ? 'bg-blue-50 text-blue-600 font-bold' : 'text-slate-700 hover:bg-slate-50'
+                className={`w-full text-left px-3 py-1.5 rounded-xl flex items-center justify-between text-xs transition-colors ${
+                  mapLayer === 'osm' ? 'bg-blue-50 text-blue-600 font-bold' : 'text-slate-600 hover:bg-slate-50'
                 }`}
               >
-                <div className="flex items-center gap-2">
-                  <span className="w-2.5 h-2.5 rounded-full bg-emerald-600"></span>
-                  <span>OpenStreetMap Estándar</span>
-                </div>
+                <span>OpenStreetMap</span>
                 {mapLayer === 'osm' && <div className="w-2 h-2 rounded-full bg-blue-600"></div>}
-              </button>
-
-              <button
-                onClick={() => { setMapLayer('light'); setShowLayerMenu(false); }}
-                className={`w-full text-left px-3 py-2 rounded-xl flex items-center justify-between transition-colors ${
-                  mapLayer === 'light' ? 'bg-blue-50 text-blue-600 font-bold' : 'text-slate-700 hover:bg-slate-50'
-                }`}
-              >
-                <div className="flex items-center gap-2">
-                  <span className="w-2.5 h-2.5 rounded-full bg-slate-400"></span>
-                  <span>Positron Claro</span>
-                </div>
-                {mapLayer === 'light' && <div className="w-2 h-2 rounded-full bg-blue-600"></div>}
-              </button>
-
-              <button
-                onClick={() => { setMapLayer('dark'); setShowLayerMenu(false); }}
-                className={`w-full text-left px-3 py-2 rounded-xl flex items-center justify-between transition-colors ${
-                  mapLayer === 'dark' ? 'bg-blue-50 text-blue-600 font-bold' : 'text-slate-700 hover:bg-slate-50'
-                }`}
-              >
-                <div className="flex items-center gap-2">
-                  <span className="w-2.5 h-2.5 rounded-full bg-slate-900"></span>
-                  <span>Modo Noche / Oscuro</span>
-                </div>
-                {mapLayer === 'dark' && <div className="w-2 h-2 rounded-full bg-blue-600"></div>}
               </button>
             </div>
           )}
@@ -696,8 +728,8 @@ export const InteractiveMap: React.FC<InteractiveMapProps> = ({
       {/* 6. Bottom Legend */}
       <div className="absolute bottom-4 left-4 z-10 flex flex-wrap items-center gap-2">
         <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-white/95 backdrop-blur-md border border-slate-200/90 shadow-md text-xs font-semibold text-slate-700">
-          <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-          <span className="font-bold text-slate-900">Mapa Urbano</span>
+          <span className="w-2 h-2 rounded-full bg-blue-600 animate-pulse"></span>
+          <span className="font-bold text-slate-900">Google Maps</span>
           <span className="w-1 h-1 rounded-full bg-slate-300"></span>
           <span className="text-slate-600 text-[11px] font-semibold">Trazado interactivo</span>
         </div>

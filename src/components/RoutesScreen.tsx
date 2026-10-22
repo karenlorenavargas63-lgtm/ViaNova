@@ -337,7 +337,7 @@ export const RoutesScreen: React.FC = () => {
 
         </div>
 
-        {/* Right Panel: Interactive Real Colombia Leaflet Map (Voyager / OpenStreetMap, Zero Google Maps) */}
+        {/* Right Panel: Interactive Google Maps with live routes */}
         <div className="flex-1 w-full relative min-h-[500px]">
           <InteractiveMap
             selectedRouteId={selectedRouteId}
