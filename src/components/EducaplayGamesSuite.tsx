@@ -284,7 +284,7 @@ const FROGGY_LANES: FroggyLane[] = [
 ];
 
 /* ========================================================================= */
-/* DATA 3: SOPA DE LETRAS VIAL (10x10 GRID)                                  */
+/* DATA 3: SOPA DE LETRAS VIAL (12x12 DISPERSA Y SIN COLISIONES)             */
 /* ========================================================================= */
 interface WordSearchDef {
   word: string;
@@ -294,27 +294,90 @@ interface WordSearchDef {
 }
 
 const SOPA_GRID: string[][] = [
-  ['S', 'E', 'M', 'A', 'F', 'O', 'R', 'O', 'K', 'P'],
-  ['C', 'A', 'S', 'C', 'O', 'X', 'B', 'W', 'Q', 'E'],
-  ['E', 'J', 'R', 'T', 'Y', 'Z', 'I', 'V', 'L', 'A'],
-  ['B', 'V', 'E', 'L', 'O', 'C', 'I', 'D', 'A', 'D'],
-  ['R', 'F', 'P', 'R', 'E', 'L', 'A', 'C', 'I', 'O'],
-  ['A', 'K', 'M', 'O', 'V', 'I', 'L', 'I', 'D', 'N'],
-  ['D', 'C', 'I', 'N', 'T', 'U', 'R', 'O', 'N', 'M'],
-  ['H', 'G', 'F', 'C', 'U', 'R', 'V', 'A', 'Z', 'P'],
-  ['B', 'I', 'C', 'I', 'C', 'L', 'E', 'T', 'A', 'X'],
-  ['W', 'R', 'U', 'E', 'D', 'A', 'S', 'P', 'A', 'S'],
+  ['A', 'S', 'E', 'M', 'A', 'F', 'O', 'R', 'O', 'G', 'Z', 'P'],
+  ['C', 'M', 'S', 'M', 'C', 'L', 'S', 'V', 'E', 'B', 'T', 'F'],
+  ['P', 'C', 'M', 'Z', 'A', 'F', 'C', 'E', 'B', 'R', 'A', 'M'],
+  ['R', 'S', 'C', 'Z', 'S', 'E', 'A', 'P', 'A', 'E', 'R', 'H'],
+  ['E', 'R', 'I', 'O', 'C', 'O', 'A', 'R', 'F', 'L', 'I', 'P'],
+  ['L', 'L', 'N', 'E', 'O', 'F', 'P', 'E', 'A', 'T', 'O', 'N'],
+  ['A', 'L', 'T', 'L', 'L', 'V', 'O', 'R', 'D', 'B', 'H', 'P'],
+  ['C', 'E', 'U', 'V', 'T', 'M', 'R', 'B', 'H', 'E', 'T', 'D'],
+  ['I', 'T', 'R', 'V', 'E', 'L', 'O', 'C', 'I', 'D', 'A', 'D'],
+  ['O', 'M', 'O', 'H', 'Z', 'L', 'I', 'A', 'E', 'O', 'L', 'C'],
+  ['N', 'M', 'N', 'P', 'O', 'I', 'B', 'C', 'T', 'B', 'A', 'C'],
+  ['C', 'B', 'I', 'C', 'I', 'C', 'L', 'E', 'T', 'A', 'R', 'P'],
 ];
 
 const SOPA_WORDS: WordSearchDef[] = [
-  { word: 'SEMAFORO', hint: 'Regula el tráfico por luces de colores', coords: [{r:0,c:0},{r:0,c:1},{r:0,c:2},{r:0,c:3},{r:0,c:4},{r:0,c:5},{r:0,c:6},{r:0,c:7}], color: '#3b82f6' },
-  { word: 'CASCO', hint: 'Protege tu cabeza en bici o moto', coords: [{r:1,c:0},{r:1,c:1},{r:1,c:2},{r:1,c:3},{r:1,c:4}], color: '#10b981' },
-  { word: 'CEBRA', hint: 'Paso peatonal rayado en el suelo', coords: [{r:1,c:0},{r:2,c:0},{r:3,c:0},{r:4,c:0},{r:5,c:0}], color: '#f59e0b' },
-  { word: 'PEATON', hint: 'Quien camina por la acera y cruces', coords: [{r:0,c:9},{r:1,c:9},{r:2,c:9},{r:3,c:9},{r:4,c:9},{r:5,c:9}], color: '#8b5cf6' },
-  { word: 'VELOCIDAD', hint: 'Razón de distancia y tiempo en la vía', coords: [{r:3,c:1},{r:3,c:2},{r:3,c:3},{r:3,c:4},{r:3,c:5},{r:3,c:6},{r:3,c:7},{r:3,c:8},{r:3,c:9}], color: '#ec4899' },
-  { word: 'PRELACION', hint: 'Derecho preferente de paso', coords: [{r:4,c:2},{r:4,c:3},{r:4,c:4},{r:4,c:5},{r:4,c:6},{r:4,c:7},{r:4,c:8},{r:4,c:9}], color: '#06b6d4' },
-  { word: 'CINTURON', hint: 'Sistema de retención que salva vidas en autos', coords: [{r:6,c:1},{r:6,c:2},{r:6,c:3},{r:6,c:4},{r:6,c:5},{r:6,c:6},{r:6,c:7},{r:6,c:8}], color: '#ef4444' },
-  { word: 'BICICLETA', hint: 'Vehículo limpio de dos ruedas', coords: [{r:8,c:0},{r:8,c:1},{r:8,c:2},{r:8,c:3},{r:8,c:4},{r:8,c:5},{r:8,c:6},{r:8,c:7},{r:8,c:8}], color: '#14b8a6' },
+  {
+    word: 'SEMAFORO',
+    hint: 'Regula el tráfico por luces de colores',
+    coords: [
+      { r: 0, c: 1 }, { r: 0, c: 2 }, { r: 0, c: 3 }, { r: 0, c: 4 },
+      { r: 0, c: 5 }, { r: 0, c: 6 }, { r: 0, c: 7 }, { r: 0, c: 8 }
+    ],
+    color: '#3b82f6'
+  },
+  {
+    word: 'CASCO',
+    hint: 'Protege tu cabeza en bici o moto',
+    coords: [
+      { r: 1, c: 4 }, { r: 2, c: 4 }, { r: 3, c: 4 }, { r: 4, c: 4 }, { r: 5, c: 4 }
+    ],
+    color: '#10b981'
+  },
+  {
+    word: 'CEBRA',
+    hint: 'Paso peatonal rayado en el suelo',
+    coords: [
+      { r: 2, c: 6 }, { r: 2, c: 7 }, { r: 2, c: 8 }, { r: 2, c: 9 }, { r: 2, c: 10 }
+    ],
+    color: '#f59e0b'
+  },
+  {
+    word: 'PRELACION',
+    hint: 'Derecho preferente de paso',
+    coords: [
+      { r: 2, c: 0 }, { r: 3, c: 0 }, { r: 4, c: 0 }, { r: 5, c: 0 },
+      { r: 6, c: 0 }, { r: 7, c: 0 }, { r: 8, c: 0 }, { r: 9, c: 0 }, { r: 10, c: 0 }
+    ],
+    color: '#06b6d4'
+  },
+  {
+    word: 'PEATON',
+    hint: 'Quien camina por la acera y cruces',
+    coords: [
+      { r: 5, c: 6 }, { r: 5, c: 7 }, { r: 5, c: 8 }, { r: 5, c: 9 }, { r: 5, c: 10 }, { r: 5, c: 11 }
+    ],
+    color: '#8b5cf6'
+  },
+  {
+    word: 'CINTURON',
+    hint: 'Sistema de retención que salva vidas en autos',
+    coords: [
+      { r: 3, c: 2 }, { r: 4, c: 2 }, { r: 5, c: 2 }, { r: 6, c: 2 },
+      { r: 7, c: 2 }, { r: 8, c: 2 }, { r: 9, c: 2 }, { r: 10, c: 2 }
+    ],
+    color: '#ef4444'
+  },
+  {
+    word: 'VELOCIDAD',
+    hint: 'Razón de distancia y tiempo en la vía',
+    coords: [
+      { r: 8, c: 3 }, { r: 8, c: 4 }, { r: 8, c: 5 }, { r: 8, c: 6 },
+      { r: 8, c: 7 }, { r: 8, c: 8 }, { r: 8, c: 9 }, { r: 8, c: 10 }, { r: 8, c: 11 }
+    ],
+    color: '#ec4899'
+  },
+  {
+    word: 'BICICLETA',
+    hint: 'Vehículo limpio de dos ruedas',
+    coords: [
+      { r: 11, c: 1 }, { r: 11, c: 2 }, { r: 11, c: 3 }, { r: 11, c: 4 },
+      { r: 11, c: 5 }, { r: 11, c: 6 }, { r: 11, c: 7 }, { r: 11, c: 8 }, { r: 11, c: 9 }
+    ],
+    color: '#14b8a6'
+  },
 ];
 
 /* ========================================================================= */
@@ -476,7 +539,7 @@ export const EducaplayGamesSuite: React.FC<EducaplayGamesSuiteProps> = ({
           {[
             { id: 'ruleta', label: 'Ruleta Vial', subtitle: 'Pasapalabra A-Z', icon: '🎡', color: 'from-amber-500/20 to-orange-500/20' },
             { id: 'froggy', label: 'Cruce Seguro', subtitle: 'Froggy Jumps', icon: '🐸', color: 'from-emerald-500/20 to-teal-500/20' },
-            { id: 'sopa', label: 'Sopa de Letras', subtitle: '10x10 Letras', icon: '🔍', color: 'from-blue-500/20 to-indigo-500/20' },
+            { id: 'sopa', label: 'Sopa de Letras', subtitle: '12x12 Dispersa', icon: '🔍', color: 'from-blue-500/20 to-indigo-500/20' },
             { id: 'memorama', label: 'Memorama', subtitle: 'Señales de Tránsito', icon: '🃏', color: 'from-purple-500/20 to-pink-500/20' },
             { id: 'columnas', label: 'Emparejar', subtitle: 'Unir Columnas', icon: '🔗', color: 'from-cyan-500/20 to-blue-500/20' },
             { id: 'completar', label: 'Completar', subtitle: 'Frases de Vida', icon: '✍️', color: 'from-rose-500/20 to-red-500/20' },
@@ -1079,7 +1142,7 @@ function GameFroggyCruce({ onScore }: { onScore: (pts: number) => void }) {
 }
 
 /* ========================================================================= */
-/* 3. JUEGO: SOPA DE LETRAS VIAL (10x10)                                      */
+/* 3. JUEGO: SOPA DE LETRAS VIAL (12x12 DISPERSA)                            */
 /* ========================================================================= */
 function GameSopaDeLetras({ onScore }: { onScore: (pts: number) => void }) {
   const [foundWords, setFoundWords] = useState<string[]>([]);
@@ -1167,9 +1230,9 @@ function GameSopaDeLetras({ onScore }: { onScore: (pts: number) => void }) {
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
         
-        {/* 10x10 LETTER GRID */}
+        {/* 12x12 LETTER GRID */}
         <div className="lg:col-span-7 flex justify-center">
-          <div className="grid grid-cols-10 gap-1 sm:gap-1.5 p-3 sm:p-4 bg-slate-900 rounded-3xl border-4 border-slate-800 shadow-xl max-w-sm sm:max-w-md w-full">
+          <div className="grid grid-cols-12 gap-1 p-2 sm:p-3.5 bg-slate-900 rounded-3xl border-4 border-slate-800 shadow-xl max-w-sm sm:max-w-md w-full">
             {SOPA_GRID.map((row, rIdx) =>
               row.map((letter, cIdx) => {
                 const isSelected = selectedCells.some((c) => c.r === rIdx && c.c === cIdx);
@@ -1179,9 +1242,12 @@ function GameSopaDeLetras({ onScore }: { onScore: (pts: number) => void }) {
                   (sw) => foundWords.includes(sw.word) && sw.coords.some((co) => co.r === rIdx && co.c === cIdx)
                 );
 
-                let cellClass = 'bg-slate-800 text-white hover:bg-slate-700';
+                let cellClass = 'bg-slate-800 text-slate-200 hover:bg-slate-700 hover:text-white';
+                const cellStyle: React.CSSProperties = {};
+
                 if (foundWordDef) {
-                  cellClass = 'bg-emerald-500 text-white font-black shadow-md scale-105';
+                  cellClass = 'text-white font-black shadow-md scale-105 ring-1 ring-white/40';
+                  cellStyle.backgroundColor = foundWordDef.color;
                 } else if (isSelected) {
                   cellClass = 'bg-blue-600 text-white font-black ring-2 ring-blue-300 scale-105';
                 }
@@ -1191,7 +1257,8 @@ function GameSopaDeLetras({ onScore }: { onScore: (pts: number) => void }) {
                     key={`${rIdx}-${cIdx}`}
                     type="button"
                     onClick={() => handleCellClick(rIdx, cIdx)}
-                    className={`aspect-square rounded-lg sm:rounded-xl text-xs sm:text-sm font-black flex items-center justify-center transition-all cursor-pointer ${cellClass}`}
+                    style={cellStyle}
+                    className={`aspect-square rounded-md sm:rounded-lg text-[10px] sm:text-xs md:text-sm font-black flex items-center justify-center transition-all cursor-pointer select-none ${cellClass}`}
                   >
                     {letter}
                   </button>
@@ -1214,13 +1281,20 @@ function GameSopaDeLetras({ onScore }: { onScore: (pts: number) => void }) {
                   key={w.word}
                   className={`p-3 rounded-xl border flex items-center justify-between text-xs transition-all ${
                     isFound
-                      ? 'bg-emerald-50 border-emerald-300 text-emerald-900 line-through'
-                      : 'bg-white border-slate-200 text-slate-700'
+                      ? 'bg-slate-100 border-slate-300 text-slate-500 line-through opacity-85'
+                      : 'bg-white border-slate-200 text-slate-700 hover:border-slate-300'
                   }`}
                 >
-                  <div>
-                    <span className="font-black tracking-wide block">{w.word}</span>
-                    <span className="text-[10px] text-slate-500 no-underline">{w.hint}</span>
+                  <div className="flex items-center gap-2.5">
+                    <span
+                      className="w-3 h-3 rounded-full shrink-0 shadow-xs ring-1 ring-black/10"
+                      style={{ backgroundColor: w.color }}
+                      title={`Color: ${w.word}`}
+                    />
+                    <div>
+                      <span className="font-black tracking-wide block text-slate-900">{w.word}</span>
+                      <span className="text-[10px] text-slate-500 no-underline">{w.hint}</span>
+                    </div>
                   </div>
                   {isFound ? (
                     <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
