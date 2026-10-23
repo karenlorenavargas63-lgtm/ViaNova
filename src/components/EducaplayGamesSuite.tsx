@@ -28,6 +28,16 @@ import {
 import confetti from 'canvas-confetti';
 import { gameAudio } from '../utils/gameAudio';
 
+// Imágenes oficiales de VIANOVA para el Memorama
+import vianovaLogoImg from '../assets/images/vianova_logo.png';
+import vianovaSmartCityImg from '../assets/images/vianova_smart_city_hero_1788275485184.jpg';
+import vianovaBikewayImg from '../assets/images/cyclists_green_bikeway_1788438597822.jpg';
+import vianovaCrosswalkImg from '../assets/images/pedestrian_safe_crosswalk_1788876049804.jpg';
+import vianovaHelmetImg from '../assets/images/motorcyclist_safety_helmet_1788876032377.jpg';
+import vianovaDrivingImg from '../assets/images/responsible_car_driving_1788876017243.jpg';
+import vianovaTransitHubImg from '../assets/images/smart_transit_hub_1788276142198.jpg';
+import vianovaIntersectionImg from '../assets/images/urban_mobility_intersection_1788442809042.jpg';
+
 export type EducaplayGameType = 
   | 'ruleta' 
   | 'froggy' 
@@ -381,52 +391,117 @@ const SOPA_WORDS: WordSearchDef[] = [
 ];
 
 /* ========================================================================= */
-/* DATA 4: MEMORAMA DE SEÑALES DE TRÁNSITO (8 PAREJAS = 16 CARTAS)           */
+/* DATA 4: MEMORAMA DE IMÁGENES VIANOVA (8 PAREJAS IDÉNTICAS = 16 CARTAS)    */
 /* ========================================================================= */
+interface VianovaMemoryPair {
+  pairId: string;
+  title: string;
+  badge: string;
+  badgeColor: string;
+  image: string;
+  description: string;
+}
+
+const VIANOVA_MEMORY_PAIRS: VianovaMemoryPair[] = [
+  {
+    pairId: 'logo',
+    title: 'Logo Oficial VIANOVA',
+    badge: 'Institucional',
+    badgeColor: 'bg-blue-600',
+    image: vianovaLogoImg,
+    description: 'Identidad oficial de la plataforma de movilidad escolar y urbana.'
+  },
+  {
+    pairId: 'smart_city',
+    title: 'Smart City VIANOVA',
+    badge: 'Innovación',
+    badgeColor: 'bg-sky-600',
+    image: vianovaSmartCityImg,
+    description: 'Ecosistema de transporte inteligente y tecnología en la ciudad.'
+  },
+  {
+    pairId: 'ciclorruta',
+    title: 'Ciclorrutas Seguras',
+    badge: 'Micromovilidad',
+    badgeColor: 'bg-emerald-600',
+    image: vianovaBikewayImg,
+    description: 'Infraestructura segregada y protegida para ciclistas urbanos.'
+  },
+  {
+    pairId: 'cruce_peatonal',
+    title: 'Paso Peatonal Seguro',
+    badge: 'Prioridad 1°',
+    badgeColor: 'bg-amber-600',
+    image: vianovaCrosswalkImg,
+    description: 'Pasos de cebra demarcados con máxima prelación al caminante.'
+  },
+  {
+    pairId: 'casco_seguridad',
+    title: 'Casco y Protección',
+    badge: 'Seguridad Vial',
+    badgeColor: 'bg-indigo-600',
+    image: vianovaHelmetImg,
+    description: 'Uso obligatorio y certificado de casco para salvar vidas.'
+  },
+  {
+    pairId: 'conduccion_segura',
+    title: 'Conducción Responsable',
+    badge: 'Cultura Vial',
+    badgeColor: 'bg-teal-600',
+    image: vianovaDrivingImg,
+    description: 'Velocidad moderada, atención plena y cero distracciones al volante.'
+  },
+  {
+    pairId: 'centro_control',
+    title: 'Centro de Tránsito',
+    badge: 'Monitoreo',
+    badgeColor: 'bg-purple-600',
+    image: vianovaTransitHubImg,
+    description: 'Supervisión en tiempo real de corredores viales y semaforización.'
+  },
+  {
+    pairId: 'interseccion',
+    title: 'Intersección Conectada',
+    badge: 'Infraestructura',
+    badgeColor: 'bg-rose-600',
+    image: vianovaIntersectionImg,
+    description: 'Cruces urbanos rediseñados para eliminar puntos ciegos y siniestros.'
+  }
+];
+
 interface MemoryCardItem {
   id: number;
   pairId: string;
-  type: 'sign' | 'meaning';
-  symbol: string;
-  name: string;
-  badge: 'Reglamentaria' | 'Preventiva' | 'Informativa';
+  title: string;
+  badge: string;
   badgeColor: string;
+  image: string;
+  description: string;
 }
-
-const MEMORY_BASE_PAIRS = [
-  { pairId: 'pare', symbol: '🛑', name: 'Señal de PARE', meaning: 'Detención total obligatoria antes de la línea', badge: 'Reglamentaria', badgeColor: 'bg-red-500' },
-  { pairId: 'no_adelantar', symbol: '🚫', name: 'Prohibido Adelantar', meaning: 'Prohibición de invadir el carril contrario', badge: 'Reglamentaria', badgeColor: 'bg-red-500' },
-  { pairId: 'curva', symbol: '⚠️', name: 'Curva Peligrosa', meaning: 'Reducción anticipada de velocidad por viraje', badge: 'Preventiva', badgeColor: 'bg-amber-500' },
-  { pairId: 'escolar', symbol: '🚸', name: 'Zona Escolar', meaning: 'Prioridad de paso infantil y límite a 30 km/h', badge: 'Preventiva', badgeColor: 'bg-amber-500' },
-  { pairId: 'ciclorruta', symbol: '🚴', name: 'Vía Exclusiva Bicis', meaning: 'Carril exclusivo para ciclistas y patinetas', badge: 'Informativa', badgeColor: 'bg-blue-500' },
-  { pairId: 'cebra', symbol: '🚶', name: 'Paso Peatonal Cebra', meaning: 'Cruce protegido con máxima prioridad al peatón', badge: 'Informativa', badgeColor: 'bg-blue-500' },
-  { pairId: 'contravia', symbol: '⛔', name: 'Sentido Prohibido', meaning: 'No ingresar en contravía bajo ninguna circunstancia', badge: 'Reglamentaria', badgeColor: 'bg-red-500' },
-  { pairId: 'auxilio', symbol: '🏥', name: 'Puesto de Auxilio / SOS', meaning: 'Atención médica y asistencia en carretera', badge: 'Informativa', badgeColor: 'bg-blue-500' },
-];
 
 function buildShuffledMemoryCards(): MemoryCardItem[] {
   const cards: MemoryCardItem[] = [];
   let id = 1;
-  MEMORY_BASE_PAIRS.forEach((item) => {
-    // Card A (Symbol + Name)
+  VIANOVA_MEMORY_PAIRS.forEach((item) => {
+    // Carta 1 de la pareja (misma imagen oficial de VIANOVA)
     cards.push({
       id: id++,
       pairId: item.pairId,
-      type: 'sign',
-      symbol: item.symbol,
-      name: item.name,
-      badge: item.badge as any,
-      badgeColor: item.badgeColor
+      title: item.title,
+      badge: item.badge,
+      badgeColor: item.badgeColor,
+      image: item.image,
+      description: item.description
     });
-    // Card B (Meaning)
+    // Carta 2 de la pareja (IMAGEN IDÉNTICA para hacer el match)
     cards.push({
       id: id++,
       pairId: item.pairId,
-      type: 'meaning',
-      symbol: item.symbol,
-      name: item.meaning,
-      badge: item.badge as any,
-      badgeColor: item.badgeColor
+      title: item.title,
+      badge: item.badge,
+      badgeColor: item.badgeColor,
+      image: item.image,
+      description: item.description
     });
   });
   return cards.sort(() => Math.random() - 0.5);
@@ -540,7 +615,7 @@ export const EducaplayGamesSuite: React.FC<EducaplayGamesSuiteProps> = ({
             { id: 'ruleta', label: 'Ruleta Vial', subtitle: 'Pasapalabra A-Z', icon: '🎡', color: 'from-amber-500/20 to-orange-500/20' },
             { id: 'froggy', label: 'Cruce Seguro', subtitle: 'Froggy Jumps', icon: '🐸', color: 'from-emerald-500/20 to-teal-500/20' },
             { id: 'sopa', label: 'Sopa de Letras', subtitle: '12x12 Dispersa', icon: '🔍', color: 'from-blue-500/20 to-indigo-500/20' },
-            { id: 'memorama', label: 'Memorama', subtitle: 'Señales de Tránsito', icon: '🃏', color: 'from-purple-500/20 to-pink-500/20' },
+            { id: 'memorama', label: 'Memorama', subtitle: 'Imágenes VIANOVA', icon: '🃏', color: 'from-purple-500/20 to-pink-500/20' },
             { id: 'columnas', label: 'Emparejar', subtitle: 'Unir Columnas', icon: '🔗', color: 'from-cyan-500/20 to-blue-500/20' },
             { id: 'completar', label: 'Completar', subtitle: 'Frases de Vida', icon: '✍️', color: 'from-rose-500/20 to-red-500/20' },
           ].map((game) => {
@@ -1313,7 +1388,7 @@ function GameSopaDeLetras({ onScore }: { onScore: (pts: number) => void }) {
 }
 
 /* ========================================================================= */
-/* 4. JUEGO: MEMORAMA DE SEÑALES DE TRÁNSITO                                  */
+/* 4. JUEGO: MEMORAMA DE IMÁGENES VIANOVA (PAREJAS IDÉNTICAS)                */
 /* ========================================================================= */
 function GameMemoramaSenales({ onScore }: { onScore: (pts: number) => void }) {
   const [cards, setCards] = useState<MemoryCardItem[]>(() => buildShuffledMemoryCards());
@@ -1341,7 +1416,7 @@ function GameMemoramaSenales({ onScore }: { onScore: (pts: number) => void }) {
         setMatchedPairs((prev) => [...prev, cardA.pairId]);
         setFlippedCards([]);
 
-        if (matchedPairs.length + 1 === MEMORY_BASE_PAIRS.length) {
+        if (matchedPairs.length + 1 === VIANOVA_MEMORY_PAIRS.length) {
           gameAudio.playWin();
           try {
             confetti({ particleCount: 90, spread: 80, origin: { y: 0.6 } });
@@ -1364,16 +1439,16 @@ function GameMemoramaSenales({ onScore }: { onScore: (pts: number) => void }) {
     setMoves(0);
   };
 
-  const isCompleted = matchedPairs.length === MEMORY_BASE_PAIRS.length;
+  const isCompleted = matchedPairs.length === VIANOVA_MEMORY_PAIRS.length;
 
   return (
     <div className="space-y-6">
       {/* HUD Header */}
       <div className="flex items-center justify-between bg-slate-50 p-4 rounded-2xl border border-slate-200">
         <div className="flex items-center gap-3">
-          <span className="text-xs font-bold text-slate-500 uppercase">Parejas Halladas:</span>
+          <span className="text-xs font-bold text-slate-500 uppercase">Parejas VIANOVA:</span>
           <span className="px-3 py-1 rounded-xl bg-blue-100 text-blue-700 text-xs font-black">
-            {matchedPairs.length} / {MEMORY_BASE_PAIRS.length}
+            {matchedPairs.length} / {VIANOVA_MEMORY_PAIRS.length}
           </span>
           <span className="text-xs font-semibold text-slate-500">({moves} Intentos)</span>
         </div>
@@ -1388,7 +1463,7 @@ function GameMemoramaSenales({ onScore }: { onScore: (pts: number) => void }) {
       </div>
 
       {!isCompleted ? (
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4.5">
           {cards.map((card) => {
             const isFlipped = flippedCards.includes(card.id) || matchedPairs.includes(card.pairId);
             const isMatched = matchedPairs.includes(card.pairId);
@@ -1398,28 +1473,65 @@ function GameMemoramaSenales({ onScore }: { onScore: (pts: number) => void }) {
                 key={card.id}
                 type="button"
                 onClick={() => handleCardClick(card.id, card.pairId)}
-                className={`h-28 sm:h-36 rounded-2xl p-3 border-2 text-center transition-all duration-300 flex flex-col items-center justify-center cursor-pointer ${
+                className={`group relative rounded-2xl overflow-hidden border-2 text-center transition-all duration-300 cursor-pointer flex flex-col justify-between ${
                   isFlipped
                     ? isMatched
-                      ? 'bg-emerald-50 border-emerald-400 text-emerald-950 shadow-sm'
-                      : 'bg-white border-blue-500 shadow-md ring-2 ring-blue-100'
-                    : 'bg-gradient-to-br from-slate-800 to-slate-900 border-slate-700 text-white hover:border-slate-600'
-                }`}
+                      ? 'border-emerald-500 bg-white ring-2 ring-emerald-300 shadow-md scale-[1.01]'
+                      : 'border-blue-500 bg-white ring-2 ring-blue-200 shadow-lg scale-[1.02]'
+                    : 'border-slate-800 bg-gradient-to-br from-slate-900 via-[#0a193b] to-slate-900 hover:border-blue-500/70 hover:shadow-lg'
+                } h-44 sm:h-52 md:h-56`}
               >
                 {isFlipped ? (
-                  <div className="space-y-1.5 animate-fade-in flex flex-col items-center">
-                    <span className="text-2xl sm:text-3xl">{card.symbol}</span>
-                    <span className="text-[11px] sm:text-xs font-black line-clamp-2 leading-tight">
-                      {card.name}
-                    </span>
-                    <span className="text-[9px] px-2 py-0.5 rounded-full bg-slate-100 font-extrabold text-slate-600">
-                      {card.badge}
-                    </span>
+                  <div className="w-full h-full flex flex-col justify-between animate-fade-in">
+                    {/* Top Image area */}
+                    <div className="relative w-full h-28 sm:h-34 md:h-38 bg-slate-950 overflow-hidden shrink-0">
+                      <img
+                        src={card.image}
+                        alt={card.title}
+                        className={`w-full h-full ${
+                          card.pairId === 'logo'
+                            ? 'object-contain p-2.5 bg-slate-900'
+                            : 'object-cover group-hover:scale-105 transition-transform duration-500'
+                        }`}
+                        loading="lazy"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent pointer-events-none" />
+                      
+                      {/* Category Badge */}
+                      <span className={`absolute top-2 left-2 px-2 py-0.5 rounded-full text-[9px] font-black text-white uppercase tracking-wider shadow-sm ${card.badgeColor}`}>
+                        {card.badge}
+                      </span>
+
+                      {/* Matched Check */}
+                      {isMatched && (
+                        <span className="absolute top-2 right-2 px-1.5 py-0.5 rounded-md bg-emerald-500 text-white text-[10px] font-black flex items-center gap-1 shadow-md animate-bounce">
+                          <Check className="w-3 h-3 stroke-[3]" />
+                          <span className="hidden sm:inline">¡Par!</span>
+                        </span>
+                      )}
+                    </div>
+
+                    {/* Bottom text info */}
+                    <div className="p-2 sm:p-2.5 bg-white text-left flex flex-col justify-center border-t border-slate-100 flex-1">
+                      <span className="text-[11px] sm:text-xs font-black text-slate-900 leading-snug line-clamp-1">
+                        {card.title}
+                      </span>
+                      <span className="text-[9px] sm:text-[10px] text-blue-600 font-bold truncate">
+                        VIANOVA Movilidad
+                      </span>
+                    </div>
                   </div>
                 ) : (
-                  <div className="flex flex-col items-center gap-1 opacity-70">
-                    <HelpCircle className="w-7 h-7 text-blue-400" />
-                    <span className="text-[10px] font-bold text-slate-400">VIANOVA</span>
+                  <div className="w-full h-full flex flex-col items-center justify-center p-3 text-center">
+                    <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-gradient-to-br from-blue-600/20 via-sky-500/20 to-blue-700/30 border border-blue-400/30 flex items-center justify-center mb-2 shadow-inner group-hover:scale-110 transition-transform">
+                      <Sparkles className="w-6 h-6 text-sky-400 animate-pulse" />
+                    </div>
+                    <span className="text-xs sm:text-sm font-black text-white tracking-wider">
+                      VIANOVA
+                    </span>
+                    <span className="text-[10px] text-sky-300/80 font-bold mt-0.5">
+                      Descubre el par
+                    </span>
                   </div>
                 )}
               </button>
@@ -1432,9 +1544,9 @@ function GameMemoramaSenales({ onScore }: { onScore: (pts: number) => void }) {
             <Trophy className="w-10 h-10" />
           </div>
           <div className="space-y-1">
-            <h3 className="text-2xl font-black text-slate-900">¡Memoria Vial Impecable!</h3>
+            <h3 className="text-2xl font-black text-slate-900">¡Memoria VIANOVA Impecable!</h3>
             <p className="text-xs sm:text-sm text-slate-600">
-              Emparejaste las 8 señales reglamentarias, preventivas e informativas en {moves} intentos.
+              Emparejaste con éxito las 8 parejas de imágenes oficiales de VIANOVA (Smart City, Micromovilidad, Cruces Peatonales, Casco y Monitoreo) en {moves} intentos.
             </p>
           </div>
           <button
